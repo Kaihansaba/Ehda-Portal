@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Ehda Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f5f8fb;
+        }
+
+        .navbar {
+            background: #b71c1c;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #b71c1c;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .content {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content h1 {
+            font-size: 38px;
+            color: #222;
+            margin-bottom: 15px;
+        }
+
+        .content p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            color: #b71c1c;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Ehda Portal</div>
+
+        <a href="{% url 'logout' %}" class="logout-btn">
+    Logout
+</a>
+    </nav>
+
+    <div class="content">
+
+        <div class="card">
+            <h1>Welcome to Ehda Portal</h1>
+
+            <p>
+                You have successfully logged in to your account.
+            </p>
+
+            <h2>Authentication Successful</h2>
+
+            <p>
+                Your account is protected and you can now access
+                the platform.
+            </p>
+        </div>
+
+    </div>
+
+</body>
+</html>
