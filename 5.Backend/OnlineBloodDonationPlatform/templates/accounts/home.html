@@ -26,6 +26,8 @@
                 {% endif %}
                 <a href="{% url 'locations:search' %}" class="btn btn-secondary btn-lg">Find blood</a>
             </div>
+
+            <p class="hero-note">Ehda (<span lang="fa-AF">اهدا</span>) means “donation” in Dari.</p>
         </div>
     </section>
 
@@ -117,5 +119,18 @@
             <p class="table-note">A hospital always confirms compatibility with a lab test before a transfusion.</p>
         </div>
     </section>
+
+    {% if not request.user.is_authenticated %}
+        <section class="band" aria-labelledby="join-title">
+            <div class="container">
+                <h2 id="join-title" class="section-title">Ready to help?</h2>
+                <p class="lead mb-5">One donation can help save up to three lives. Join the donors who are ready when someone nearby needs blood.</p>
+                <div class="cluster">
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Become a donor</a>
+                    <a href="{% url 'login' %}" class="btn btn-ghost btn-lg">I already have an account</a>
+                </div>
+            </div>
+        </section>
+    {% endif %}
 
 {% endblock %}

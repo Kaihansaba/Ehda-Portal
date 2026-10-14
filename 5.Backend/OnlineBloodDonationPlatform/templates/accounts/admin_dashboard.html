@@ -15,6 +15,18 @@
         {% endif %}
     </section>
 
+    <!-- Platform numbers need data from the view; placeholders until then -->
+    <section class="section" aria-labelledby="overview-title">
+        <h2 id="overview-title" class="visually-hidden">Overview</h2>
+
+        <div class="grid grid-4">
+            {% include "partials/stat_card.html" with label="Total users" value="—" note="Coming soon" %}
+            {% include "partials/stat_card.html" with label="Donors" value="—" note="Coming soon" %}
+            {% include "partials/stat_card.html" with label="Hospitals" value="—" note="Coming soon" %}
+            {% include "partials/stat_card.html" with label="Reports" value="—" note="Coming soon" %}
+        </div>
+    </section>
+
     {% if request.user.is_staff %}
         <section class="section" aria-labelledby="manage-title">
             <h2 id="manage-title" class="section-title">Manage in site admin</h2>
@@ -42,6 +54,64 @@
         </section>
     {% endif %}
 
-    <p class="soon">Coming soon: reported accounts, donation records and platform statistics.</p>
+    <section class="section" aria-labelledby="status-title">
+        <h2 id="status-title" class="section-title">System status</h2>
+
+        <div class="grid grid-2">
+            <div class="card soon-card">
+                <h3 class="card-title">Sign-in and permissions</h3>
+                <p class="card-text">Authentication and role-based access control are active.</p>
+                <span class="availability is-available">Operational</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Administrator access</h3>
+                <p class="card-text">You are signed in with administrator privileges.</p>
+                <span class="availability is-available">Active</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" aria-labelledby="soon-title">
+        <h2 id="soon-title" class="section-title">Administration tools</h2>
+
+        <div class="grid grid-3">
+            <div class="card soon-card">
+                <h3 class="card-title">Manage users</h3>
+                <p class="card-text">View, search, activate or deactivate accounts.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Hospitals and centres</h3>
+                <p class="card-text">Add and update hospitals and donation centres shown on the map.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Reported accounts</h3>
+                <p class="card-text">Review reports from users and take action.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Donation records</h3>
+                <p class="card-text">Monitor donation activity across the platform.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Platform statistics</h3>
+                <p class="card-text">Requests, response times and activity over time.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Security and access</h3>
+                <p class="card-text">Monitor sign-ins and keep permissions up to date.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+        </div>
+    </section>
 
 {% endblock %}

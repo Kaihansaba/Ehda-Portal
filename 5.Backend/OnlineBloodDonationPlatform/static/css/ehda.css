@@ -772,9 +772,37 @@ main:focus {
     vertical-align: middle;
 }
 
-/* Key figure (for dashboard numbers once the views provide them) */
+/* Features that are not built yet: plain card + "Coming soon" tag */
+.soon-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    height: 100%;
+    padding: var(--space-4) var(--space-5);
+}
+
+.soon-card .card-title {
+    margin: 0;
+}
+
+.soon-card .card-text {
+    flex: 1;
+    font-size: var(--text-sm);
+}
+
+.soon-card .tag,
+.soon-card .availability {
+    align-self: flex-start;
+}
+
+/* Key figure on dashboards */
 .stat-card {
     padding: var(--space-4);
+}
+
+.stat-note {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
 }
 
 .stat-label {
@@ -917,7 +945,17 @@ main:focus {
 
 /* Empty state */
 .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: var(--space-5) 0;
+    text-align: center;
+}
+
+.empty-state > svg {
+    width: 7rem;
+    height: auto;
+    margin-block-end: var(--space-4);
 }
 
 .empty-state h3 {
@@ -1140,6 +1178,15 @@ fieldset {
 
 .choice-card label:hover {
     border-color: var(--color-border-strong);
+}
+
+.choice-card-icon {
+    color: var(--color-primary);
+}
+
+.choice-card-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .choice-card-title {
@@ -1497,6 +1544,27 @@ fieldset {
     color: var(--color-text-muted);
 }
 
+.auth-note {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-block-start: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+.auth-note svg {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
+.hero-note {
+    margin-block-start: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
 /* Dashboards */
 .dash-hero {
     display: flex;
@@ -1523,43 +1591,69 @@ fieldset {
     gap: var(--space-3);
 }
 
-/* Availability: current status on the left, a normal button on the right */
-.availability-row {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-}
-
-.availability-row form {
-    margin: 0;
-}
-
-.status-line {
+/* Availability switch: a POST submit button drawn as an on/off switch.
+   Neutral border; only the switch track itself turns green. */
+.toggle-button {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-lg);
-    font-weight: 700;
+    gap: var(--space-4);
+    width: 100%;
+    min-height: 4rem;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    text-align: start;
+    cursor: pointer;
 }
 
-.status-line::before {
-    content: "";
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 50%;
+.toggle-button:hover {
+    border-color: var(--color-text-muted);
+}
+
+.toggle-track {
+    position: relative;
+    flex-shrink: 0;
+    width: 3.25rem;
+    height: 1.875rem;
+    border-radius: var(--radius-pill);
     background: var(--color-unavailable-dot);
 }
 
-.status-line.is-available::before {
+.toggle-track::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 0.1875rem;
+    inset-inline-start: 0.1875rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--color-surface);
+}
+
+.toggle-button[aria-pressed="true"] .toggle-track {
     background: var(--color-available-dot);
 }
 
-@media (min-width: 48rem) {
-    .availability-row {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-    }
+.toggle-button[aria-pressed="true"] .toggle-track::after {
+    inset-inline-start: auto;
+    inset-inline-end: 0.1875rem;
+}
+
+.toggle-label {
+    display: flex;
+    flex-direction: column;
+    line-height: var(--leading-tight);
+}
+
+.toggle-label strong {
+    font-size: var(--text-lg);
+}
+
+.toggle-label span {
+    margin-block-start: var(--space-1);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
 }
 
 /* Search */
@@ -1784,6 +1878,12 @@ fieldset {
 
 .error-page h1 {
     margin-block: var(--space-2) var(--space-3);
+}
+
+.error-page > svg {
+    width: 7rem;
+    height: auto;
+    margin-block-end: var(--space-4);
 }
 
 .error-code {

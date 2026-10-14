@@ -54,6 +54,11 @@
             New to Ehda?
             <a href="{% url 'register' %}">Create an account</a>
         </p>
+
+        <p class="auth-note">
+            {% include "partials/icon.html" with name="lock" %}
+            Your password is stored securely and never shared.
+        </p>
     </div>
 </div>
 {% endblock %}

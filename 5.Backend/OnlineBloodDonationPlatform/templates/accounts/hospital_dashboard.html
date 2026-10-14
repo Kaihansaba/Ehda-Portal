@@ -13,6 +13,17 @@
         <a href="{% url 'locations:search' %}" class="btn btn-primary btn-lg">Find donors</a>
     </section>
 
+    <!-- Request numbers arrive with the blood request feature -->
+    <section class="section" aria-labelledby="overview-title">
+        <h2 id="overview-title" class="visually-hidden">Overview</h2>
+
+        <div class="grid grid-3">
+            {% include "partials/stat_card.html" with label="Active requests" value="—" note="Available when requests launch" %}
+            {% include "partials/stat_card.html" with label="Donors connected" value="—" note="Available when requests launch" %}
+            {% include "partials/stat_card.html" with label="Account status" value="Active" %}
+        </div>
+    </section>
+
     <section class="section" aria-labelledby="actions-title">
         <h2 id="actions-title" class="section-title">Find blood</h2>
 
@@ -38,6 +49,28 @@
         </ul>
     </section>
 
-    <p class="soon">Coming soon: creating blood requests, tracking donor responses and your hospital profile.</p>
+    <section class="section" aria-labelledby="soon-title">
+        <h2 id="soon-title" class="section-title">Coming soon</h2>
+
+        <div class="grid grid-3">
+            <div class="card soon-card">
+                <h3 class="card-title">Create blood request</h3>
+                <p class="card-text">Ask matching donors for help when a patient needs a specific blood type.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Manage requests</h3>
+                <p class="card-text">Follow your active requests and see donors’ responses.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Hospital profile</h3>
+                <p class="card-text">Your hospital’s details and contact information.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+        </div>
+    </section>
 
 {% endblock %}

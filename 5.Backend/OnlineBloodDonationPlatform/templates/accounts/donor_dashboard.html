@@ -28,28 +28,26 @@
         </div>
     {% endif %}
 
-    <!-- Availability: current status + a plain button (still a POST form) -->
+    <!-- Availability switch (still a POST form) -->
     <section class="card section" aria-labelledby="availability-title">
-        <h2 id="availability-title" class="visually-hidden">Availability</h2>
+        <h2 id="availability-title" class="card-title">Can you donate right now?</h2>
+        <p class="card-text mb-4">Only available donors appear in search results and on the map. You can change this at any time.</p>
 
-        <div class="availability-row">
-            <div>
-                {% if request.user.is_available %}
-                    <p class="status-line is-available">Available to donate</p>
-                    <p class="muted">You appear in search results and on the map.</p>
-                {% else %}
-                    <p class="status-line">Not available</p>
-                    <p class="muted">You are hidden from search results and the map.</p>
-                {% endif %}
-            </div>
-
-            <form method="post" action="{% url 'toggle_availability' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-secondary">
-                    {% if request.user.is_available %}Mark as not available{% else %}Mark as available{% endif %}
-                </button>
-            </form>
-        </div>
+        <form method="post" action="{% url 'toggle_availability' %}">
+            {% csrf_token %}
+            <button type="submit" class="toggle-button" aria-pressed="{{ request.user.is_available|yesno:'true,false' }}">
+                <span class="toggle-track" aria-hidden="true"></span>
+                <span class="toggle-label">
+                    {% if request.user.is_available %}
+                        <strong>Available to donate</strong>
+                        <span>Tap to hide yourself from search for now</span>
+                    {% else %}
+                        <strong>Not available right now</strong>
+                        <span>Tap to show up in search again</span>
+                    {% endif %}
+                </span>
+            </button>
+        </form>
     </section>
 
     <section class="section" aria-labelledby="actions-title">
@@ -95,6 +93,22 @@
         </ul>
     </section>
 
-    <p class="soon">Coming soon: blood requests and your donation history.</p>
+    <section class="section" aria-labelledby="soon-title">
+        <h2 id="soon-title" class="section-title">Coming soon</h2>
+
+        <div class="grid grid-2">
+            <div class="card soon-card">
+                <h3 class="card-title">Blood requests</h3>
+                <p class="card-text">See requests from people who need your blood type, and accept or decline them.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+
+            <div class="card soon-card">
+                <h3 class="card-title">Donation history</h3>
+                <p class="card-text">Keep a private record of your past donations.</p>
+                <span class="tag">Coming soon</span>
+            </div>
+        </div>
+    </section>
 
 {% endblock %}
