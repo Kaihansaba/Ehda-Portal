@@ -17,6 +17,12 @@ from accounts.views import (
 )
 
 
+# Django admin branding (templates/admin/base_site.html adds the logo)
+admin.site.site_header = "Ehda Admin"
+admin.site.site_title = "Ehda Admin"
+admin.site.index_title = "Platform management"
+
+
 urlpatterns = [
     # Admin
     path("admin/", admin.site.urls),

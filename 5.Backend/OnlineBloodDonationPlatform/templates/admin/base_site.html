@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% comment %}
+    Ehda branding for the Django admin. Same blocks as Django's own
+    admin/base_site.html, plus the logo, favicon and ehda-admin.css.
+    extrastyle loads after Django's base.css and dark_mode.css, so our
+    colour variables win.
+{% endcomment %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/ehda-admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}" class="ehda-brand">
+        {% include "partials/logo.html" with class="ehda-brand-mark" %}
+        <span>{{ site_header|default:_('Django administration') }}</span>
+        <span class="ehda-brand-native" lang="fa-AF" dir="rtl">اهدا</span>
+    </a>
+</div>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
