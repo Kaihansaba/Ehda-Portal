@@ -329,7 +329,7 @@
         {% if request.user.is_authenticated %}
             <div class="nav-links">
                 <a href="{% url 'role_redirect' %}">Dashboard</a>
-                {% block nav_links %}{% endblock %}
+                <a href="{% url 'locations:search' %}">Find Donors</a>
             </div>
 
             <div class="nav-right">

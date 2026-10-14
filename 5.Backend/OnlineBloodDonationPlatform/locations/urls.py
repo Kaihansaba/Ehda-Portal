@@ -12,4 +12,7 @@ urlpatterns = [
         views.donor_location,
         name="donor_location",
     ),
+
+    # Search donors by blood type and location (#006, #007)
+    path("search/", views.donor_search, name="search"),
 ]
