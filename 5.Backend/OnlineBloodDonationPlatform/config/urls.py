@@ -3,6 +3,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 
 from accounts.views import (
+    index,
     register,
     user_login,
     home,
@@ -19,6 +20,9 @@ from accounts.views import (
 urlpatterns = [
     # Admin
     path("admin/", admin.site.urls),
+
+    # Site root: dashboard if logged in, otherwise login
+    path("", index, name="index"),
 
     # Authentication
     path("register/", register, name="register"),

@@ -47,6 +47,13 @@ class CustomUserAdmin(UserAdmin):
             )
         }),
 
+        ("Donor Information", {
+            "fields": (
+                "blood_type",
+                "is_available",
+            )
+        }),
+
         ("Role & Permissions", {
             "fields": (
                 "role",
