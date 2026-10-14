@@ -2,12 +2,14 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import NoReverseMatch, reverse
 
+from accounts.models import User
 from accounts.views import role_required
 
 from .constants import AFGHANISTAN_CENTER, DONOR_SEARCH_ROLES, PROVINCES
 from .forms import DonorLocationForm, DonorSearchForm
-from .models import DonorLocation
-from .search import search_donors
+from .models import DonorLocation, Facility
+from .search import search_donors, searchable_donors
+from .utils import public_name
 
 
 def blood_request_url(donor_id):
@@ -104,5 +106,55 @@ def donor_search(request):
             "results": results,
             "map_center": map_center_for(request.user),
             "province_centres": province_centres(),
+        },
+    )
+
+
+@role_required(*DONOR_SEARCH_ROLES)
+def donor_map(request):
+    blood_type = request.GET.get("blood_type", "")
+    if blood_type not in User.BloodType.values:
+        blood_type = ""
+
+    locations = searchable_donors(request.user)
+    if blood_type:
+        locations = locations.filter(user__blood_type=blood_type)
+
+    # PRIVACY: donors are sent with approximate coordinates only.
+    donors = []
+    for location in locations:
+        lat, lng = location.approximate_coordinates
+        donors.append({
+            "name": public_name(location.user),
+            "blood_type": location.user.blood_type,
+            "lat": lat,
+            "lng": lng,
+        })
+
+    facilities = [
+        {
+            "name": facility.name,
+            "type": facility.facility_type,
+            "type_label": facility.get_facility_type_display(),
+            "address": facility.address,
+            "phone": facility.phone,
+            "lat": float(facility.latitude),
+            "lng": float(facility.longitude),
+        }
+        for facility in Facility.objects.filter(is_active=True)
+    ]
+
+    return render(
+        request,
+        "locations/map.html",
+        {
+            "blood_type": blood_type,
+            "blood_type_choices": User.BloodType.choices,
+            "donor_count": len(donors),
+            "map_data": {
+                "center": map_center_for(request.user),
+                "donors": donors,
+                "facilities": facilities,
+            },
         },
     )

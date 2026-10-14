@@ -15,4 +15,7 @@ urlpatterns = [
 
     # Search donors by blood type and location (#006, #007)
     path("search/", views.donor_search, name="search"),
+
+    # Map of donors, hospitals and donation centres (#008)
+    path("map/", views.donor_map, name="map"),
 ]
