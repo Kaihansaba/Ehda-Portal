@@ -304,10 +304,6 @@ main:focus {
     }
 }
 
-.stack > * + * {
-    margin-block-start: var(--space-4);
-}
-
 .stack-sm > * + * {
     margin-block-start: var(--space-2);
 }
@@ -626,6 +622,7 @@ main:focus {
     color: var(--color-text);
 }
 
+/* Danger and pending styles are ready for blood requests (Sprint 3). */
 .btn-danger {
     background: var(--color-surface);
     border-color: var(--color-danger);
@@ -2021,12 +2018,6 @@ fieldset {
     font-size: var(--text-sm);
 }
 
-.text-center {
-    text-align: center;
-}
-
-.mt-0 { margin-block-start: 0; }
-.mb-2 { margin-block-end: var(--space-2); }
 .mb-4 { margin-block-end: var(--space-4); }
 .mb-5 { margin-block-end: var(--space-5); }
 .mt-4 { margin-block-start: var(--space-4); }
