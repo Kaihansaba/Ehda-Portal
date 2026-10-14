@@ -538,3 +538,40 @@ class AdminNavigationTests(TestCase):
         response = self.client.get(reverse("admin_dashboard"))
         self.assertContains(response, f'href="{admin_url}"')
         self.assertNotContains(response, 'target="_blank"')
+
+
+# 9. Demo accounts command
+
+class DemoAccountsCommandTests(TestCase):
+
+    def run_command(self):
+        from io import StringIO
+        from django.core.management import call_command
+
+        call_command("create_demo_accounts", stdout=StringIO())
+
+    def test_creates_accounts_for_every_role(self):
+        with self.settings(DEBUG=True):
+            self.run_command()
+
+        self.assertTrue(User.objects.get(email="admin@ehda.test").is_superuser)
+        self.assertEqual(User.objects.get(email="hospital@ehda.test").role, "HOSPITAL")
+        donor = User.objects.get(email="donor@ehda.test")
+        self.assertTrue(donor.check_password("EhdaDemo2026!"))
+        self.assertTrue(DonorLocation.objects.filter(user=donor).exists())
+
+    def test_running_twice_does_not_duplicate(self):
+        with self.settings(DEBUG=True):
+            self.run_command()
+            count = User.objects.count()
+            self.run_command()
+
+        self.assertEqual(User.objects.count(), count)
+
+    def test_refuses_when_debug_is_off(self):
+        from django.core.management.base import CommandError
+
+        with self.settings(DEBUG=False), self.assertRaises(CommandError):
+            self.run_command()
+
+        self.assertFalse(User.objects.filter(email__endswith="@ehda.test").exists())
