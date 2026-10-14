@@ -27,6 +27,7 @@ INSTALLED_APPS = [
 
     # Our application
     "accounts.apps.AccountsConfig",
+    "locations.apps.LocationsConfig",
 ]
 
 

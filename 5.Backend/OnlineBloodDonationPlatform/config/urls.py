@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from django.contrib.auth import views as auth_views
 
 from accounts.views import (
@@ -49,6 +49,9 @@ urlpatterns = [
         toggle_availability,
         name="toggle_availability",
     ),
+
+    # Donor location, search and map (Developer 2)
+    path("", include("locations.urls")),
 
     # Hospital dashboard
     path(
