@@ -4,11 +4,10 @@
 
 {% block content %}
 
-    <!-- Greeting + blood type -->
     <section class="dash-hero" aria-labelledby="greeting">
         <div>
             <h1 id="greeting">Hello, {{ request.user.first_name }}</h1>
-            <p class="lead">Thank you for being a blood donor. Your kindness can save a life.</p>
+            <p class="lead">Your donor account</p>
         </div>
 
         <div class="profile-summary">
@@ -19,98 +18,83 @@
         </div>
     </section>
 
-    <!-- Gentle prompts for missing information -->
     {% if not request.user.donor_location %}
         <div class="prompt">
             <div>
-                <h2 class="prompt-title">Add your approximate location</h2>
-                <p class="muted">People searching nearby can only find you once you’ve set it. Only a rough area (about 1 km) is ever shown.</p>
+                <h2 class="prompt-title">You haven’t set your location yet</h2>
+                <p class="muted">People searching nearby can’t find you until you do. Only a rough area (about 1 km) is shown.</p>
             </div>
-            <a href="{% url 'locations:donor_location' %}" class="btn btn-primary">
-                {% include "partials/icon.html" with name="pin" %}
-                Set my location
-            </a>
+            <a href="{% url 'locations:donor_location' %}" class="btn btn-primary">Set my location</a>
         </div>
     {% endif %}
 
-    <!-- Availability -->
-    <section class="card availability-card section" aria-labelledby="availability-title">
-        <div>
-            <h2 id="availability-title" class="card-title">Can you donate right now?</h2>
-            <p class="card-text">Only available donors appear in search results and on the map. You can change this at any time.</p>
-        </div>
+    <!-- Availability: current status + a plain button (still a POST form) -->
+    <section class="card section" aria-labelledby="availability-title">
+        <h2 id="availability-title" class="visually-hidden">Availability</h2>
 
-        <form method="post" action="{% url 'toggle_availability' %}">
-            {% csrf_token %}
-            <button type="submit" class="toggle-button" aria-pressed="{{ request.user.is_available|yesno:'true,false' }}">
-                <span class="toggle-track" aria-hidden="true"></span>
-                <span class="toggle-label">
-                    {% if request.user.is_available %}
-                        <strong>I’m available to donate</strong>
-                        <span>Tap to hide yourself from search for now</span>
-                    {% else %}
-                        <strong>I’m not available right now</strong>
-                        <span>Tap to show up in search again</span>
-                    {% endif %}
-                </span>
-            </button>
-        </form>
+        <div class="availability-row">
+            <div>
+                {% if request.user.is_available %}
+                    <p class="status-line is-available">Available to donate</p>
+                    <p class="muted">You appear in search results and on the map.</p>
+                {% else %}
+                    <p class="status-line">Not available</p>
+                    <p class="muted">You are hidden from search results and the map.</p>
+                {% endif %}
+            </div>
+
+            <form method="post" action="{% url 'toggle_availability' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">
+                    {% if request.user.is_available %}Mark as not available{% else %}Mark as available{% endif %}
+                </button>
+            </form>
+        </div>
     </section>
 
-    <!-- Quick actions -->
     <section class="section" aria-labelledby="actions-title">
-        <h2 id="actions-title" class="section-title">Quick actions</h2>
+        <h2 id="actions-title" class="section-title">Manage</h2>
 
-        <div class="grid grid-4">
-            <div class="card action-card">
-                <span class="icon-tile">{% include "partials/icon.html" with name="pin" %}</span>
-                <h3 class="card-title">My location</h3>
-                <p class="card-text">Choose your area on a map so nearby people can find you.</p>
-                <a href="{% url 'locations:donor_location' %}" class="btn btn-secondary btn-sm">Set my location</a>
-            </div>
-
-            <div class="card action-card">
-                <span class="icon-tile">{% include "partials/icon.html" with name="edit" %}</span>
-                <h3 class="card-title">My profile</h3>
-                <p class="card-text">Update your name, contact details and blood type.</p>
-                <a href="{% url 'donor_profile' %}" class="btn btn-secondary btn-sm">Edit profile</a>
-            </div>
-
-            <div class="card action-card">
-                <span class="icon-tile">{% include "partials/icon.html" with name="search" %}</span>
-                <h3 class="card-title">Find donors</h3>
-                <p class="card-text">Need blood for someone you know? Search donors by type and distance.</p>
-                <a href="{% url 'locations:search' %}" class="btn btn-secondary btn-sm">Search donors</a>
-            </div>
-
-            <div class="card action-card">
-                <span class="icon-tile">{% include "partials/icon.html" with name="map" %}</span>
-                <h3 class="card-title">Map</h3>
-                <p class="card-text">See donors, hospitals and donation centres near you.</p>
-                <a href="{% url 'locations:map' %}" class="btn btn-secondary btn-sm">Open map</a>
-            </div>
-        </div>
+        <ul class="link-list">
+            <li>
+                <a href="{% url 'locations:donor_location' %}">
+                    <span>
+                        <span class="link-title">My location</span>
+                        <span class="link-text">Choose your area on a map</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'donor_profile' %}">
+                    <span>
+                        <span class="link-title">Profile</span>
+                        <span class="link-text">Name, contact details and blood type</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'locations:search' %}">
+                    <span>
+                        <span class="link-title">Find donors</span>
+                        <span class="link-text">Search by blood type and distance</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'locations:map' %}">
+                    <span>
+                        <span class="link-title">Map</span>
+                        <span class="link-text">Donors, hospitals and donation centres</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+        </ul>
     </section>
 
-    <!-- Coming soon -->
-    <section class="section" aria-labelledby="soon-title">
-        <h2 id="soon-title" class="section-title">Coming soon</h2>
-
-        <div class="grid grid-2">
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="send" %}</span>
-                <h3 class="card-title">Blood requests</h3>
-                <p class="card-text">See requests from people who need your blood type, and accept or decline them.</p>
-                <span class="tag">{% include "partials/icon.html" with name="clock" class="tag-icon" %}Coming soon</span>
-            </div>
-
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="history" %}</span>
-                <h3 class="card-title">Donation history</h3>
-                <p class="card-text">Keep a private record of your past donations.</p>
-                <span class="tag">{% include "partials/icon.html" with name="clock" class="tag-icon" %}Coming soon</span>
-            </div>
-        </div>
-    </section>
+    <p class="soon">Coming soon: blood requests and your donation history.</p>
 
 {% endblock %}

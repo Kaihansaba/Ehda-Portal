@@ -1,11 +1,9 @@
 {% comment %}
-    Parameters: icon, label, value, note (optional).
+    A key number for a dashboard. Parameters: label, value.
+    Not used yet: the dashboards will show real counts once their views
+    provide them (no placeholder numbers in the meantime).
 {% endcomment %}
 <div class="card stat-card">
-    <span class="icon-tile">{% include "partials/icon.html" with name=icon %}</span>
-    <div>
-        <div class="stat-label">{{ label }}</div>
-        <div class="stat-value">{{ value }}</div>
-        {% if note %}<div class="stat-note">{{ note }}</div>{% endif %}
-    </div>
+    <div class="stat-label">{{ label }}</div>
+    <div class="stat-value">{{ value }}</div>
 </div>

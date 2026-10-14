@@ -7,9 +7,8 @@
     <div class="card auth-card is-wide">
 
         <div class="auth-header">
-            <span class="icon-tile">{% include "partials/icon.html" with name="heart" %}</span>
-            <h1>Join Ehda</h1>
-            <p>Create a free account to become a donor or to find donors for your patients.</p>
+            <h1>Create an account</h1>
+            <p>For blood donors and hospitals.</p>
         </div>
 
         {% if form.non_field_errors %}
@@ -30,7 +29,6 @@
                     <div class="choice-card">
                         <input type="radio" name="role" value="DONOR" id="id_role_donor"{% if form.role.value != "HOSPITAL" %} checked{% endif %}>
                         <label for="id_role_donor">
-                            <span class="choice-card-icon">{% include "partials/icon.html" with name="heart" %}</span>
                             <span class="choice-card-title">A blood donor</span>
                             <span class="choice-card-text">Let people nearby find you when they need your blood type.</span>
                         </label>
@@ -39,7 +37,6 @@
                     <div class="choice-card">
                         <input type="radio" name="role" value="HOSPITAL" id="id_role_hospital"{% if form.role.value == "HOSPITAL" %} checked{% endif %}>
                         <label for="id_role_hospital">
-                            <span class="choice-card-icon">{% include "partials/icon.html" with name="building" %}</span>
                             <span class="choice-card-title">A hospital</span>
                             <span class="choice-card-text">Search for available donors for your patients.</span>
                         </label>

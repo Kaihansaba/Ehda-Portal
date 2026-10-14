@@ -7,9 +7,7 @@
     <div class="card auth-card">
 
         <div class="auth-header">
-            <span class="icon-tile">{% include "partials/icon.html" with name="heart" %}</span>
-            <h1>Welcome back</h1>
-            <p>Sign in to find donors, update your availability and manage your account.</p>
+            <h1>Sign in</h1>
         </div>
 
         {% if error %}
@@ -55,11 +53,6 @@
         <p class="form-footer">
             New to Ehda?
             <a href="{% url 'register' %}">Create an account</a>
-        </p>
-
-        <p class="auth-note">
-            {% include "partials/icon.html" with name="lock" %}
-            Your password is stored securely and never shared.
         </p>
     </div>
 </div>

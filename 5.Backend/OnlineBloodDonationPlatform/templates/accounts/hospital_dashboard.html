@@ -6,72 +6,38 @@
 
     <section class="dash-hero" aria-labelledby="greeting">
         <div>
-            <h1 id="greeting">Hello, {{ request.user.first_name }}</h1>
-            <p class="lead">Find available donors for your patients and keep track of your requests.</p>
+            <h1 id="greeting">{{ request.user.first_name }}</h1>
+            <p class="lead">Hospital account</p>
         </div>
 
-        <a href="{% url 'locations:search' %}" class="btn btn-primary btn-lg">
-            {% include "partials/icon.html" with name="search" %}
-            Find donors
-        </a>
-    </section>
-
-    <!-- Overview: request numbers arrive with the blood request feature -->
-    <section class="section" aria-labelledby="overview-title">
-        <h2 id="overview-title" class="visually-hidden">Overview</h2>
-
-        <div class="grid grid-3">
-            {% include "partials/stat_card.html" with icon="send" label="Active requests" value="—" note="Available when requests launch" %}
-            {% include "partials/stat_card.html" with icon="users" label="Donors connected" value="—" note="Available when requests launch" %}
-            {% include "partials/stat_card.html" with icon="shield" label="Account status" value="Active" %}
-        </div>
+        <a href="{% url 'locations:search' %}" class="btn btn-primary btn-lg">Find donors</a>
     </section>
 
     <section class="section" aria-labelledby="actions-title">
-        <h2 id="actions-title" class="section-title">What would you like to do?</h2>
+        <h2 id="actions-title" class="section-title">Find blood</h2>
 
-        <div class="grid grid-2">
-            <div class="card action-card">
-                <span class="icon-tile">{% include "partials/icon.html" with name="search" %}</span>
-                <h3 class="card-title">Find donors</h3>
-                <p class="card-text">Search available donors by blood type, compatible types and distance.</p>
-                <a href="{% url 'locations:search' %}" class="btn btn-secondary btn-sm">Search donors</a>
-            </div>
-
-            <div class="card action-card">
-                <span class="icon-tile">{% include "partials/icon.html" with name="map" %}</span>
-                <h3 class="card-title">Donor map</h3>
-                <p class="card-text">See donors’ approximate areas, hospitals and donation centres on a map.</p>
-                <a href="{% url 'locations:map' %}" class="btn btn-secondary btn-sm">Open map</a>
-            </div>
-        </div>
+        <ul class="link-list">
+            <li>
+                <a href="{% url 'locations:search' %}">
+                    <span>
+                        <span class="link-title">Search donors</span>
+                        <span class="link-text">By blood type, compatible types and distance</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'locations:map' %}">
+                    <span>
+                        <span class="link-title">Donor map</span>
+                        <span class="link-text">Donors’ approximate areas, hospitals and donation centres</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+        </ul>
     </section>
 
-    <section class="section" aria-labelledby="soon-title">
-        <h2 id="soon-title" class="section-title">Coming soon</h2>
-
-        <div class="grid grid-3">
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="drop" %}</span>
-                <h3 class="card-title">Create blood request</h3>
-                <p class="card-text">Ask matching donors for help when a patient needs a specific blood type.</p>
-                <span class="tag">{% include "partials/icon.html" with name="clock" class="tag-icon" %}Coming soon</span>
-            </div>
-
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="list" %}</span>
-                <h3 class="card-title">Manage requests</h3>
-                <p class="card-text">Follow your active requests and see donors’ responses.</p>
-                <span class="tag">{% include "partials/icon.html" with name="clock" class="tag-icon" %}Coming soon</span>
-            </div>
-
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="building" %}</span>
-                <h3 class="card-title">Hospital profile</h3>
-                <p class="card-text">Your hospital’s details and contact information.</p>
-                <span class="tag">{% include "partials/icon.html" with name="clock" class="tag-icon" %}Coming soon</span>
-            </div>
-        </div>
-    </section>
+    <p class="soon">Coming soon: creating blood requests, tracking donor responses and your hospital profile.</p>
 
 {% endblock %}

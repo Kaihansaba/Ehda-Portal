@@ -9,23 +9,12 @@
 
 {% block content %}
 <div class="error-page">
-    <svg viewBox="0 0 160 140" aria-hidden="true" focusable="false">
-        <circle cx="80" cy="70" r="62" fill="#fceeec"/>
-        <path d="M44 36 24 44v68l20-8 26 8 20-8 20 8V44l-20-8-20 8z" fill="#fff" stroke="#c9bdb9" stroke-width="3" stroke-linejoin="round"/>
-        <path d="M44 36v68M70 44v68M90 36v68" stroke="#e7dfdc" stroke-width="3"/>
-        <path d="M112 30s-15 16.7-15 26.8a15 15 0 0 0 30 0C127 46.7 112 30 112 30z" fill="#b3261e"/>
-        <path d="M108 52l8 8M116 52l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-    </svg>
+    <p class="error-code">Error 404</p>
+    <h1>Page not found</h1>
+    <p>The link may be broken, or the page may have moved.</p>
 
-    <p class="error-code">404</p>
-    <h1>We couldn’t find that page</h1>
-    <p>The link may be broken or the page may have moved. Let’s get you back on track.</p>
-
-    <div class="cluster cta-actions">
-        <a href="{% url 'index' %}" class="btn btn-primary">
-            {% include "partials/icon.html" with name="home" %}
-            Go to home page
-        </a>
+    <div class="cluster">
+        <a href="{% url 'index' %}" class="btn btn-primary">Go to the home page</a>
         <a href="{% url 'locations:search' %}" class="btn btn-ghost">Find donors</a>
     </div>
 </div>

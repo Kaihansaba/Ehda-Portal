@@ -4,26 +4,13 @@
 
 {% block content %}
 <div class="error-page">
-    <svg viewBox="0 0 160 140" aria-hidden="true" focusable="false">
-        <circle cx="80" cy="70" r="62" fill="#fceeec"/>
-        <rect x="48" y="62" width="64" height="50" rx="10" fill="#fff" stroke="#b3261e" stroke-width="4"/>
-        <path d="M60 62V48a20 20 0 0 1 40 0v14" fill="none" stroke="#b3261e" stroke-width="4" stroke-linecap="round"/>
-        <path d="M80 80s-8 9-8 14a8 8 0 0 0 16 0c0-5-8-14-8-14z" fill="#b3261e"/>
-    </svg>
+    <p class="error-code">Error 403</p>
+    <h1>You don’t have access to this page</h1>
+    <p>This page is for a different type of account (donor, hospital or administrator).</p>
 
-    <p class="error-code">403</p>
-    <h1>This page isn’t available to your account</h1>
-    <p>
-        Some pages are only for donors, hospitals or administrators.
-        Head back to your dashboard to find what you can do.
-    </p>
-
-    <div class="cluster cta-actions">
-        <a href="{% url 'role_redirect' %}" class="btn btn-primary">
-            {% include "partials/icon.html" with name="dashboard" %}
-            Back to my dashboard
-        </a>
-        <a href="{% url 'index' %}" class="btn btn-ghost">Go to home page</a>
+    <div class="cluster">
+        <a href="{% url 'role_redirect' %}" class="btn btn-primary">Back to my dashboard</a>
+        <a href="{% url 'index' %}" class="btn btn-ghost">Go to the home page</a>
     </div>
 </div>
 {% endblock %}

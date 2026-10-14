@@ -7,89 +7,41 @@
     <section class="dash-hero" aria-labelledby="greeting">
         <div>
             <h1 id="greeting">Hello, {{ request.user.first_name|default:"Administrator" }}</h1>
-            <p class="lead">Keep Ehda safe and running smoothly for donors, hospitals and people in need.</p>
+            <p class="lead">Administrator account</p>
         </div>
 
         {% if request.user.is_staff %}
-            <a href="{% url 'admin:index' %}" class="btn btn-primary btn-lg">
-                {% include "partials/icon.html" with name="settings" %}
-                Open site admin
-            </a>
+            <a href="{% url 'admin:index' %}" class="btn btn-primary btn-lg">Open site admin</a>
         {% endif %}
     </section>
 
-    <!-- Platform numbers need data from the view; placeholders until then -->
-    <section class="section" aria-labelledby="overview-title">
-        <h2 id="overview-title" class="visually-hidden">Overview</h2>
+    {% if request.user.is_staff %}
+        <section class="section" aria-labelledby="manage-title">
+            <h2 id="manage-title" class="section-title">Manage in site admin</h2>
 
-        <div class="grid grid-4">
-            {% include "partials/stat_card.html" with icon="users" label="Total users" value="—" note="Coming soon" %}
-            {% include "partials/stat_card.html" with icon="drop" label="Donors" value="—" note="Coming soon" %}
-            {% include "partials/stat_card.html" with icon="hospital" label="Hospitals" value="—" note="Coming soon" %}
-            {% include "partials/stat_card.html" with icon="flag" label="Reports" value="—" note="Coming soon" %}
-        </div>
-    </section>
+            <ul class="link-list">
+                <li>
+                    <a href="{% url 'admin:accounts_user_changelist' %}">
+                        <span>
+                            <span class="link-title">Users</span>
+                            <span class="link-text">Donors, hospitals and administrators</span>
+                        </span>
+                        {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin:locations_facility_changelist' %}">
+                        <span>
+                            <span class="link-title">Hospitals and donation centres</span>
+                            <span class="link-text">Places shown on the map</span>
+                        </span>
+                        {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                    </a>
+                </li>
+            </ul>
+        </section>
+    {% endif %}
 
-    <section class="section" aria-labelledby="status-title">
-        <h2 id="status-title" class="section-title">System status</h2>
-
-        <div class="grid grid-2">
-            <div class="card action-card">
-                <span class="icon-tile">{% include "partials/icon.html" with name="shield" %}</span>
-                <h3 class="card-title">Sign-in and permissions</h3>
-                <p class="card-text">Authentication and role-based access control are active.</p>
-                <span class="availability is-available">Operational</span>
-            </div>
-
-            <div class="card action-card">
-                <span class="icon-tile">{% include "partials/icon.html" with name="lock" %}</span>
-                <h3 class="card-title">Administrator access</h3>
-                <p class="card-text">You are signed in with administrator privileges.</p>
-                <span class="availability is-available">Active</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="section" aria-labelledby="soon-title">
-        <h2 id="soon-title" class="section-title">Administration tools <span class="tag">Coming soon</span></h2>
-
-        <div class="grid grid-3">
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="users" %}</span>
-                <h3 class="card-title">Manage users</h3>
-                <p class="card-text">View, search, activate or deactivate accounts.</p>
-            </div>
-
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="hospital" %}</span>
-                <h3 class="card-title">Hospitals and centres</h3>
-                <p class="card-text">Add and update hospitals and donation centres shown on the map.</p>
-            </div>
-
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="flag" %}</span>
-                <h3 class="card-title">Reported accounts</h3>
-                <p class="card-text">Review reports from users and take action.</p>
-            </div>
-
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="history" %}</span>
-                <h3 class="card-title">Donation records</h3>
-                <p class="card-text">Monitor donation activity across the platform.</p>
-            </div>
-
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="chart" %}</span>
-                <h3 class="card-title">Platform statistics</h3>
-                <p class="card-text">Requests, response times and activity over time.</p>
-            </div>
-
-            <div class="card action-card is-placeholder">
-                <span class="icon-tile">{% include "partials/icon.html" with name="lock" %}</span>
-                <h3 class="card-title">Security and access</h3>
-                <p class="card-text">Monitor sign-ins and keep permissions up to date.</p>
-            </div>
-        </div>
-    </section>
+    <p class="soon">Coming soon: reported accounts, donation records and platform statistics.</p>
 
 {% endblock %}
