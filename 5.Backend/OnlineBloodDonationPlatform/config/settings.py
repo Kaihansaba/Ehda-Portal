@@ -115,6 +115,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Project-level static files (CSS, JS, icons). Served automatically by
+# runserver while DEBUG is True.
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.1/ref/settings/#default-auto-field

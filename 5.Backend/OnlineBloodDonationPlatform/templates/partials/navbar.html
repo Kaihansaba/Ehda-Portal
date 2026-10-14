@@ -1,0 +1,98 @@
+{% with view=request.resolver_match.view_name role=request.user.role %}
+<header class="site-header">
+    <div class="container header-inner">
+
+        <a href="{% url 'index' %}" class="brand">
+            {% include "partials/logo.html" %}
+            <span class="brand-text">
+                <span class="brand-name">Ehda</span>
+                <span class="brand-native" lang="fa-AF" dir="rtl">اهدا</span>
+            </span>
+            <span class="visually-hidden">Ehda Portal home</span>
+        </a>
+
+        <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
+            {% include "partials/icon.html" with name="menu" class="icon-menu" %}
+            {% include "partials/icon.html" with name="close" class="icon-close" %}
+            <span class="visually-hidden">Menu</span>
+        </button>
+
+        <nav id="site-nav" class="site-nav" aria-label="Main">
+            {% if request.user.is_authenticated %}
+                <ul class="nav-list" role="list">
+                    <li>
+                        <a class="nav-link" href="{% url 'role_redirect' %}"{% if view == "donor_dashboard" or view == "hospital_dashboard" or view == "admin_dashboard" %} aria-current="page"{% endif %}>
+                            {% include "partials/icon.html" with name="dashboard" %}
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'locations:search' %}"{% if view == "locations:search" %} aria-current="page"{% endif %}>
+                            {% include "partials/icon.html" with name="search" %}
+                            Find donors
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'locations:map' %}"{% if view == "locations:map" %} aria-current="page"{% endif %}>
+                            {% include "partials/icon.html" with name="map" %}
+                            Map
+                        </a>
+                    </li>
+                    {% if role == "DONOR" %}
+                        <li>
+                            <a class="nav-link" href="{% url 'locations:donor_location' %}"{% if view == "locations:donor_location" %} aria-current="page"{% endif %}>
+                                {% include "partials/icon.html" with name="pin" %}
+                                My location
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{% url 'donor_profile' %}"{% if view == "donor_profile" %} aria-current="page"{% endif %}>
+                                {% include "partials/icon.html" with name="user" %}
+                                Profile
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if request.user.is_staff %}
+                        <li>
+                            <a class="nav-link" href="{% url 'admin:index' %}">
+                                {% include "partials/icon.html" with name="settings" %}
+                                Site admin
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <div class="nav-account">
+                    <div class="nav-user">
+                        <span class="nav-user-name">{{ request.user.first_name|default:"Your account" }}</span>
+                        <span class="nav-user-role">{{ request.user.get_role_display }}</span>
+                    </div>
+
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary btn-sm">
+                            {% include "partials/icon.html" with name="logout" class="flip-rtl" %}
+                            Log out
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <ul class="nav-list" role="list">
+                    <li>
+                        <a class="nav-link" href="{% url 'locations:search' %}">
+                            {% include "partials/icon.html" with name="search" %}
+                            Find blood
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="nav-account">
+                    <a class="btn btn-ghost btn-sm" href="{% url 'login' %}"{% if view == "login" %} aria-current="page"{% endif %}>Sign in</a>
+                    <a class="btn btn-primary btn-sm" href="{% url 'register' %}"{% if view == "register" %} aria-current="page"{% endif %}>Become a donor</a>
+                </div>
+            {% endif %}
+        </nav>
+
+    </div>
+</header>
+{% endwith %}

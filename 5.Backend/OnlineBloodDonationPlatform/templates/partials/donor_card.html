@@ -1,0 +1,48 @@
+{% comment %}
+    One donor search result. `result` is a locations.search.DonorResult.
+    PRIVACY: it only carries first name + last initial, blood type,
+    availability, province/district and a rounded distance. Do not add
+    anything else here.
+{% endcomment %}
+<article class="card donor-card">
+    {% include "partials/blood_badge.html" with type=result.blood_type large=True %}
+
+    <div class="stack-sm">
+        <h3 class="donor-card-name">{{ result.name }}</h3>
+
+        <div class="donor-card-meta">
+            {% if result.is_available %}
+                <span class="availability is-available">Available</span>
+            {% else %}
+                <span class="availability is-unavailable">Unavailable</span>
+            {% endif %}
+
+            <span class="meta-item">
+                {% include "partials/icon.html" with name="pin" %}
+                {{ result.province }}{% if result.district %}, {{ result.district }}{% endif %}
+            </span>
+
+            {% if result.distance_label %}
+                <span class="meta-item">
+                    {% include "partials/icon.html" with name="map" %}
+                    {{ result.distance_label }} away
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="donor-card-actions">
+        {% if result.request_url %}
+            <a href="{{ result.request_url }}" class="btn btn-primary">
+                {% include "partials/icon.html" with name="send" %}
+                Send request
+            </a>
+        {% else %}
+            {# TODO(#010): becomes a link automatically once requests:create exists #}
+            <button type="button" class="btn" disabled aria-describedby="requests-soon">
+                {% include "partials/icon.html" with name="send" %}
+                Send request
+            </button>
+        {% endif %}
+    </div>
+</article>

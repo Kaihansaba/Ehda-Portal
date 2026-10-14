@@ -1,250 +1,165 @@
 {% extends "base.html" %}
+{% load ehda_ui %}
 
-{% block title %}Find Donors{% endblock %}
+{% block title %}Find blood donors{% endblock %}
 
 {% block extra_head %}
     {% include "locations/_leaflet_assets.html" %}
-
-    <style>
-        .search-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-            gap: 24px;
-        }
-
-        .search-layout .form-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .search-layout .map {
-            height: 360px;
-        }
-
-        .map-actions {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .map-actions .map-hint {
-            margin: 0;
-        }
-
-        .results {
-            display: grid;
-            gap: 14px;
-        }
-
-        .result {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 18px 20px;
-            border: 1px solid #eee;
-            border-radius: 14px;
-        }
-
-        .result-main {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .blood-badge {
-            width: 52px;
-            height: 52px;
-            flex-shrink: 0;
-            border-radius: 50%;
-            background: #fdeaea;
-            color: #b71c1c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 16px;
-        }
-
-        .result h3 {
-            font-size: 17px;
-            margin-bottom: 4px;
-        }
-
-        .result-meta {
-            color: #777;
-            font-size: 14px;
-        }
-
-        .result-side {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex-shrink: 0;
-        }
-
-        .distance {
-            color: #444;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 30px 10px;
-        }
-
-        .empty h3 {
-            margin-bottom: 8px;
-        }
-
-        @media (max-width: 850px) {
-            .search-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .result {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
 
-    <h1 class="page-title">Find Blood Donors</h1>
+    <div class="page-header">
+        <h1>Find blood donors</h1>
+        <p class="lead">
+            Choose the blood type you need, then pick a place to search near.
+            Donor locations are approximate to protect their privacy.
+        </p>
+    </div>
 
-    <p class="page-subtitle">
-        Choose the blood type you need, then click on the map or pick a
-        province to find donors nearby. Donor locations are approximate
-        to protect their privacy.
-    </p>
+    <div class="search-layout">
 
-    <form method="get" class="card">
+        <!-- FILTERS (top on mobile, side on desktop) -->
+        <form method="get" class="card filter-panel" aria-labelledby="filters-title">
+            <h2 id="filters-title" class="card-title">Search filters</h2>
 
-        {% for error in form.non_field_errors %}
-            <p class="error" style="margin-bottom: 14px;">{{ error }}</p>
-        {% endfor %}
+            <div class="form-stack">
 
-        <div class="search-layout">
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-error" role="alert">
+                        {% include "partials/icon.html" with name="alert" %}
+                        <span>{{ error }}</span>
+                    </div>
+                {% endfor %}
 
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="{{ form.blood_type.id_for_label }}">Blood type needed</label>
-                    {{ form.blood_type }}
-                    {% for error in form.blood_type.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
+                <!-- Blood type: radio badges (same "blood_type" field) -->
+                <fieldset class="field{% if form.blood_type.errors %} has-error{% endif %}">
+                    <legend class="fieldset-legend">Blood type needed</legend>
 
-                <div class="form-group checkbox-group">
-                    {{ form.include_compatible }}
-                    <label for="{{ form.include_compatible.id_for_label }}">
-                        {{ form.include_compatible.label }}
-                    </label>
-                </div>
-                <p class="help-text" style="margin-top: -10px;">
-                    {{ form.include_compatible.help_text }}
-                </p>
-
-                <div class="form-group">
-                    <label for="{{ form.province.id_for_label }}">Province</label>
-                    {{ form.province }}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.district.id_for_label }}">District</label>
-                    {{ form.district }}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.radius.id_for_label }}">{{ form.radius.label }}</label>
-                    {{ form.radius }}
-                    {% for error in form.radius.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="form-actions" style="margin-top: 4px;">
-                    <button type="submit" class="btn">Search</button>
-                    <a href="{% url 'locations:search' %}" class="btn secondary">Reset</a>
-                </div>
-            </div>
-
-            <div>
-                {{ form.latitude }}
-                {{ form.longitude }}
-
-                <div id="search-map" class="map"></div>
-
-                <div class="map-actions">
-                    <p class="map-hint" id="map-hint">
-                        Click on the map to search around a point.
-                    </p>
-                    <button type="button" class="btn secondary" id="clear-point">
-                        Clear point
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </form>
-
-    {% if results is not None %}
-        <div class="card">
-            <h2>
-                {{ results|length }} donor{{ results|length|pluralize }} found
-            </h2>
-
-            {% if results %}
-                <div class="results">
-                    {% for result in results %}
-                        <div class="result">
-                            <div class="result-main">
-                                <div class="blood-badge">{{ result.blood_type }}</div>
-
-                                <div>
-                                    <h3>{{ result.name }}</h3>
-                                    <div class="result-meta">
-                                        {{ result.province }}{% if result.district %}, {{ result.district }}{% endif %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="result-side">
-                                {% if result.distance_label %}
-                                    <span class="distance">{{ result.distance_label }}</span>
-                                {% endif %}
-
-                                <span class="status{% if not result.is_available %} not-available{% endif %}">
-                                    {% if result.is_available %}Available{% else %}Unavailable{% endif %}
+                    <div class="blood-chip-grid">
+                        {% for value, label in form.fields.blood_type.choices %}
+                            {% if value %}
+                                <span>
+                                    <input class="chip-input" type="radio" name="blood_type" value="{{ value }}" id="id_blood_type_{{ forloop.counter }}"{% if value == form.blood_type.value %} checked{% endif %} required>
+                                    <label class="chip is-blood" for="id_blood_type_{{ forloop.counter }}">
+                                        <span aria-hidden="true">{{ value|blood_symbol }}</span>
+                                        <span class="visually-hidden">{{ value|blood_name }}</span>
+                                    </label>
                                 </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
 
-                                {% if result.request_url %}
-                                    <a href="{{ result.request_url }}" class="btn">Send request</a>
-                                {% else %}
-                                    {# TODO(#010): enabled automatically once requests:create exists #}
-                                    <button type="button" class="btn" disabled title="Blood requests are coming soon">
-                                        Send request
-                                    </button>
-                                {% endif %}
-                            </div>
-                        </div>
+                    {% for error in form.blood_type.errors %}
+                        <p class="field-error">
+                            {% include "partials/icon.html" with name="alert" %}
+                            <span>{{ error }}</span>
+                        </p>
                     {% endfor %}
+                </fieldset>
+
+                <!-- Compatible donors toggle -->
+                <label class="switch" for="{{ form.include_compatible.id_for_label }}">
+                    <span class="switch-text">
+                        <span class="field-label">{{ form.include_compatible.label }}</span>
+                        <span class="field-help">{{ form.include_compatible.help_text }}</span>
+                    </span>
+                    {{ form.include_compatible }}
+                </label>
+
+                <!-- Distance chips (same "radius" field) -->
+                <fieldset class="field{% if form.radius.errors %} has-error{% endif %}">
+                    <legend class="fieldset-legend">Distance</legend>
+
+                    <div class="chip-group">
+                        {% for value, label in form.fields.radius.choices %}
+                            <span>
+                                <input class="chip-input" type="radio" name="radius" value="{{ value }}" id="id_radius_{{ forloop.counter }}"{% if value == form.radius.value|default:"" %} checked{% endif %}>
+                                <label class="chip" for="id_radius_{{ forloop.counter }}">{% if value %}{{ label }}{% else %}Any{% endif %}</label>
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    {% for error in form.radius.errors %}
+                        <p class="field-error">
+                            {% include "partials/icon.html" with name="alert" %}
+                            <span>{{ error }}</span>
+                        </p>
+                    {% endfor %}
+                </fieldset>
+
+                <!-- Location: tap the map, or choose a province -->
+                <fieldset class="field">
+                    <legend class="fieldset-legend">Search near</legend>
+
+                    {{ form.latitude }}
+                    {{ form.longitude }}
+
+                    <div id="search-map" class="map is-small" role="application" aria-label="Map: tap to choose where to search near" aria-describedby="map-hint"></div>
+
+                    <div class="map-hint" id="map-hint" aria-live="polite">
+                        {% include "partials/icon.html" with name="info" %}
+                        <span data-hint>Tap the map to search near a point, or choose a province below.</span>
+                    </div>
+
+                    <button type="button" class="btn btn-ghost btn-sm" data-clear-point hidden>
+                        {% include "partials/icon.html" with name="close" %}
+                        Clear map point
+                    </button>
+                </fieldset>
+
+                {% include "partials/form_field.html" with field=form.province label="Province" optional=True %}
+                {% include "partials/form_field.html" with field=form.district label="District" optional=True %}
+
+                <div class="stack-sm">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        {% include "partials/icon.html" with name="search" %}
+                        Search donors
+                    </button>
+                    <a href="{% url 'locations:search' %}" class="btn btn-ghost btn-block">Clear all filters</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- RESULTS -->
+        <section aria-labelledby="results-title">
+            {% if results is None %}
+                <h2 id="results-title" class="visually-hidden">Results</h2>
+                <div class="card">
+                    {% include "partials/empty_state.html" with title="Choose a blood type to start" text="Pick the blood type you need. Add a place and a distance to see the nearest donors first." %}
                 </div>
             {% else %}
-                <div class="empty">
-                    <h3>No donors match your search</h3>
-                    <p class="muted">
-                        Try a larger distance, a different province, or tick
-                        "Include compatible donors" to see more blood types.
-                    </p>
+                <div class="results-header">
+                    <h2 id="results-title">
+                        {{ results|length }} donor{{ results|length|pluralize }} found
+                    </h2>
+                    {% if results.0.distance_label %}
+                        <p class="muted text-sm">Nearest first</p>
+                    {% endif %}
                 </div>
+
+                {% if results %}
+                    {% if not results.0.request_url %}
+                        <p class="alert alert-info mb-4" id="requests-soon">
+                            {% include "partials/icon.html" with name="clock" %}
+                            <span>Sending blood requests through Ehda is coming soon.</span>
+                        </p>
+                    {% endif %}
+
+                    <div class="results-list">
+                        {% for result in results %}
+                            {% include "partials/donor_card.html" %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="card">
+                        {% include "partials/empty_state.html" with title="No donors match your search" text="Try a larger distance, a different province, or turn on “Include compatible donors” to see more blood types." %}
+                    </div>
+                {% endif %}
             {% endif %}
-        </div>
-    {% endif %}
+        </section>
+
+    </div>
 
     {{ map_center|json_script:"map-center" }}
     {{ province_centres|json_script:"province-centres" }}
@@ -253,59 +168,40 @@
 
 {% block extra_js %}
 <script>
-    const center = JSON.parse(document.getElementById("map-center").textContent);
-    const provinceCentres = JSON.parse(document.getElementById("province-centres").textContent);
+    (function () {
+        var map = EhdaMap.create("search-map", EhdaMap.readJson("map-center"));
+        var hint = document.querySelector("#map-hint [data-hint]");
+        var clearButton = document.querySelector("[data-clear-point]");
+        var latInput = document.getElementById("{{ form.latitude.id_for_label }}");
 
-    const map = createOsmMap("search-map", center);
-
-    const latInput = document.getElementById("{{ form.latitude.id_for_label }}");
-    const lngInput = document.getElementById("{{ form.longitude.id_for_label }}");
-    const provinceSelect = document.getElementById("{{ form.province.id_for_label }}");
-    const hint = document.getElementById("map-hint");
-
-    let pin = null;
-
-    function setPin(latlng) {
-        if (pin) {
-            pin.setLatLng(latlng);
-        } else {
-            pin = L.marker(latlng).addTo(map);
+        function showClear() {
+            clearButton.hidden = !latInput.value;
         }
 
-        hint.textContent = "Searching around the pin.";
-    }
+        var picker = EhdaMap.pickPoint(map, {
+            latInput: latInput,
+            lngInput: document.getElementById("{{ form.longitude.id_for_label }}"),
+            decimals: 5,
+            onPick: function () {
+                hint.textContent = "Searching near the pin. Press “Search donors” to update.";
+                showClear();
+            }
+        });
 
-    // Keep the searcher's point after the page reloads with results.
-    if (latInput.value && lngInput.value) {
-        const latlng = [parseFloat(latInput.value), parseFloat(lngInput.value)];
-        setPin(latlng);
-        map.setView(latlng, 11);
-    }
+        clearButton.addEventListener("click", function () {
+            picker.clear();
+            hint.textContent = "Tap the map to search near a point, or choose a province below.";
+            showClear();
+        });
 
-    map.on("click", function (event) {
-        latInput.value = event.latlng.lat.toFixed(5);
-        lngInput.value = event.latlng.lng.toFixed(5);
-        setPin(event.latlng);
-    });
+        showClear();
 
-    document.getElementById("clear-point").addEventListener("click", function () {
-        latInput.value = "";
-        lngInput.value = "";
-
-        if (pin) {
-            map.removeLayer(pin);
-            pin = null;
-        }
-
-        hint.textContent = "Click on the map to search around a point.";
-    });
-
-    provinceSelect.addEventListener("change", function () {
-        const centre = provinceCentres[provinceSelect.value];
-
-        if (centre) {
-            map.setView([centre.lat, centre.lng], 10);
-        }
-    });
+        EhdaMap.followProvince(
+            map,
+            document.getElementById("{{ form.province.id_for_label }}"),
+            EhdaMap.readJson("province-centres"),
+            10
+        );
+    })();
 </script>
 {% endblock %}

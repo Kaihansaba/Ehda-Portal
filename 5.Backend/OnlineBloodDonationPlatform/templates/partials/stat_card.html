@@ -1,0 +1,11 @@
+{% comment %}
+    Parameters: icon, label, value, note (optional).
+{% endcomment %}
+<div class="card stat-card">
+    <span class="icon-tile">{% include "partials/icon.html" with name=icon %}</span>
+    <div>
+        <div class="stat-label">{{ label }}</div>
+        <div class="stat-value">{{ value }}</div>
+        {% if note %}<div class="stat-note">{{ note }}</div>{% endif %}
+    </div>
+</div>

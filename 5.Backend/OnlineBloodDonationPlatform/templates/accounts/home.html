@@ -1,113 +1,159 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | Ehda Portal</title>
+{% extends "base.html" %}
+{% load ehda_ui %}
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
+{% block title %}Find blood donors near you{% endblock %}
+{% block main_class %}is-flush{% endblock %}
 
-        body {
-            min-height: 100vh;
-            background: #f5f8fb;
-        }
+{% block page %}
 
-        .navbar {
-            background: #b71c1c;
-            color: white;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+        <div class="container hero-inner">
+            <div>
+                {% include "partials/messages.html" %}
 
-        .logo {
-            font-size: 26px;
-            font-weight: bold;
-        }
+                <p class="hero-eyebrow">
+                    {% include "partials/icon.html" with name="heart" %}
+                    <span>Ehda (<span lang="fa-AF">اهدا</span>) means “donation”</span>
+                </p>
 
-        .logout-btn {
-            background: white;
-            color: #b71c1c;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
+                <h1 id="hero-title">Find blood donors near you. <em>Save a life.</em></h1>
 
-        .content {
-            max-width: 1000px;
-            margin: 60px auto;
-            padding: 20px;
-            text-align: center;
-        }
+                <p class="lead">
+                    Ehda connects people who need blood with willing donors and
+                    hospitals across Afghanistan. It is free, and donors’ exact
+                    addresses are never shown.
+                </p>
 
-        .content h1 {
-            font-size: 38px;
-            color: #222;
-            margin-bottom: 15px;
-        }
+                <div class="cluster">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'role_redirect' %}" class="btn btn-primary btn-lg">
+                            {% include "partials/icon.html" with name="dashboard" %}
+                            Go to my dashboard
+                        </a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+                            {% include "partials/icon.html" with name="heart" %}
+                            Become a donor
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'locations:search' %}" class="btn btn-secondary btn-lg">
+                        {% include "partials/icon.html" with name="search" %}
+                        Find blood
+                    </a>
+                </div>
+            </div>
 
-        .content p {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 40px;
-        }
-
-        .card {
-            background: white;
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        }
-
-        .card h2 {
-            color: #b71c1c;
-            margin-bottom: 15px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <nav class="navbar">
-        <div class="logo">Ehda Portal</div>
-
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="logout-btn">
-                Logout
-            </button>
-        </form>
-    </nav>
-
-    <div class="content">
-
-        <div class="card">
-            <h1>Welcome to Ehda Portal</h1>
-
-            <p>
-                You have successfully logged in to your account.
-            </p>
-
-            <h2>Authentication Successful</h2>
-
-            <p>
-                Your account is protected and you can now access
-                the platform.
-            </p>
+            <svg class="hero-art" viewBox="0 0 320 300" aria-hidden="true" focusable="false">
+                <circle cx="160" cy="150" r="138" fill="#fceeec"/>
+                <circle cx="160" cy="150" r="98" fill="#fdf6f5"/>
+                <path d="M160 52s-62 69-62 110a62 62 0 0 0 124 0c0-41-62-110-62-110z" fill="#b3261e"/>
+                <path d="M160 206l-24-23.5a14.5 14.5 0 0 1 20.5-20.5l3.5 3.5 3.5-3.5a14.5 14.5 0 0 1 20.5 20.5z" fill="#fff"/>
+                <path d="M126 158c2.5-13 11-28 19-39.5 1.8-2.4 4.8 0 3.4 2.6-6 11-12.4 24.4-14.6 38-.8 5.2-8.8 4.3-7.8-1.1z" fill="#fff" fill-opacity=".3"/>
+                <g fill="#fff" stroke="#c9bdb9" stroke-width="2">
+                    <circle cx="58" cy="96" r="16"/>
+                    <circle cx="266" cy="200" r="16"/>
+                    <circle cx="250" cy="78" r="12"/>
+                </g>
+                <g fill="#1e6b3a">
+                    <circle cx="58" cy="96" r="6"/>
+                    <circle cx="266" cy="200" r="6"/>
+                    <circle cx="250" cy="78" r="4.5"/>
+                </g>
+                <path d="M74 104c22 10 38 22 46 34M250 192c-14-4-28-8-40-6M240 86c-12 8-20 14-26 22" fill="none" stroke="#c9bdb9" stroke-width="2" stroke-dasharray="4 6"/>
+            </svg>
         </div>
+    </section>
 
-    </div>
+    <!-- HOW IT WORKS -->
+    <section class="band band-muted" aria-labelledby="how-title">
+        <div class="container">
+            <div class="band-header">
+                <h2 id="how-title" class="section-title">How it works</h2>
+                <p>Three simple steps between someone who needs blood and someone who can give it.</p>
+            </div>
 
-</body>
-</html>
+            <ol class="grid grid-3 steps" role="list">
+                <li class="card step">
+                    <span class="step-number" aria-hidden="true">1</span>
+                    <h3 class="card-title">Create a free account</h3>
+                    <p class="card-text">Sign up as a donor or as a hospital. It takes about a minute.</p>
+                </li>
+                <li class="card step">
+                    <span class="step-number" aria-hidden="true">2</span>
+                    <h3 class="card-title">Share your blood type and area</h3>
+                    <p class="card-text">Donors add their blood type and an approximate location. Your exact address stays private.</p>
+                </li>
+                <li class="card step">
+                    <span class="step-number" aria-hidden="true">3</span>
+                    <h3 class="card-title">Connect and donate</h3>
+                    <p class="card-text">People in need search by blood type and distance, then reach out to available donors nearby.</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- BLOOD TYPES -->
+    <section class="band" aria-labelledby="types-title">
+        <div class="container">
+            <div class="band-header">
+                <h2 id="types-title" class="section-title">The 8 blood types</h2>
+                <p>
+                    Who can give to whom (red blood cells). A hospital always
+                    confirms compatibility with a lab test before a transfusion.
+                </p>
+            </div>
+
+            {# Keep in sync with COMPATIBLE_DONORS in locations/constants.py #}
+            <ul class="blood-type-grid" role="list">
+                <li class="card blood-type-card">
+                    {% include "partials/blood_badge.html" with type="O-" %}
+                    <p><strong>Universal donor.</strong> Can give to everyone; receives only from O−.</p>
+                </li>
+                <li class="card blood-type-card">
+                    {% include "partials/blood_badge.html" with type="O+" %}
+                    <p>Gives to all positive types. Receives from O+ and O−.</p>
+                </li>
+                <li class="card blood-type-card">
+                    {% include "partials/blood_badge.html" with type="A-" %}
+                    <p>Gives to A and AB. Receives from A− and O−.</p>
+                </li>
+                <li class="card blood-type-card">
+                    {% include "partials/blood_badge.html" with type="A+" %}
+                    <p>Gives to A+ and AB+. Receives from A and O.</p>
+                </li>
+                <li class="card blood-type-card">
+                    {% include "partials/blood_badge.html" with type="B-" %}
+                    <p>Gives to B and AB. Receives from B− and O−.</p>
+                </li>
+                <li class="card blood-type-card">
+                    {% include "partials/blood_badge.html" with type="B+" %}
+                    <p>Gives to B+ and AB+. Receives from B and O.</p>
+                </li>
+                <li class="card blood-type-card">
+                    {% include "partials/blood_badge.html" with type="AB-" %}
+                    <p>Gives to AB. Receives from all negative types.</p>
+                </li>
+                <li class="card blood-type-card">
+                    {% include "partials/blood_badge.html" with type="AB+" %}
+                    <p><strong>Universal recipient.</strong> Can receive from everyone.</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- CLOSING CALL TO ACTION -->
+    {% if not request.user.is_authenticated %}
+        <section class="band band-muted" aria-labelledby="join-title">
+            <div class="container text-center stack">
+                <h2 id="join-title" class="section-title">One donation can help save up to three lives</h2>
+                <p class="lead cta-text">Join the donors who are ready to help when someone nearby needs blood.</p>
+                <div class="cluster cta-actions">
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Become a donor</a>
+                    <a href="{% url 'login' %}" class="btn btn-ghost btn-lg">I already have an account</a>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+{% endblock %}

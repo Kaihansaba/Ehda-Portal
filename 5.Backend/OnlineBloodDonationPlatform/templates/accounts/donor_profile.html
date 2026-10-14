@@ -1,241 +1,93 @@
- {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Donor Profile | Ehda Portal</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+{% extends "base.html" %}
+{% load ehda_ui %}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f7f8fc;
-            color: #252b36;
-        }
+{% block title %}My profile{% endblock %}
 
-        .navbar {
-            background: #b71c1c;
-            color: white;
-            padding: 18px 7%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
+{% block content %}
 
-        .brand {
-            font-size: 23px;
-            font-weight: bold;
-        }
+    <div class="page-header">
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to dashboard
+        </a>
+        <h1>My donor profile</h1>
+        <p class="lead">Keep your details up to date so the right people can reach you.</p>
+    </div>
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
+    <div class="form-layout">
+        <form method="post" class="card form-stack">
+            {% csrf_token %}
 
-        .container {
-            width: min(760px, 92%);
-            margin: 42px auto;
-        }
+            {% if form.non_field_errors %}
+                <div class="alert alert-error" role="alert">
+                    {% include "partials/icon.html" with name="alert" %}
+                    <span>{{ form.non_field_errors|join:" " }}</span>
+                </div>
+            {% endif %}
 
-        .intro {
-            margin-bottom: 24px;
-        }
+            <div class="form-row">
+                {% include "partials/form_field.html" with field=form.first_name label="First name" %}
+                {% include "partials/form_field.html" with field=form.last_name label="Last name" %}
+            </div>
 
-        .intro h1 {
-            margin-bottom: 8px;
-            font-size: 30px;
-        }
+            <div class="form-row">
+                {% include "partials/form_field.html" with field=form.email label="Email address" %}
+                {% include "partials/form_field.html" with field=form.phone label="Phone number" %}
+            </div>
 
-        .intro p {
-            color: #687080;
-            line-height: 1.6;
-        }
+            <!-- Blood type: radio badges using the same "blood_type" field -->
+            <fieldset class="field{% if form.blood_type.errors %} has-error{% endif %}">
+                <legend class="fieldset-legend">Blood type</legend>
 
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 28px rgba(25, 35, 55, 0.08);
-        }
-
-        .field {
-            margin-bottom: 19px;
-        }
-
-        .field label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        .field input,
-        .field select {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #d8dce5;
-            border-radius: 8px;
-            font-size: 15px;
-            background: white;
-        }
-
-        .field input:focus,
-        .field select:focus {
-            outline: 2px solid #efb5b5;
-            border-color: #b71c1c;
-        }
-
-        .help {
-            color: #737b89;
-            font-size: 13px;
-            margin-top: 6px;
-        }
-
-        .error {
-            color: #b71c1c;
-            font-size: 14px;
-            margin-top: 7px;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 26px;
-        }
-
-        .button {
-            display: inline-block;
-            border: none;
-            border-radius: 8px;
-            padding: 13px 20px;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .primary {
-            background: #b71c1c;
-            color: white;
-        }
-
-        .secondary {
-            background: #eef0f5;
-            color: #303747;
-        }
-
-        .form-errors {
-            background: #fff0f0;
-            border: 1px solid #f2c4c4;
-            color: #a31616;
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-        }
-
-        .footer {
-            text-align: center;
-            color: #7a8190;
-            padding: 24px 12px;
-            font-size: 13px;
-        }
-
-        @media (max-width: 520px) {
-            .card {
-                padding: 21px;
-            }
-
-            .intro h1 {
-                font-size: 25px;
-            }
-
-            .actions .button {
-                width: 100%;
-                text-align: center;
-            }
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="brand">🩸 Ehda Portal</div>
-        <a href="{% url 'donor_dashboard' %}">← Back to Dashboard</a>
-    </nav>
-
-    <main class="container">
-        <section class="intro">
-            <h1>My Donor Profile</h1>
-            <p>Keep your contact information and blood type up to date so your donor profile is ready when needed.</p>
-        </section>
-
-        <section class="card">
-            <form method="post">
-                {% csrf_token %}
-
-                {% if form.non_field_errors %}
-                    <div class="form-errors">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
-                <div class="field">
-                    <label for="{{ form.first_name.id_for_label }}">First name</label>
-                    {{ form.first_name }}
-                    {% for error in form.first_name.errors %}
-                        <div class="error">{{ error }}</div>
+                <div class="blood-chip-grid">
+                    {% for value, label in form.fields.blood_type.choices %}
+                        {% if value %}
+                            <span>
+                                <input class="chip-input" type="radio" name="blood_type" value="{{ value }}" id="id_blood_type_{{ forloop.counter }}"{% if value == form.blood_type.value %} checked{% endif %}>
+                                <label class="chip is-blood" for="id_blood_type_{{ forloop.counter }}">
+                                    <span aria-hidden="true">{{ value|blood_symbol }}</span>
+                                    <span class="visually-hidden">{{ value|blood_name }}</span>
+                                </label>
+                            </span>
+                        {% endif %}
                     {% endfor %}
                 </div>
 
-                <div class="field">
-                    <label for="{{ form.last_name.id_for_label }}">Last name</label>
-                    {{ form.last_name }}
-                    {% for error in form.last_name.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
+                <span>
+                    <input class="chip-input" type="radio" name="blood_type" value="" id="id_blood_type_unknown"{% if not form.blood_type.value %} checked{% endif %}>
+                    <label class="chip chip-wide" for="id_blood_type_unknown">I don’t know yet</label>
+                </span>
 
-                <div class="field">
-                    <label for="{{ form.email.id_for_label }}">Email address</label>
-                    {{ form.email }}
-                    {% for error in form.email.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
+                <p class="field-help">Not sure? Any hospital or blood bank can test it for you.</p>
 
-                <div class="field">
-                    <label for="{{ form.phone.id_for_label }}">Phone number</label>
-                    {{ form.phone }}
-                    {% for error in form.phone.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
+                {% for error in form.blood_type.errors %}
+                    <p class="field-error">
+                        {% include "partials/icon.html" with name="alert" %}
+                        <span>{{ error }}</span>
+                    </p>
+                {% endfor %}
+            </fieldset>
 
-                <div class="field">
-                    <label for="{{ form.blood_type.id_for_label }}">Blood type</label>
-                    {{ form.blood_type }}
-                    <div class="help">Select your blood type if you know it.</div>
-                    {% for error in form.blood_type.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a class="btn btn-secondary" href="{% url 'donor_dashboard' %}">Cancel</a>
+            </div>
+        </form>
 
-                <div class="actions">
-                    <button class="button primary" type="submit">Save Profile</button>
-                    <a class="button secondary" href="{% url 'donor_dashboard' %}">Cancel</a>
-                </div>
-            </form>
-        </section>
-    </main>
+        <aside class="card info-aside" aria-labelledby="privacy-title">
+            <span class="icon-tile">{% include "partials/icon.html" with name="eye-off" %}</span>
+            <h2 id="privacy-title" class="card-title">What others can see</h2>
+            <p class="card-text">
+                People searching for donors only see your first name, the first
+                letter of your last name, your blood type, your availability and
+                your approximate area.
+            </p>
+            <p class="card-text">Your email, phone number and exact location are not shown in search results or on the map.</p>
+            <a href="{% url 'locations:donor_location' %}" class="btn btn-secondary btn-sm">
+                {% include "partials/icon.html" with name="pin" %}
+                Set my location
+            </a>
+        </aside>
+    </div>
 
-    <footer class="footer">
-        Ehda Portal · Every donation can make a difference.
-    </footer>
-</body>
-</html>
+{% endblock %}

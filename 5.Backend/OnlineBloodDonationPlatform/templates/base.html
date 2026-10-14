@@ -1,372 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}<!DOCTYPE html>
+{% comment %}
+    Every page extends this template.
+
+    Blocks:
+      title        - page name (" | Ehda Portal" is added)
+      description  - meta description
+      extra_head   - extra <head> tags (loaded BEFORE ehda.css so our
+                     styles win, e.g. Leaflet's stylesheet)
+      main_class   - extra classes on <main> ("is-flush" removes padding)
+      page         - the whole page body; override for full-width layouts
+      content      - normal page content inside the container
+      extra_js     - page scripts at the end of <body>
+
+    lang/dir are set here so a Dari (dir="rtl") version only needs these
+    two attributes changed; the stylesheet uses logical CSS properties.
+{% endcomment %}
+<html lang="en" dir="ltr" class="no-js">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Ehda Portal{% endblock %} | Ehda Portal</title>
+    <meta name="description" content="{% block description %}Ehda connects people who need blood with donors and hospitals across Afghanistan.{% endblock %}">
+    <meta name="theme-color" content="#b3261e">
+    <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
 
-    <!--
-        Shared styles for Ehda Portal pages.
-        Colours, navbar, cards and buttons match the existing dashboards.
-        New pages should extend this template instead of copying CSS.
-    -->
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
-            color: #222;
-            min-height: 100vh;
-        }
-
-        /* NAVBAR */
-        .navbar {
-            min-height: 76px;
-            background: #b71c1c;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 50px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 27px;
-            font-weight: 800;
-            color: white;
-            text-decoration: none;
-        }
-
-        .logo-heart {
-            font-size: 25px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 22px;
-        }
-
-        .nav-links a {
-            color: #ffeaea;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 15px;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: white;
-            text-decoration: underline;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-name {
-            font-size: 14px;
-            color: #ffeaea;
-        }
-
-        .logout-btn {
-            display: inline-block;
-            background: white;
-            color: #b71c1c;
-            padding: 11px 21px;
-            border: none;
-            border-radius: 9px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            background: #f8dddd;
-            transform: translateY(-1px);
-        }
-
-        /* MAIN */
-        .main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 45px 25px 60px;
-        }
-
-        .page-title {
-            color: #b71c1c;
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .page-subtitle {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 28px;
-        }
-
-        .section-title {
-            font-size: 23px;
-            color: #222;
-            margin-bottom: 18px;
-        }
-
-        /* CARDS */
-        .card {
-            background: white;
-            border-radius: 17px;
-            padding: 28px;
-            box-shadow: 0 7px 22px rgba(0, 0, 0, 0.06);
-            margin-bottom: 24px;
-        }
-
-        .card h2 {
-            font-size: 20px;
-            margin-bottom: 15px;
-            color: #222;
-        }
-
-        .muted {
-            color: #777;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        /* BUTTONS */
-        .btn {
-            display: inline-block;
-            padding: 11px 18px;
-            border: none;
-            border-radius: 8px;
-            background: #b71c1c;
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .btn:hover {
-            background: #8f1515;
-        }
-
-        .btn.secondary {
-            background: #eeeeee;
-            color: #444;
-        }
-
-        .btn.secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .btn:disabled,
-        .btn.disabled {
-            background: #eeeeee;
-            color: #999;
-            cursor: not-allowed;
-        }
-
-        /* FORMS */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group label {
-            font-size: 14px;
-            font-weight: 700;
-            color: #444;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 11px 13px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #b71c1c;
-        }
-
-        .checkbox-group {
-            flex-direction: row;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .help-text {
-            color: #888;
-            font-size: 12px;
-        }
-
-        .error {
-            color: #b71c1c;
-            font-size: 13px;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 22px;
-        }
-
-        /* STATUS BADGES */
-        .status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: #e8f5e9;
-            color: #2e7d32;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .status.not-available {
-            background: #ffebee;
-            color: #b71c1c;
-        }
-
-        /* MESSAGES */
-        .messages {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-
-        .messages li {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .messages li.error {
-            background: #ffebee;
-            color: #b71c1c;
-        }
-
-        /* FOOTER */
-        .footer {
-            text-align: center;
-            color: #999;
-            font-size: 13px;
-            margin-top: 35px;
-        }
-
-        /* RESPONSIVE DESIGN */
-        @media (max-width: 850px) {
-            .navbar {
-                padding: 15px 25px;
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 550px) {
-            .navbar {
-                padding: 18px 20px;
-                flex-direction: column;
-            }
-
-            .nav-right {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .main {
-                padding: 25px 15px 40px;
-            }
-
-            .card {
-                padding: 23px;
-            }
-        }
-    </style>
+    <script>document.documentElement.className = "js";</script>
 
     {% block extra_head %}{% endblock %}
+
+    <link rel="stylesheet" href="{% static 'css/ehda.css' %}">
+    <script src="{% static 'js/ehda.js' %}" defer></script>
 </head>
 
 <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <a href="{% url 'index' %}" class="logo">
-            <span class="logo-heart">❤️</span>
-            Ehda Portal
-        </a>
+    {% include "partials/navbar.html" %}
 
-        {% if request.user.is_authenticated %}
-            <div class="nav-links">
-                <a href="{% url 'role_redirect' %}">Dashboard</a>
-                <a href="{% url 'locations:search' %}">Find Donors</a>
-                <a href="{% url 'locations:map' %}">Map</a>
+    <main id="main" class="site-main {% block main_class %}{% endblock %}" tabindex="-1">
+        {% block page %}
+            <div class="container">
+                {% include "partials/messages.html" %}
+                {% block content %}{% endblock %}
             </div>
-
-            <div class="nav-right">
-                <span class="user-name">
-                    {{ request.user.first_name }}
-                </span>
-
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout-btn">
-                        Logout
-                    </button>
-                </form>
-            </div>
-        {% endif %}
-    </nav>
-
-    <!-- MAIN CONTENT -->
-    <main class="main">
-
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="{{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
-        {% block content %}{% endblock %}
-
-        <div class="footer">
-            Ehda Portal © 2026 · Connecting people. Saving lives. ❤️
-        </div>
+        {% endblock %}
     </main>
 
-    {% block extra_js %}{% endblock %}
+    {% include "partials/footer.html" %}
 
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

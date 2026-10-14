@@ -1,0 +1,25 @@
+{% comment %}
+    Friendly empty state with an illustration.
+    Parameters: title, text, action_url, action_label (all optional except title).
+{% endcomment %}
+<div class="empty-state">
+    <svg viewBox="0 0 160 120" aria-hidden="true" focusable="false">
+        <ellipse cx="80" cy="108" rx="54" ry="7" fill="#f5f0ed"/>
+        <circle cx="80" cy="58" r="46" fill="#fceeec"/>
+        <path fill="#fff" stroke="#b3261e" stroke-width="3" d="M72 22S50 46 50 61a22 22 0 0 0 44 0C94 46 72 22 72 22z"/>
+        <path fill="#f6d9d5" d="M58 62c1-6 5-13 9-18 1-1 2.4 0 1.7 1.2C66 50.5 63 56.6 62 63c-.3 2-4.3 1.6-4-1z"/>
+        <circle cx="104" cy="74" r="15" fill="#fff" stroke="#5f5654" stroke-width="3"/>
+        <path stroke="#5f5654" stroke-width="5" stroke-linecap="round" d="m115 85 12 12"/>
+        <path stroke="#c9bdb9" stroke-width="3" stroke-linecap="round" d="M98 74h12"/>
+    </svg>
+
+    <h3>{{ title }}</h3>
+
+    {% if text %}
+        <p>{{ text }}</p>
+    {% endif %}
+
+    {% if action_url %}
+        <a href="{{ action_url }}" class="btn btn-secondary">{{ action_label }}</a>
+    {% endif %}
+</div>
