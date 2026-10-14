@@ -43,7 +43,9 @@ The team works in Scrum sprints. See
 
 - Python 3.12+ and [Django 6.1](https://docs.djangoproject.com/en/6.1/)
 - SQLite for development
-- Server-rendered Django templates (no JavaScript framework, no build step)
+- Server-rendered Django templates, one hand-written stylesheet and a
+  little vanilla JavaScript (no framework, no build step); see
+  [docs/UI_GUIDELINES.md](docs/UI_GUIDELINES.md)
 - [Leaflet](https://leafletjs.com/) and OpenStreetMap tiles for maps (free, no API key)
 
 ## Folder structure
@@ -63,11 +65,17 @@ Ehda-Portal/
 │       ├── config/                     Settings and URL routes
 │       ├── accounts/                   Users, login, dashboards, donor profile
 │       ├── locations/                  Donor locations, facilities, search, map
+│       ├── static/                     ehda.css, ehda-admin.css, ehda.js, maps.js, favicon
 │       └── templates/                  All page templates
+│           ├── base.html               Layout every page extends
+│           ├── partials/               Navbar, footer, form field, donor card, icons...
 │           ├── accounts/
-│           └── locations/
+│           ├── locations/
+│           └── admin/                  Ehda branding for /admin/
 ├── 6.Database/                 README only: points to models and migrations
-└── 7.Tests/                    README only: points to the test files
+├── 7.Tests/                    README only: points to the test files
+└── docs/
+    └── UI_GUIDELINES.md        How to build pages that match the design
 ```
 
 ## Setup and run
@@ -149,6 +157,12 @@ python manage.py test locations.test_smoke
 The tests cover accounts and permissions, search and distance, map data,
 location privacy, and a smoke test that opens every page as every role.
 See [`7.Tests/README.md`](7.Tests/README.md).
+
+## Design
+
+Read [docs/UI_GUIDELINES.md](docs/UI_GUIDELINES.md) before adding or
+changing pages: design tokens, components and partials, forms, maps,
+privacy rules, accessibility checklist and right-to-left support.
 
 ## Open decisions
 
