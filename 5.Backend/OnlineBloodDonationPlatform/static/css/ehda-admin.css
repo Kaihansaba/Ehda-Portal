@@ -222,3 +222,72 @@ body .submit-row a.deletelink:active {
     background: var(--error-fg);
     color: var(--body-bg);
 }
+
+
+/* LINKS BACK TO THE EHDA APP ----------------------------------------------- */
+
+#branding {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+}
+
+/* "#header" outranks Django's own "#header a:link" colour rule. */
+.ehda-admin-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+}
+
+#header .ehda-admin-nav a:link,
+#header .ehda-admin-nav a:visited {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    color: var(--header-link-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#header .ehda-admin-nav a:hover,
+#header .ehda-admin-nav a:focus-visible {
+    background: rgba(255, 255, 255, 0.16);
+    color: var(--header-link-color);
+}
+
+/* "Back to Ehda": the most visible way out of the admin. */
+#header .ehda-admin-nav a.ehda-back:link,
+#header .ehda-admin-nav a.ehda-back:visited {
+    background: #ffffff;
+    color: #8c1d18;                    /* ehda --color-primary-hover */
+}
+
+#header .ehda-admin-nav a.ehda-back:hover,
+#header .ehda-admin-nav a.ehda-back:focus-visible {
+    background: #fceeec;
+    color: #8c1d18;
+}
+
+#header .ehda-admin-nav a:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.ehda-admin-nav .icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* The arrow points "back" in both reading directions. */
+.ehda-admin-nav .flip {
+    transform: scaleX(-1);
+}
+
+[dir="rtl"] .ehda-admin-nav .flip {
+    transform: none;
+}
