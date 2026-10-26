@@ -7,6 +7,7 @@ project, so Django's test runner can find them.
 |---|---|
 | Registration, login, profile, availability, role permissions | [`5.Backend/OnlineBloodDonationPlatform/accounts/test_sprint1.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_sprint1.py) |
 | Search, distance, map, location privacy, access control | [`5.Backend/OnlineBloodDonationPlatform/locations/tests.py`](../5.Backend/OnlineBloodDonationPlatform/locations/tests.py) |
+| Blood request validation | [`5.Backend/OnlineBloodDonationPlatform/accounts/test_blood_requests.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_blood_requests.py) |
 | Every URL for every role, search/map edge cases | [`5.Backend/OnlineBloodDonationPlatform/locations/test_smoke.py`](../5.Backend/OnlineBloodDonationPlatform/locations/test_smoke.py) |
 
 Run them all from `5.Backend/OnlineBloodDonationPlatform/`:
