@@ -105,6 +105,13 @@ class BloodRequest(models.Model):
         URGENT = "URGENT", "Urgent"
         EMERGENCY = "EMERGENCY", "Emergency"
 
+    class Status(models.TextChoices):
+        OPEN = "OPEN", "Open"
+        IN_REVIEW = "IN_REVIEW", "In Review"
+        ACCEPTED = "ACCEPTED", "Accepted"
+        COMPLETED = "COMPLETED", "Completed"
+        CANCELLED = "CANCELLED", "Cancelled"
+
     hospital = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -122,7 +129,11 @@ class BloodRequest(models.Model):
         default=Urgency.ROUTINE,
     )
     notes = models.TextField(blank=True, default="")
-    status = models.CharField(max_length=20, default="OPEN")
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.OPEN,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -130,3 +141,10 @@ class BloodRequest(models.Model):
 
     def __str__(self):
         return f"{self.hospital.get_full_name()} - {self.blood_type} ({self.urgency})"
+
+    def clean(self):
+        if self.units_needed <= 0:
+            raise ValueError("Units needed must be greater than 0.")
+
+        if self.urgency in {self.Urgency.URGENT, self.Urgency.EMERGENCY} and not self.notes.strip():
+            raise ValueError("Please add notes for urgent or emergency requests.")

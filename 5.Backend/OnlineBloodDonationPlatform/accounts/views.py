@@ -139,7 +139,7 @@ def create_blood_request(request):
 
 @role_required("HOSPITAL")
 def manage_blood_requests(request):
-    requests = BloodRequest.objects.filter(hospital=request.user)
+    requests = BloodRequest.objects.filter(hospital=request.user).order_by("-created_at")
     return render(
         request,
         "accounts/manage_blood_requests.html",
