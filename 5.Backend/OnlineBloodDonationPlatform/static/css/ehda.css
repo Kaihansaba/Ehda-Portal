@@ -940,6 +940,40 @@ main:focus {
     }
 }
 
+/* Blood request card (hospital's request list) */
+.request-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3) var(--space-4);
+    align-items: start;
+    padding: var(--space-4);
+}
+
+.request-card-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-lg);
+}
+
+.request-notes {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    white-space: pre-line;
+}
+
+@media (min-width: 40rem) {
+    .request-card {
+        padding: var(--space-4) var(--space-5);
+    }
+}
+
+.tag-danger {
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
 /* Empty state */
 .empty-state {
     display: flex;

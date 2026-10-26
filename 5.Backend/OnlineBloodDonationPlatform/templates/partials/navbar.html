@@ -38,6 +38,14 @@
                             Map
                         </a>
                     </li>
+                    {% if role == "HOSPITAL" %}
+                        <li>
+                            <a class="nav-link" href="{% url 'manage_blood_requests' %}"{% if view == "manage_blood_requests" or view == "create_blood_request" %} aria-current="page"{% endif %}>
+                                {% include "partials/icon.html" with name="list" %}
+                                Requests
+                            </a>
+                        </li>
+                    {% endif %}
                     {% if role == "DONOR" %}
                         <li>
                             <a class="nav-link" href="{% url 'locations:donor_location' %}"{% if view == "locations:donor_location" %} aria-current="page"{% endif %}>
