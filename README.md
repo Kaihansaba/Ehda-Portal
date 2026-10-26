@@ -53,7 +53,7 @@ The team works in Scrum sprints. See
 
 ```
 Ehda-Portal/
-├── 0.Project-documents/        Project description, user stories, acceptance criteria, roles
+├── 0.Project-documents/        Project description, user stories, acceptance criteria, roles, UML diagrams
 ├── 1.Project-Backlogs/         Product and sprint backlogs
 ├── 2.Meeting-Recordings/
 ├── 3.Meeting-Agendas/
@@ -75,6 +75,8 @@ Ehda-Portal/
 │           └── admin/                  Ehda branding for /admin/
 ├── 6.Database/                 README only: points to models and migrations
 ├── 7.Tests/                    README only: points to the test files
+├── 8.Scrum Master Documents/   Burndown charts and daily scrum notes
+├── Data/, Models/              Unused C# (ASP.NET) files, not part of the app; to be removed
 └── docs/
     └── UI_GUIDELINES.md        How to build pages that match the design
 ```
