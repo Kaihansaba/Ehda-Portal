@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
-from django.views.generic import RedirectView
 
 from accounts.views import (
     index,
@@ -21,9 +20,6 @@ from accounts.views import (
 
 
 urlpatterns = [
-    # Root redirect
-    path("", RedirectView.as_view(pattern_name="login"), name="index"),
-
     # Admin
     path("admin/", admin.site.urls),
 

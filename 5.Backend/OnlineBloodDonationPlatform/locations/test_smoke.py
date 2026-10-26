@@ -101,6 +101,9 @@ def expected(name, url):
             "donor": (302, reverse("donor_dashboard")),
         },
         "hospital_dashboard": only("hospital"),
+        # Blood requests (Developer 3): hospitals only
+        "manage_blood_requests": only("hospital"),
+        "create_blood_request": only("hospital"),
         "admin_dashboard": only("admin"),
         "password_reset": public(),
         "password_reset_done": public(),
