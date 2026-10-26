@@ -130,12 +130,6 @@ class BloodRequestForm(forms.ModelForm):
             raise forms.ValidationError("Units needed must be greater than 0.")
         return units
 
-    def clean(self):
-        cleaned_data = super().clean()
-        urgency = cleaned_data.get("urgency")
-        notes = (cleaned_data.get("notes") or "").strip()
-
-        if urgency in {BloodRequest.Urgency.URGENT, BloodRequest.Urgency.EMERGENCY} and not notes:
-            self.add_error("notes", "Please add notes for urgent or emergency requests.")
-
-        return cleaned_data
+    # The "notes required for urgent/emergency" rule lives in
+    # BloodRequest.clean(), which ModelForm runs automatically. Checking it
+    # here as well showed the same error twice.
