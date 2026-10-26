@@ -300,3 +300,30 @@ class SprintOneAuthenticationTests(TestCase):
             response,
             f"{reverse('login')}?next={reverse('donor_dashboard')}",
         )
+
+    def test_hospital_can_create_blood_request(self):
+        self.client.force_login(self.hospital)
+
+        response = self.client.post(
+            reverse("create_blood_request"),
+            {
+                "blood_type": "O+",
+                "units_needed": 2,
+                "urgency": "URGENT",
+                "notes": "Need blood for emergency treatment.",
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            self.hospital.blood_requests.filter(blood_type="O+").exists()
+        )
+
+    def test_hospital_can_view_blood_requests(self):
+        self.client.force_login(self.hospital)
+
+        response = self.client.get(reverse("manage_blood_requests"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("requests", response.context)

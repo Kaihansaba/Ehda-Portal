@@ -97,3 +97,36 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+
+class BloodRequest(models.Model):
+    class Urgency(models.TextChoices):
+        ROUTINE = "ROUTINE", "Routine"
+        URGENT = "URGENT", "Urgent"
+        EMERGENCY = "EMERGENCY", "Emergency"
+
+    hospital = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="blood_requests",
+        limit_choices_to={"role": User.Role.HOSPITAL},
+    )
+    blood_type = models.CharField(
+        max_length=3,
+        choices=User.BloodType.choices,
+    )
+    units_needed = models.PositiveIntegerField(default=1)
+    urgency = models.CharField(
+        max_length=20,
+        choices=Urgency.choices,
+        default=Urgency.ROUTINE,
+    )
+    notes = models.TextField(blank=True, default="")
+    status = models.CharField(max_length=20, default="OPEN")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.hospital.get_full_name()} - {self.blood_type} ({self.urgency})"

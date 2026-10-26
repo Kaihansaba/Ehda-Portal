@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from django.views.generic import RedirectView
 
 from accounts.views import (
     register,
@@ -13,10 +14,15 @@ from accounts.views import (
     toggle_availability,
     hospital_dashboard,
     admin_dashboard,
+    create_blood_request,
+    manage_blood_requests,
 )
 
 
 urlpatterns = [
+    # Root redirect
+    path("", RedirectView.as_view(pattern_name="login"), name="index"),
+
     # Admin
     path("admin/", admin.site.urls),
 
@@ -51,6 +57,16 @@ urlpatterns = [
         "dashboard/hospital/",
         hospital_dashboard,
         name="hospital_dashboard",
+    ),
+    path(
+        "dashboard/hospital/requests/",
+        manage_blood_requests,
+        name="manage_blood_requests",
+    ),
+    path(
+        "dashboard/hospital/requests/new/",
+        create_blood_request,
+        name="create_blood_request",
     ),
 
     # Admin dashboard
