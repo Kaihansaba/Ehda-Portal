@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .forms import RegistrationForm, DonorProfileForm
+from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
+from .models import BloodRequest
 
 
 def index(request):
@@ -139,6 +140,31 @@ def hospital_dashboard(request):
 @role_required("ADMIN")
 def admin_dashboard(request):
     return render(request, "accounts/admin_dashboard.html")
+
+
+@role_required("HOSPITAL")
+def create_blood_request(request):
+    if request.method == "POST":
+        form = BloodRequestForm(request.POST)
+        if form.is_valid():
+            blood_request = form.save(commit=False)
+            blood_request.hospital = request.user
+            blood_request.save()
+            return redirect("manage_blood_requests")
+    else:
+        form = BloodRequestForm()
+
+    return render(request, "accounts/create_blood_request.html", {"form": form})
+
+
+@role_required("HOSPITAL")
+def manage_blood_requests(request):
+    requests = BloodRequest.objects.filter(hospital=request.user).order_by("-created_at")
+    return render(
+        request,
+        "accounts/manage_blood_requests.html",
+        {"requests": requests},
+    )
 
 
 @login_required
