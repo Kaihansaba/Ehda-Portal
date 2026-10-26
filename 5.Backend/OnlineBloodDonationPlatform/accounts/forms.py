@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 
-from .models import User
+from .models import User, BloodRequest
 
 
 class RegistrationForm(forms.ModelForm):
