@@ -36,7 +36,8 @@ The team works in Scrum sprints. See
 | #007 | Search by location and distance, nearest first | Done |
 | #008 | Map of donors, hospitals and donation centres | Done |
 | #009 | Location privacy (approximate locations only) | Done |
-| #010–#014 | Blood requests, notifications, responses, messaging | Planned |
+| #010 | Hospitals create and manage blood requests | In progress |
+| #011–#014 | Notifications, accept/decline, responses, messaging | Planned |
 | #015–#020 | Donation history, account and admin management | Planned |
 
 ## Tech stack

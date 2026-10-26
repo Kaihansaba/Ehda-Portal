@@ -14,6 +14,8 @@ from accounts.views import (
     toggle_availability,
     hospital_dashboard,
     admin_dashboard,
+    create_blood_request,
+    manage_blood_requests,
 )
 
 
@@ -67,6 +69,16 @@ urlpatterns = [
         "dashboard/hospital/",
         hospital_dashboard,
         name="hospital_dashboard",
+    ),
+    path(
+        "dashboard/hospital/requests/",
+        manage_blood_requests,
+        name="manage_blood_requests",
+    ),
+    path(
+        "dashboard/hospital/requests/new/",
+        create_blood_request,
+        name="create_blood_request",
     ),
 
     # Admin dashboard

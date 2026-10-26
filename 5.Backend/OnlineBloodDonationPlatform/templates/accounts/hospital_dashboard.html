@@ -10,18 +10,46 @@
             <p class="lead">Hospital account</p>
         </div>
 
-        <a href="{% url 'locations:search' %}" class="btn btn-primary btn-lg">Find donors</a>
+        <div class="cluster">
+            <a href="{% url 'create_blood_request' %}" class="btn btn-primary btn-lg">New blood request</a>
+            <a href="{% url 'locations:search' %}" class="btn btn-secondary btn-lg">Find donors</a>
+        </div>
     </section>
 
-    <!-- Request numbers arrive with the blood request feature -->
+    <!-- Request counts need data from the view; placeholders until then -->
     <section class="section" aria-labelledby="overview-title">
         <h2 id="overview-title" class="visually-hidden">Overview</h2>
 
         <div class="grid grid-3">
-            {% include "partials/stat_card.html" with label="Active requests" value="—" note="Available when requests launch" %}
-            {% include "partials/stat_card.html" with label="Donors connected" value="—" note="Available when requests launch" %}
+            {% include "partials/stat_card.html" with label="Active requests" value="—" note="See Manage requests" %}
+            {% include "partials/stat_card.html" with label="Donors connected" value="—" note="Available when donors can respond" %}
             {% include "partials/stat_card.html" with label="Account status" value="Active" %}
         </div>
+    </section>
+
+    <section class="section" aria-labelledby="requests-title">
+        <h2 id="requests-title" class="section-title">Blood requests</h2>
+
+        <ul class="link-list">
+            <li>
+                <a href="{% url 'create_blood_request' %}">
+                    <span>
+                        <span class="link-title">Create blood request</span>
+                        <span class="link-text">Ask for a blood type when a patient needs it</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'manage_blood_requests' %}">
+                    <span>
+                        <span class="link-title">Manage requests</span>
+                        <span class="link-text">See your requests and their status</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+        </ul>
     </section>
 
     <section class="section" aria-labelledby="actions-title">
@@ -52,16 +80,10 @@
     <section class="section" aria-labelledby="soon-title">
         <h2 id="soon-title" class="section-title">Coming soon</h2>
 
-        <div class="grid grid-3">
+        <div class="grid grid-2">
             <div class="card soon-card">
-                <h3 class="card-title">Create blood request</h3>
-                <p class="card-text">Ask matching donors for help when a patient needs a specific blood type.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-
-            <div class="card soon-card">
-                <h3 class="card-title">Manage requests</h3>
-                <p class="card-text">Follow your active requests and see donors’ responses.</p>
+                <h3 class="card-title">Donor responses</h3>
+                <p class="card-text">See which donors accepted or declined your requests.</p>
                 <span class="tag">Coming soon</span>
             </div>
 

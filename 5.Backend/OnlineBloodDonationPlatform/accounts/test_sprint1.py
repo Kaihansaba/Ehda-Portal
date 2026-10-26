@@ -300,3 +300,62 @@ class SprintOneAuthenticationTests(TestCase):
             response,
             f"{reverse('login')}?next={reverse('donor_dashboard')}",
         )
+
+    def test_hospital_can_create_blood_request(self):
+        self.client.force_login(self.hospital)
+
+        response = self.client.post(
+            reverse("create_blood_request"),
+            {
+                "blood_type": "O+",
+                "units_needed": 2,
+                "urgency": "URGENT",
+                "notes": "Need blood for emergency treatment.",
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            self.hospital.blood_requests.filter(blood_type="O+").exists()
+        )
+
+    def test_hospital_can_view_blood_requests(self):
+        self.client.force_login(self.hospital)
+
+        response = self.client.get(reverse("manage_blood_requests"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("requests", response.context)
+
+    def test_hospital_request_rejects_invalid_units(self):
+        self.client.force_login(self.hospital)
+
+        response = self.client.post(
+            reverse("create_blood_request"),
+            {
+                "blood_type": "O+",
+                "units_needed": 0,
+                "urgency": "ROUTINE",
+                "notes": "Need blood.",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("units_needed", response.context["form"].errors)
+
+    def test_hospital_request_requires_notes_for_urgent_requests(self):
+        self.client.force_login(self.hospital)
+
+        response = self.client.post(
+            reverse("create_blood_request"),
+            {
+                "blood_type": "A-",
+                "units_needed": 2,
+                "urgency": "URGENT",
+                "notes": "",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("notes", response.context["form"].errors)
