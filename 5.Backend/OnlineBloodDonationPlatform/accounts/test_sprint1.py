@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from accounts.models import User
+from accounts.models import BloodRequest, User
 
 
 class SprintOneAuthenticationTests(TestCase):
@@ -359,6 +359,88 @@ class SprintOneAuthenticationTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("notes", response.context["form"].errors)
+
+    def test_hospital_can_move_request_to_in_review(self):
+        blood_request = BloodRequest.objects.create(
+            hospital=self.hospital,
+            blood_type="O+",
+            units_needed=2,
+            urgency="ROUTINE",
+            notes="Need blood for patient.",
+            status=BloodRequest.Status.OPEN,
+        )
+
+        self.client.force_login(self.hospital)
+
+        response = self.client.post(
+            reverse("change_request_status", args=[blood_request.pk, "IN_REVIEW"])
+        )
+
+        self.assertRedirects(response, reverse("manage_blood_requests"))
+        blood_request.refresh_from_db()
+        self.assertEqual(blood_request.status, BloodRequest.Status.IN_REVIEW)
+
+    def test_hospital_can_accept_request(self):
+        blood_request = BloodRequest.objects.create(
+            hospital=self.hospital,
+            blood_type="A-",
+            units_needed=3,
+            urgency="URGENT",
+            notes="Emergency case.",
+            status=BloodRequest.Status.IN_REVIEW,
+        )
+
+        self.client.force_login(self.hospital)
+
+        response = self.client.post(
+            reverse("change_request_status", args=[blood_request.pk, "ACCEPTED"])
+        )
+
+        self.assertRedirects(response, reverse("manage_blood_requests"))
+        blood_request.refresh_from_db()
+        self.assertEqual(blood_request.status, BloodRequest.Status.ACCEPTED)
+
+    def test_hospital_can_cancel_request(self):
+        blood_request = BloodRequest.objects.create(
+            hospital=self.hospital,
+            blood_type="B+",
+            units_needed=1,
+            urgency="ROUTINE",
+            notes="Test request.",
+            status=BloodRequest.Status.OPEN,
+        )
+
+        self.client.force_login(self.hospital)
+
+        response = self.client.post(
+            reverse("change_request_status", args=[blood_request.pk, "CANCELLED"])
+        )
+
+        self.assertRedirects(response, reverse("manage_blood_requests"))
+        blood_request.refresh_from_db()
+        self.assertEqual(blood_request.status, BloodRequest.Status.CANCELLED)
+
+    def test_hospital_cannot_cancel_accepted_request(self):
+        blood_request = BloodRequest.objects.create(
+            hospital=self.hospital,
+            blood_type="O+",
+            units_needed=2,
+            urgency="ROUTINE",
+            notes="Need for patient care.",
+            status=BloodRequest.Status.ACCEPTED,
+        )
+
+        self.client.force_login(self.hospital)
+
+        response = self.client.post(
+            reverse("close_blood_request", args=[blood_request.pk]),
+            {"status": "CANCELLED"},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        blood_request.refresh_from_db()
+        self.assertEqual(blood_request.status, BloodRequest.Status.ACCEPTED)
 
     def test_hospital_can_close_a_blood_request(self):
         self.client.force_login(self.hospital)

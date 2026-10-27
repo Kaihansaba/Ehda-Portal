@@ -2,9 +2,10 @@ from functools import wraps
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render, redirect
+from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
+from .forms import BloodRequestForm, DonorProfileForm, RegistrationForm
 from .models import BloodRequest
 
 
@@ -148,19 +149,60 @@ def manage_blood_requests(request):
 
 
 @role_required("HOSPITAL")
+def request_detail(request, pk):
+    blood_request = get_object_or_404(BloodRequest, pk=pk, hospital=request.user)
+    return render(request, "accounts/request_detail.html", {"request": blood_request})
+
+
+@role_required("HOSPITAL")
+def change_request_status(request, pk, status):
+    blood_request = get_object_or_404(BloodRequest, pk=pk, hospital=request.user)
+
+    if request.method != "POST":
+        return redirect("manage_blood_requests")
+
+    try:
+        blood_request.update_status(status)
+    except ValidationError as exc:
+        return render(
+            request,
+            "accounts/manage_blood_requests.html",
+            {
+                "requests": BloodRequest.objects.filter(hospital=request.user).order_by("-created_at"),
+                "error": str(exc),
+            },
+        )
+
+    return redirect("manage_blood_requests")
+
+
+@role_required("HOSPITAL")
 def close_blood_request(request, pk):
     blood_request = get_object_or_404(BloodRequest, pk=pk, hospital=request.user)
 
-    if request.method == "POST":
-        new_status = request.POST.get("status")
-        valid_statuses = {
-            BloodRequest.Status.COMPLETED,
-            BloodRequest.Status.CANCELLED,
-        }
+    if request.method != "POST":
+        return redirect("manage_blood_requests")
 
-        if new_status in valid_statuses:
-            blood_request.status = new_status
-            blood_request.save(update_fields=["status"])
+    new_status = request.POST.get("status")
+    valid_statuses = {
+        BloodRequest.Status.COMPLETED,
+        BloodRequest.Status.CANCELLED,
+    }
+
+    if new_status not in valid_statuses:
+        return redirect("manage_blood_requests")
+
+    try:
+        blood_request.update_status(new_status)
+    except ValidationError as exc:
+        return render(
+            request,
+            "accounts/manage_blood_requests.html",
+            {
+                "requests": BloodRequest.objects.filter(hospital=request.user).order_by("-created_at"),
+                "error": str(exc),
+            },
+        )
 
     return redirect("manage_blood_requests")
 

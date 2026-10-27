@@ -71,6 +71,34 @@
             border-radius: 12px;
             color: #4b5563;
         }
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .action-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 700;
+            color: white;
+            background: #1565c0;
+        }
+        .cancel-btn {
+            background: #b71c1c;
+        }
+        .success {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .error {
+            color: #b71c1c;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -79,6 +107,10 @@
             <h1>Blood Requests</h1>
             <a href="{% url 'create_blood_request' %}" class="btn">+ New Request</a>
         </div>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
 
         {% if requests %}
             <div class="request-list">
@@ -96,12 +128,40 @@
                         {% endif %}
                         <p><small>Created: {{ request.created_at|date:"M d, Y H:i" }}</small></p>
 
-                        {% if request.status != 'COMPLETED' and request.status != 'CANCELLED' %}
-                            <form method="post" action="{% url 'close_blood_request' request.pk %}" style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
-                                {% csrf_token %}
-                                <button type="submit" name="status" value="COMPLETED" class="btn" style="padding: 10px 14px; border: none; cursor: pointer;">Mark as Completed</button>
-                                <button type="submit" name="status" value="CANCELLED" class="btn" style="padding: 10px 14px; border: none; cursor: pointer; background: #b71c1c;">Cancel Request</button>
-                            </form>
+                        {% if request.status == 'OPEN' %}
+                            <div class="action-row">
+                                <form method="post" action="{% url 'change_request_status' request.pk 'IN_REVIEW' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn">Mark In Review</button>
+                                </form>
+
+                                <form method="post" action="{% url 'close_blood_request' request.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="CANCELLED">
+                                    <button type="submit" class="action-btn cancel-btn">Cancel</button>
+                                </form>
+                            </div>
+                        {% elif request.status == 'IN_REVIEW' %}
+                            <div class="action-row">
+                                <form method="post" action="{% url 'change_request_status' request.pk 'ACCEPTED' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn">Accept</button>
+                                </form>
+
+                                <form method="post" action="{% url 'close_blood_request' request.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="CANCELLED">
+                                    <button type="submit" class="action-btn cancel-btn">Cancel</button>
+                                </form>
+                            </div>
+                        {% elif request.status == 'ACCEPTED' %}
+                            <div class="action-row">
+                                <form method="post" action="{% url 'close_blood_request' request.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="COMPLETED">
+                                    <button type="submit" class="action-btn">Mark Completed</button>
+                                </form>
+                            </div>
                         {% endif %}
                     </div>
                 {% endfor %}
