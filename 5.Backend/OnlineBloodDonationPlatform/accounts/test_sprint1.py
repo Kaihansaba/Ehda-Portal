@@ -359,3 +359,23 @@ class SprintOneAuthenticationTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("notes", response.context["form"].errors)
+
+    def test_hospital_can_close_a_blood_request(self):
+        self.client.force_login(self.hospital)
+        blood_request = self.hospital.blood_requests.create(
+            blood_type="O+",
+            units_needed=2,
+            urgency="ROUTINE",
+            notes="Need for upcoming surgery.",
+        )
+
+        response = self.client.post(
+            reverse("close_blood_request", args=[blood_request.pk]),
+            {"status": "COMPLETED"},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        blood_request.refresh_from_db()
+        self.assertEqual(blood_request.status, "COMPLETED")
+        self.assertRedirects(response, reverse("manage_blood_requests"))

@@ -16,6 +16,7 @@ from accounts.views import (
     admin_dashboard,
     create_blood_request,
     manage_blood_requests,
+    close_blood_request,
 )
 
 
@@ -67,6 +68,11 @@ urlpatterns = [
         "dashboard/hospital/requests/new/",
         create_blood_request,
         name="create_blood_request",
+    ),
+    path(
+        "dashboard/hospital/requests/<int:pk>/close/",
+        close_blood_request,
+        name="close_blood_request",
     ),
 
     # Admin dashboard

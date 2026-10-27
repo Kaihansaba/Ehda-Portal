@@ -2,7 +2,7 @@ from functools import wraps
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 
 from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
 from .models import BloodRequest
@@ -145,6 +145,24 @@ def manage_blood_requests(request):
         "accounts/manage_blood_requests.html",
         {"requests": requests},
     )
+
+
+@role_required("HOSPITAL")
+def close_blood_request(request, pk):
+    blood_request = get_object_or_404(BloodRequest, pk=pk, hospital=request.user)
+
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+        valid_statuses = {
+            BloodRequest.Status.COMPLETED,
+            BloodRequest.Status.CANCELLED,
+        }
+
+        if new_status in valid_statuses:
+            blood_request.status = new_status
+            blood_request.save(update_fields=["status"])
+
+    return redirect("manage_blood_requests")
 
 
 @login_required

@@ -1,5 +1,6 @@
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -144,7 +145,7 @@ class BloodRequest(models.Model):
 
     def clean(self):
         if self.units_needed <= 0:
-            raise ValueError("Units needed must be greater than 0.")
+            raise ValidationError({"units_needed": "Units needed must be greater than 0."})
 
         if self.urgency in {self.Urgency.URGENT, self.Urgency.EMERGENCY} and not self.notes.strip():
-            raise ValueError("Please add notes for urgent or emergency requests.")
+            raise ValidationError({"notes": "Please add notes for urgent or emergency requests."})
