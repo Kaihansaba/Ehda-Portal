@@ -95,6 +95,14 @@
                             <p><strong>Notes:</strong> {{ request.notes }}</p>
                         {% endif %}
                         <p><small>Created: {{ request.created_at|date:"M d, Y H:i" }}</small></p>
+
+                        {% if request.status != 'COMPLETED' and request.status != 'CANCELLED' %}
+                            <form method="post" action="{% url 'close_blood_request' request.pk %}" style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
+                                {% csrf_token %}
+                                <button type="submit" name="status" value="COMPLETED" class="btn" style="padding: 10px 14px; border: none; cursor: pointer;">Mark as Completed</button>
+                                <button type="submit" name="status" value="CANCELLED" class="btn" style="padding: 10px 14px; border: none; cursor: pointer; background: #b71c1c;">Cancel Request</button>
+                            </form>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
