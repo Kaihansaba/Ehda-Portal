@@ -6,236 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Donor Profile | Ehda Portal</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f7f8fc;
-            color: #252b36;
-        }
-
-        .navbar {
-            background: #b71c1c;
-            color: white;
-            padding: 18px 7%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .brand {
-            font-size: 23px;
-            font-weight: bold;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .container {
-            width: min(760px, 92%);
-            margin: 42px auto;
-        }
-
-        .intro {
-            margin-bottom: 24px;
-        }
-
-        .intro h1 {
-            margin-bottom: 8px;
-            font-size: 30px;
-        }
-
-        .intro p {
-            color: #687080;
-            line-height: 1.6;
-        }
-
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 28px rgba(25, 35, 55, 0.08);
-        }
-
-        .field {
-            margin-bottom: 19px;
-        }
-
-        .field label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        .field input,
-        .field select {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #d8dce5;
-            border-radius: 8px;
-            font-size: 15px;
-            background: white;
-        }
-
-        .field input:focus,
-        .field select:focus {
-            outline: 2px solid #efb5b5;
-            border-color: #b71c1c;
-        }
-
-        .help {
-            color: #737b89;
-            font-size: 13px;
-            margin-top: 6px;
-        }
-
-        .error {
-            color: #b71c1c;
-            font-size: 14px;
-            margin-top: 7px;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 26px;
-        }
-
-        .button {
-            display: inline-block;
-            border: none;
-            border-radius: 8px;
-            padding: 13px 20px;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .primary {
-            background: #b71c1c;
-            color: white;
-        }
-
-        .secondary {
-            background: #eef0f5;
-            color: #303747;
-        }
-
-        .form-errors {
-            background: #fff0f0;
-            border: 1px solid #f2c4c4;
-            color: #a31616;
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-        }
-
-        .footer {
-            text-align: center;
-            color: #7a8190;
-            padding: 24px 12px;
-            font-size: 13px;
-        }
-
-        @media (max-width: 520px) {
-            .card {
-                padding: 21px;
-            }
-
-            .intro h1 {
-                font-size: 25px;
-            }
-
-            .actions .button {
-                width: 100%;
-                text-align: center;
-            }
-        }
+        body { margin: 0; font-family: Arial, sans-serif; background: #f7f8fc; color: #252b36; }
+        nav { background: #b71c1c; color: white; padding: 18px 7%; display: flex; justify-content: space-between; }
+        nav a { color: white; text-decoration: none; font-weight: bold; }
+        main { max-width: 700px; margin: 40px auto; padding: 20px; }
+        .card { background: white; padding: 28px; border-radius: 12px; box-shadow: 0 5px 20px #0001; }
+        .field { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 7px; font-weight: bold; }
+        input, select { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 7px; }
+        button, .cancel { display: inline-block; padding: 12px 18px; border: 0; border-radius: 7px; text-decoration: none; cursor: pointer; font-weight: bold; }
+        button { background: #b71c1c; color: white; }
+        .cancel { background: #eee; color: #333; }
+        .error { color: #b71c1c; font-size: 14px; margin-top: 5px; }
+        .success { color: #176b35; }
+        @media (max-width: 600px) { main { margin: 20px auto; } .card { padding: 18px; } }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="brand">🩸 Ehda Portal</div>
-        <a href="{% url 'donor_dashboard' %}">← Back to Dashboard</a>
+    <nav>
+        <strong>Ehda Portal</strong>
+        <a href="{% url 'donor_dashboard' %}">Back to Dashboard</a>
     </nav>
 
-    <main class="container">
-        <section class="intro">
-            <h1>My Donor Profile</h1>
-            <p>Keep your contact information and blood type up to date so your donor profile is ready when needed.</p>
-        </section>
+    <main>
+        <h1>Manage My Account</h1>
+        <p>Update your personal and donor information below.</p>
 
         <section class="card">
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="success">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
             <form method="post">
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
-                    <div class="form-errors">
-                        {{ form.non_field_errors }}
-                    </div>
+                    <div class="error">{{ form.non_field_errors }}</div>
                 {% endif %}
 
-                <div class="field">
-                    <label for="{{ form.first_name.id_for_label }}">First name</label>
-                    {{ form.first_name }}
-                    {% for error in form.first_name.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
+                {% for field in form %}
+                    <div class="field">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
 
-                <div class="field">
-                    <label for="{{ form.last_name.id_for_label }}">Last name</label>
-                    {{ form.last_name }}
-                    {% for error in form.last_name.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="field">
-                    <label for="{{ form.email.id_for_label }}">Email address</label>
-                    {{ form.email }}
-                    {% for error in form.email.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="field">
-                    <label for="{{ form.phone.id_for_label }}">Phone number</label>
-                    {{ form.phone }}
-                    {% for error in form.phone.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="field">
-                    <label for="{{ form.blood_type.id_for_label }}">Blood type</label>
-                    {{ form.blood_type }}
-                    <div class="help">Select your blood type if you know it.</div>
-                    {% for error in form.blood_type.errors %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="actions">
-                    <button class="button primary" type="submit">Save Profile</button>
-                    <a class="button secondary" href="{% url 'donor_dashboard' %}">Cancel</a>
-                </div>
+                <button type="submit">Save Changes</button>
+                <a class="cancel" href="{% url 'donor_dashboard' %}">Cancel</a>
             </form>
         </section>
     </main>
-
-    <footer class="footer">
-        Ehda Portal · Every donation can make a difference.
-    </footer>
 </body>
 </html>

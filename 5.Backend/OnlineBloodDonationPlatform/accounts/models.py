@@ -97,3 +97,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+class Donation(models.Model):
+    donor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="donations",
+    )
+
+    donation_date = models.DateField()
+
+    blood_type = models.CharField(
+        max_length=3,
+        choices=User.BloodType.choices,
+    )
+
+    notes = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-donation_date"]
+
+    def __str__(self):
+        return f"{self.donor.get_full_name()} - {self.donation_date}"

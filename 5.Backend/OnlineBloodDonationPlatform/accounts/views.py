@@ -1,11 +1,12 @@
-from functools import wraps
+﻿from functools import wraps
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import RegistrationForm, DonorProfileForm
-
+from .models import Donation
 
 def register(request):
     if request.method == "POST":
@@ -33,6 +34,9 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
+            next_url = request.GET.get("next", "")
+            if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+                return redirect(next_url)
             return redirect("role_redirect")
 
         return render(
@@ -77,7 +81,12 @@ def role_required(*allowed_roles):
 
 @role_required("DONOR")
 def donor_dashboard(request):
-    return render(request, "accounts/donor_dashboard.html")
+    donation_count = Donation.objects.filter(donor=request.user).count()
+    return render(
+        request,
+        "accounts/donor_dashboard.html",
+        {"donation_count": donation_count},
+    )
 
 
 @role_required("DONOR")
@@ -121,10 +130,16 @@ def admin_dashboard(request):
     return render(request, "accounts/admin_dashboard.html")
 
 
+def index(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    return redirect("role_redirect")
+
+
 @login_required
 def home(request):
     return render(request, "accounts/home.html")
-
 
 def user_logout(request):
     if request.method == "POST":
@@ -132,3 +147,20 @@ def user_logout(request):
         return redirect("login")
 
     return redirect("role_redirect")
+
+@role_required("DONOR")
+def donation_history(request):
+    donations = Donation.objects.filter(
+        donor=request.user
+    ).order_by("-donation_date")
+
+    return render(
+        request,
+        "accounts/donation_history.html",
+        {"donations": donations},
+    )
+
+
+
+
+
