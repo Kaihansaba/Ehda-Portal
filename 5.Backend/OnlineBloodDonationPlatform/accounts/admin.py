@@ -1,7 +1,11 @@
-from django.contrib import admin
+﻿from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.urls import reverse_lazy
 
 from .models import User
+
+
+admin.site.site_url = reverse_lazy("role_redirect")
 
 
 @admin.register(User)
@@ -29,6 +33,8 @@ class CustomUserAdmin(UserAdmin):
         "first_name",
         "last_name",
         "phone",
+                "blood_type",
+                "is_available",
     )
 
     fieldsets = (
@@ -44,6 +50,8 @@ class CustomUserAdmin(UserAdmin):
                 "first_name",
                 "last_name",
                 "phone",
+                "blood_type",
+                "is_available",
             )
         }),
 
@@ -77,6 +85,8 @@ class CustomUserAdmin(UserAdmin):
                 "first_name",
                 "last_name",
                 "phone",
+                "blood_type",
+                "is_available",
                 "role",
                 "password1",
                 "password2",
@@ -85,3 +95,5 @@ class CustomUserAdmin(UserAdmin):
             ),
         }),
     )
+
+
