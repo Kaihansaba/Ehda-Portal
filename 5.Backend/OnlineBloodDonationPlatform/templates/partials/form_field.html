@@ -1,0 +1,37 @@
+{% comment %}
+    One labelled form field with help text and inline errors.
+
+    Parameters:
+      field     - a bound form field (required)
+      label     - label text (defaults to the field's label)
+      optional  - show "(optional)" after the label
+      help      - help text (defaults to the field's help_text)
+      password  - add a Show/Hide button (needs ehda.js)
+{% endcomment %}
+<div class="field{% if field.errors %} has-error{% endif %}">
+    <label class="field-label" for="{{ field.id_for_label }}">
+        {{ label|default:field.label }}{% if optional %} <span class="field-optional">(optional)</span>{% endif %}
+    </label>
+
+    {% if password %}
+        <div class="password-wrap">
+            {{ field }}
+            <button type="button" class="password-toggle" data-password-toggle="{{ field.id_for_label }}" aria-pressed="false" aria-label="Show password" hidden>Show</button>
+        </div>
+    {% else %}
+        {{ field }}
+    {% endif %}
+
+    {% if help %}
+        <div class="field-help">{{ help }}</div>
+    {% elif field.help_text %}
+        <div class="field-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>
+    {% endif %}
+
+    {% for error in field.errors %}
+        <p class="field-error" id="{{ field.auto_id }}_error">
+            {% include "partials/icon.html" with name="alert" %}
+            <span>{{ error }}</span>
+        </p>
+    {% endfor %}
+</div>

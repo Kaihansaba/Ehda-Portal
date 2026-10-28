@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, reverse_lazy
 from django.contrib.auth import views as auth_views
 
 from accounts.views import (
@@ -18,6 +18,15 @@ from accounts.views import (
     create_blood_request,
     manage_blood_requests,
 )
+
+
+# Django admin branding (templates/admin/base_site.html adds the logo)
+admin.site.site_header = "Ehda Admin"
+admin.site.site_title = "Ehda Admin"
+admin.site.index_title = "Platform management"
+
+# "View site" in the admin goes to the user's own dashboard.
+admin.site.site_url = reverse_lazy("role_redirect")
 
 
 urlpatterns = [

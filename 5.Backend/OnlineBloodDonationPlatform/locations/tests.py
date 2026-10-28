@@ -494,7 +494,53 @@ class SetupFixTests(TestCase):
         self.assertContains(response, 'name="is_available"')
 
 
-# 8. Demo accounts command
+# 8. Navigation between the app and the Django admin
+
+class AdminNavigationTests(TestCase):
+
+    def setUp(self):
+        self.staff = User.objects.create_superuser(
+            email="staff@example.com", password="StrongPass123!", first_name="Staff",
+        )
+
+    def test_admin_view_site_goes_to_dashboard(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse("admin:index"))
+
+        self.assertContains(response, f'href="{reverse("role_redirect")}"')
+        self.assertContains(response, "View site")
+
+    def test_admin_header_links_back_to_the_app(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse("admin:index"))
+
+        self.assertContains(response, "Back to Ehda")
+        self.assertContains(response, f'href="{reverse("index")}"')
+        self.assertContains(response, f'href="{reverse("locations:search")}"')
+        self.assertContains(response, f'href="{reverse("locations:map")}"')
+
+    def test_admin_login_page_only_shows_back_link(self):
+        response = self.client.get(reverse("admin:login"))
+
+        self.assertContains(response, "Back to Ehda")
+        self.assertNotContains(response, f'href="{reverse("locations:map")}"')
+
+    def test_site_admin_link_only_for_staff(self):
+        donor = make_user("donor@example.com")
+        admin_url = reverse("admin:index")
+
+        self.client.force_login(donor)
+        self.assertNotContains(self.client.get(reverse("donor_dashboard")), admin_url)
+
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse("admin_dashboard"))
+        self.assertContains(response, f'href="{admin_url}"')
+        self.assertNotContains(response, 'target="_blank"')
+
+
+# 9. Demo accounts command
 
 class DemoAccountsCommandTests(TestCase):
 
@@ -529,3 +575,18 @@ class DemoAccountsCommandTests(TestCase):
             self.run_command()
 
         self.assertFalse(User.objects.filter(email__endswith="@ehda.test").exists())
+
+
+# 10. Map tiles
+
+class MapTileReferrerTests(TestCase):
+
+    def test_pages_allow_a_referer_for_map_tiles(self):
+        # OpenStreetMap tiles return 403 without a Referer; Django's
+        # default policy ("same-origin") would not send one.
+        response = self.client.get(reverse("login"))
+
+        self.assertEqual(
+            response.headers["Referrer-Policy"],
+            "strict-origin-when-cross-origin",
+        )

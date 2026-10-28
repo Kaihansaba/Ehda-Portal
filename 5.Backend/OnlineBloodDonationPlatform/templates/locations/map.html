@@ -1,121 +1,85 @@
 {% extends "base.html" %}
+{% load ehda_ui %}
 
-{% block title %}Donor Map{% endblock %}
+{% block title %}Donor map{% endblock %}
+{% block main_class %}is-flush{% endblock %}
 
 {% block extra_head %}
-    {% include "locations/_leaflet_assets.html" %}
-
-    <style>
-        .map-toolbar {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 18px;
-        }
-
-        .map-filter {
-            display: flex;
-            align-items: flex-end;
-            gap: 12px;
-        }
-
-        .big-map {
-            height: 560px;
-        }
-
-        .legend {
-            background: white;
-            padding: 10px 14px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-            font-size: 13px;
-            line-height: 1.9;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .legend-swatch {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-        }
-
-        /* Marker styles (also used for legend swatches) */
-        .donor-swatch {
-            border-radius: 50%;
-            background: rgba(183, 28, 28, 0.35);
-            border: 2px solid #b71c1c;
-        }
-
-        .facility-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 800;
-            font-size: 12px;
-            border: 2px solid white;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
-        }
-
-        .facility-icon.hospital {
-            background: #1565c0;
-            border-radius: 5px;
-        }
-
-        .facility-icon.donation-center {
-            background: #2e7d32;
-            border-radius: 50%;
-        }
-
-        .popup-title {
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .popup-line {
-            color: #555;
-        }
-    </style>
+    {% include "partials/leaflet_assets.html" %}
 {% endblock %}
 
-{% block content %}
+{% block page %}
 
-    <h1 class="page-title">Donor Map</h1>
+    <div class="container map-page-header">
+        {% include "partials/messages.html" %}
 
-    <p class="page-subtitle">
-        Hospitals, donation centres and available donors near you.
-        Donor positions are approximate (about 1 km) to protect their privacy.
-    </p>
+        <h1>Donor map</h1>
+        <p class="lead">
+            Hospitals, donation centres and available donors near you.
+            Donor positions are approximate (about 1 km) to protect their privacy.
+        </p>
 
-    <div class="card">
         <div class="map-toolbar">
-            <form method="get" class="map-filter">
-                <div class="form-group">
-                    <label for="blood-type-filter">Donor blood type</label>
-                    <select name="blood_type" id="blood-type-filter">
-                        <option value="">All blood types</option>
+            <form method="get" data-autosubmit aria-label="Filter donors by blood type">
+                <fieldset>
+                    <legend class="fieldset-legend text-sm">Show donors with blood type</legend>
+                    <div class="chip-group">
+                        <span>
+                            <input class="chip-input" type="radio" name="blood_type" value="" id="map-bt-all"{% if not blood_type %} checked{% endif %}>
+                            <label class="chip" for="map-bt-all">All</label>
+                        </span>
                         {% for value, label in blood_type_choices %}
-                            <option value="{{ value }}"{% if value == blood_type %} selected{% endif %}>{{ label }}</option>
+                            <span>
+                                <input class="chip-input" type="radio" name="blood_type" value="{{ value }}" id="map-bt-{{ forloop.counter }}"{% if value == blood_type %} checked{% endif %}>
+                                <label class="chip is-blood" for="map-bt-{{ forloop.counter }}">
+                                    <span aria-hidden="true">{{ value|blood_symbol }}</span>
+                                    <span class="visually-hidden">{{ value|blood_name }}</span>
+                                </label>
+                            </span>
                         {% endfor %}
-                    </select>
-                </div>
-
-                <button type="submit" class="btn">Filter</button>
+                        <button type="submit" class="btn btn-secondary btn-sm autosubmit-button">Apply</button>
+                    </div>
+                </fieldset>
             </form>
 
-            <p class="muted">
-                Showing {{ donor_count }} available donor{{ donor_count|pluralize }}{% if blood_type %} with blood type {{ blood_type }}{% endif %}.
-            </p>
+            <ul class="legend" role="list" aria-label="Map legend">
+                <li class="legend-item">
+                    <svg viewBox="0 0 28 36" aria-hidden="true" focusable="false"><path fill="#b3261e" d="M14 1.5S2.5 14.6 2.5 22.3a11.5 11.5 0 0 0 23 0C25.5 14.6 14 1.5 14 1.5z"/><circle cx="14" cy="23" r="4" fill="#fff"/></svg>
+                    Donor area
+                </li>
+                <li class="legend-item">
+                    <svg viewBox="0 0 30 30" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="27" height="27" rx="7" fill="#1f5fa8"/><path fill="#fff" d="M12.5 7.5h5v5h5v5h-5v5h-5v-5h-5v-5h5z"/></svg>
+                    Hospital
+                </li>
+                <li class="legend-item">
+                    <svg viewBox="0 0 30 30" aria-hidden="true" focusable="false"><circle cx="15" cy="15" r="13.5" fill="#00796b"/><path fill="#fff" d="M15 7s-5.5 6.2-5.5 9.8a5.5 5.5 0 0 0 11 0C20.5 13.2 15 7 15 7z"/></svg>
+                    Donation centre
+                </li>
+            </ul>
         </div>
 
-        <div id="donor-map" class="map big-map"></div>
+        <p class="muted text-sm mt-4" role="status">
+            Showing {{ donor_count }} available donor{{ donor_count|pluralize }}{% if blood_type %} with blood type {{ blood_type|blood_symbol }}{% endif %}.
+        </p>
+    </div>
+
+    <div id="donor-map" class="map map-full" role="application" aria-label="Map of donors, hospitals and donation centres"></div>
+
+    <!-- Text alternative to the map for screen readers and slow connections -->
+    <div class="container section mt-5">
+        <details class="card facility-list">
+            <summary>List of hospitals and donation centres ({{ map_data.facilities|length }})</summary>
+            <ul class="facility-items" role="list">
+                {% for facility in map_data.facilities %}
+                    <li>
+                        <strong>{{ facility.name }}</strong>
+                        <span class="muted">{{ facility.type_label }}{% if facility.address %} · {{ facility.address }}{% endif %}{% if facility.phone %} · {{ facility.phone }}{% endif %}</span>
+                    </li>
+                {% empty %}
+                    <li class="muted">No facilities have been added yet.</li>
+                {% endfor %}
+            </ul>
+        </details>
     </div>
 
     {{ map_data|json_script:"map-data" }}
@@ -124,100 +88,52 @@
 
 {% block extra_js %}
 <script>
-    const data = JSON.parse(document.getElementById("map-data").textContent);
-    const map = createOsmMap("donor-map", data.center);
+    (function () {
+        var data = EhdaMap.readJson("map-data");
+        var map = EhdaMap.create("donor-map", data.center);
 
-    // Build popups with textContent so user-entered names are never
-    // interpreted as HTML.
-    function popupContent(title, lines) {
-        const container = document.createElement("div");
+        var points = [];
 
-        const heading = document.createElement("div");
-        heading.className = "popup-title";
-        heading.textContent = title;
-        container.appendChild(heading);
+        // Donors sharing the same approximate area get one marker.
+        var areas = {};
 
-        lines.filter(Boolean).forEach(function (text) {
-            const line = document.createElement("div");
-            line.className = "popup-line";
-            line.textContent = text;
-            container.appendChild(line);
+        data.donors.forEach(function (donor) {
+            var key = donor.lat + "," + donor.lng;
+            (areas[key] = areas[key] || []).push(donor);
         });
 
-        return container;
-    }
+        Object.keys(areas).forEach(function (key) {
+            var donors = areas[key];
+            points.push([donors[0].lat, donors[0].lng]);
 
-    // Donors sharing the same approximate area get one marker.
-    const donorAreas = {};
-
-    data.donors.forEach(function (donor) {
-        const key = donor.lat + "," + donor.lng;
-        (donorAreas[key] = donorAreas[key] || []).push(donor);
-    });
-
-    Object.values(donorAreas).forEach(function (donors) {
-        const first = donors[0];
-
-        const title = donors.length === 1
-            ? "Donor"
-            : donors.length + " donors in this area";
-
-        const lines = donors.map(function (donor) {
-            return donor.name + " - " + donor.blood_type;
+            L.marker([donors[0].lat, donors[0].lng], {
+                icon: EhdaMap.donorIcon(donors.length),
+                title: donors.length + " donor(s) in this area"
+            })
+                .bindPopup(EhdaMap.donorPopup(donors))
+                .addTo(map);
         });
 
-        L.circleMarker([first.lat, first.lng], {
-            radius: 8 + Math.min(donors.length, 6),
-            color: "#b71c1c",
-            weight: 2,
-            fillColor: "#b71c1c",
-            fillOpacity: 0.35,
-        })
-            .bindPopup(popupContent(title, lines))
-            .addTo(map);
-    });
+        data.facilities.forEach(function (facility) {
+            var isCenter = facility.type === "DONATION_CENTER";
+            points.push([facility.lat, facility.lng]);
 
-    const facilityIcons = {
-        HOSPITAL: L.divIcon({
-            className: "",
-            html: '<div class="facility-icon hospital" style="width:24px;height:24px;">H</div>',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-            popupAnchor: [0, -12],
-        }),
-        DONATION_CENTER: L.divIcon({
-            className: "",
-            html: '<div class="facility-icon donation-center" style="width:24px;height:24px;">D</div>',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-            popupAnchor: [0, -12],
-        }),
-    };
+            L.marker([facility.lat, facility.lng], {
+                icon: isCenter ? EhdaMap.centerIcon : EhdaMap.hospitalIcon,
+                title: facility.name
+            })
+                .bindPopup(EhdaMap.popup(facility.type_label, facility.name, [
+                    facility.address,
+                    facility.phone ? "Phone: " + facility.phone : ""
+                ]))
+                .addTo(map);
+        });
 
-    data.facilities.forEach(function (facility) {
-        L.marker([facility.lat, facility.lng], {
-            icon: facilityIcons[facility.type] || facilityIcons.HOSPITAL,
-        })
-            .bindPopup(popupContent(facility.name, [
-                facility.type_label,
-                facility.address,
-                facility.phone ? "Phone: " + facility.phone : "",
-            ]))
-            .addTo(map);
-    });
-
-    // Legend
-    const legend = L.control({ position: "bottomright" });
-
-    legend.onAdd = function () {
-        const box = L.DomUtil.create("div", "legend");
-        box.innerHTML =
-            '<div class="legend-item"><span class="legend-swatch donor-swatch"></span>Donor (approximate area)</div>' +
-            '<div class="legend-item"><span class="legend-swatch facility-icon hospital"></span>Hospital</div>' +
-            '<div class="legend-item"><span class="legend-swatch facility-icon donation-center"></span>Donation centre</div>';
-        return box;
-    };
-
-    legend.addTo(map);
+        // No saved location (country view): zoom to show every marker,
+        // which also keeps far-away markers on screen on narrow phones.
+        if (data.center.zoom <= 6 && points.length > 1) {
+            map.fitBounds(points, { padding: [32, 32], maxZoom: 12 });
+        }
+    })();
 </script>
 {% endblock %}

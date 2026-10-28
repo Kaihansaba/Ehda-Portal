@@ -1,65 +1,92 @@
- {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Donor Profile | Ehda Portal</title>
-    <style>
-        body { margin: 0; font-family: Arial, sans-serif; background: #f7f8fc; color: #252b36; }
-        nav { background: #b71c1c; color: white; padding: 18px 7%; display: flex; justify-content: space-between; }
-        nav a { color: white; text-decoration: none; font-weight: bold; }
-        main { max-width: 700px; margin: 40px auto; padding: 20px; }
-        .card { background: white; padding: 28px; border-radius: 12px; box-shadow: 0 5px 20px #0001; }
-        .field { margin-bottom: 18px; }
-        label { display: block; margin-bottom: 7px; font-weight: bold; }
-        input, select { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 7px; }
-        button, .cancel { display: inline-block; padding: 12px 18px; border: 0; border-radius: 7px; text-decoration: none; cursor: pointer; font-weight: bold; }
-        button { background: #b71c1c; color: white; }
-        .cancel { background: #eee; color: #333; }
-        .error { color: #b71c1c; font-size: 14px; margin-top: 5px; }
-        .success { color: #176b35; }
-        @media (max-width: 600px) { main { margin: 20px auto; } .card { padding: 18px; } }
-    </style>
-</head>
-<body>
-    <nav>
-        <strong>Ehda Portal</strong>
-        <a href="{% url 'donor_dashboard' %}">Back to Dashboard</a>
-    </nav>
+{% extends "base.html" %}
+{% load ehda_ui %}
 
-    <main>
-        <h1>Manage My Account</h1>
-        <p>Update your personal and donor information below.</p>
+{% block title %}My profile{% endblock %}
 
-        <section class="card">
-            {% if messages %}
-                {% for message in messages %}
-                    <p class="success">{{ message }}</p>
-                {% endfor %}
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to dashboard
+        </a>
+        <h1>My donor profile</h1>
+        <p class="lead">Keep your details up to date so the right people can reach you.</p>
+    </div>
+
+    <div class="form-layout">
+        <form method="post" class="card form-stack">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-error" role="alert">
+                    {% include "partials/icon.html" with name="alert" %}
+                    <span>{{ form.non_field_errors|join:" " }}</span>
+                </div>
             {% endif %}
 
-            <form method="post">
-                {% csrf_token %}
+            <div class="form-row">
+                {% include "partials/form_field.html" with field=form.first_name label="First name" %}
+                {% include "partials/form_field.html" with field=form.last_name label="Last name" %}
+            </div>
 
-                {% if form.non_field_errors %}
-                    <div class="error">{{ form.non_field_errors }}</div>
-                {% endif %}
+            <div class="form-row">
+                {% include "partials/form_field.html" with field=form.email label="Email address" %}
+                {% include "partials/form_field.html" with field=form.phone label="Phone number" %}
+            </div>
 
-                {% for field in form %}
-                    <div class="field">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% for error in field.errors %}
-                            <div class="error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
+            <!-- Blood type: radio badges using the same "blood_type" field -->
+            <fieldset class="field{% if form.blood_type.errors %} has-error{% endif %}">
+                <legend class="fieldset-legend">Blood type</legend>
+
+                <div class="blood-chip-grid">
+                    {% for value, label in form.fields.blood_type.choices %}
+                        {% if value %}
+                            <span>
+                                <input class="chip-input" type="radio" name="blood_type" value="{{ value }}" id="id_blood_type_{{ forloop.counter }}"{% if value == form.blood_type.value %} checked{% endif %}>
+                                <label class="chip is-blood" for="id_blood_type_{{ forloop.counter }}">
+                                    <span aria-hidden="true">{{ value|blood_symbol }}</span>
+                                    <span class="visually-hidden">{{ value|blood_name }}</span>
+                                </label>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <span>
+                    <input class="chip-input" type="radio" name="blood_type" value="" id="id_blood_type_unknown"{% if not form.blood_type.value %} checked{% endif %}>
+                    <label class="chip chip-wide" for="id_blood_type_unknown">I don’t know yet</label>
+                </span>
+
+                <p class="field-help">Not sure? Any hospital or blood bank can test it for you.</p>
+
+                {% for error in form.blood_type.errors %}
+                    <p class="field-error">
+                        {% include "partials/icon.html" with name="alert" %}
+                        <span>{{ error }}</span>
+                    </p>
                 {% endfor %}
+            </fieldset>
 
-                <button type="submit">Save Changes</button>
-                <a class="cancel" href="{% url 'donor_dashboard' %}">Cancel</a>
-            </form>
-        </section>
-    </main>
-</body>
-</html>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a class="btn btn-secondary" href="{% url 'donor_dashboard' %}">Cancel</a>
+            </div>
+        </form>
+
+        <aside class="info-aside" aria-labelledby="privacy-title">
+            <h2 id="privacy-title" class="card-title">What others can see</h2>
+            <p class="card-text">
+                People searching for donors only see your first name, the first
+                letter of your last name, your blood type, your availability and
+                your approximate area.
+            </p>
+            <p class="card-text">Your email, phone number and exact location are not shown in search results or on the map.</p>
+            <a href="{% url 'locations:donor_location' %}" class="btn btn-secondary btn-sm">
+                {% include "partials/icon.html" with name="pin" %}
+                Set my location
+            </a>
+        </aside>
+    </div>
+
+{% endblock %}

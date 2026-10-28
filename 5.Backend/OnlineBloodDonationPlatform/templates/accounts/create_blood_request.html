@@ -1,97 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Blood Request | Ehda Portal</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 700px;
-            margin: 60px auto;
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            padding: 30px;
-        }
-        h1 {
-            color: #1565c0;
-            margin-bottom: 25px;
-        }
-        form {
-            display: grid;
-            gap: 18px;
-        }
-        .field {
-            display: grid;
-            gap: 8px;
-        }
-        label {
-            font-weight: 700;
-            color: #333;
-        }
-        input, select, textarea, button {
-            font: inherit;
-        }
-        .form-control {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #d7dce5;
-            border-radius: 10px;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-        .actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        .btn {
-            text-decoration: none;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 18px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .primary {
-            background: #1565c0;
-            color: white;
-        }
-        .secondary {
-            background: #e7edf5;
-            color: #1f2d3d;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Create Blood Request</h1>
+{% extends "base.html" %}
+{% load ehda_ui %}
 
-        <form method="post">
+{% block title %}New blood request{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'hospital_dashboard' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to dashboard
+        </a>
+        <h1>New blood request</h1>
+        <p class="lead">Tell us which blood type you need, how much, and how soon.</p>
+    </div>
+
+    <div class="form-layout">
+        <form method="post" class="card form-stack">
             {% csrf_token %}
 
-            {% for field in form %}
-                <div class="field">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <div style="color:#b71c1c; font-size: 14px;">{{ field.errors }}</div>
-                    {% endif %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-error" role="alert">
+                    {% include "partials/icon.html" with name="alert" %}
+                    <span>{{ form.non_field_errors|join:" " }}</span>
                 </div>
-            {% endfor %}
+            {% endif %}
 
-            <div class="actions">
-                <button type="submit" class="btn primary">Submit Request</button>
-                <a href="{% url 'hospital_dashboard' %}" class="btn secondary">Back to Dashboard</a>
+            <!-- Blood type: radio badges (same "blood_type" field) -->
+            <fieldset class="field{% if form.blood_type.errors %} has-error{% endif %}">
+                <legend class="fieldset-legend">Blood type needed</legend>
+
+                <div class="blood-chip-grid">
+                    {% for value, label in form.fields.blood_type.choices %}
+                        {% if value %}
+                            <span>
+                                <input class="chip-input" type="radio" name="blood_type" value="{{ value }}" id="id_blood_type_{{ forloop.counter }}"{% if value == form.blood_type.value %} checked{% endif %} required>
+                                <label class="chip is-blood" for="id_blood_type_{{ forloop.counter }}">
+                                    <span aria-hidden="true">{{ value|blood_symbol }}</span>
+                                    <span class="visually-hidden">{{ value|blood_name }}</span>
+                                </label>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                {% for error in form.blood_type.errors %}
+                    <p class="field-error">
+                        {% include "partials/icon.html" with name="alert" %}
+                        <span>{{ error }}</span>
+                    </p>
+                {% endfor %}
+            </fieldset>
+
+            {% include "partials/form_field.html" with field=form.units_needed label="Units needed" help="One unit is one standard blood bag." %}
+
+            <!-- Urgency: radio chips (same "urgency" field) -->
+            <fieldset class="field{% if form.urgency.errors %} has-error{% endif %}">
+                <legend class="fieldset-legend">Urgency</legend>
+
+                <div class="chip-group">
+                    {% for value, label in form.fields.urgency.choices %}
+                        {% if value %}
+                            <span>
+                                <input class="chip-input" type="radio" name="urgency" value="{{ value }}" id="id_urgency_{{ forloop.counter }}"{% if value == form.urgency.value %} checked{% endif %} required>
+                                <label class="chip" for="id_urgency_{{ forloop.counter }}">{{ label }}</label>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                {% for error in form.urgency.errors %}
+                    <p class="field-error">
+                        {% include "partials/icon.html" with name="alert" %}
+                        <span>{{ error }}</span>
+                    </p>
+                {% endfor %}
+            </fieldset>
+
+            {% include "partials/form_field.html" with field=form.notes label="Notes" help="Required for urgent and emergency requests, e.g. the reason and when the blood is needed." %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Submit request</button>
+                <a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
+
+        <aside class="info-aside" aria-labelledby="about-title">
+            <h2 id="about-title" class="card-title">About blood requests</h2>
+            <p class="card-text">
+                Your requests are listed under Manage requests, where you can
+                follow their status.
+            </p>
+            <p class="card-text">Sending requests directly to matching donors is coming soon.</p>
+            <a href="{% url 'manage_blood_requests' %}" class="btn btn-secondary btn-sm">Manage requests</a>
+        </aside>
     </div>
-</body>
-</html>
+
+{% endblock %}

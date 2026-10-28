@@ -1,88 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <title>Access Denied | Ehda Portal</title>
+{% block title %}Access denied{% endblock %}
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
+{% block content %}
+<div class="error-page">
+    <svg viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+        <rect x="28" y="42" width="64" height="50" rx="8" fill="#fff" stroke="#5f5654" stroke-width="3"/>
+        <path d="M40 42V30a20 20 0 0 1 40 0v12" fill="none" stroke="#5f5654" stroke-width="3" stroke-linecap="round"/>
+        <path d="M60 58s-8 9-8 14a8 8 0 0 0 16 0c0-5-8-14-8-14z" fill="#b3261e"/>
+    </svg>
+    <p class="error-code">Error 403</p>
+    <h1>You don’t have access to this page</h1>
+    <p>This page is for a different type of account (donor, hospital or administrator).</p>
 
-        body {
-            min-height: 100vh;
-            background: #f5f8fb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .card {
-            width: 90%;
-            max-width: 600px;
-            background: white;
-            padding: 50px;
-            border-radius: 18px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #b71c1c;
-            margin-bottom: 15px;
-        }
-
-        p {
-            color: #666;
-            font-size: 17px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .back-btn {
-            display: inline-block;
-            background: #b71c1c;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .back-btn:hover {
-            background: #8f1515;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="card">
-
-    <div class="icon">🔒</div>
-
-    <h1>Access Denied</h1>
-
-    <p>
-        You do not have permission to access this page.
-        Please return to your dashboard.
-    </p>
-
-    <a href="{% url 'role_redirect' %}" class="back-btn">
-        Back to My Dashboard
-    </a>
-
+    <div class="cluster">
+        <a href="{% url 'role_redirect' %}" class="btn btn-primary">Back to my dashboard</a>
+        <a href="{% url 'index' %}" class="btn btn-ghost">Go to the home page</a>
+    </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

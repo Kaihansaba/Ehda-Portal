@@ -1,0 +1,8 @@
+{% comment %}
+    A key figure on a dashboard. Parameters: label, value, note (optional).
+{% endcomment %}
+<div class="card stat-card">
+    <div class="stat-label">{{ label }}</div>
+    <div class="stat-value">{{ value }}</div>
+    {% if note %}<div class="stat-note">{{ note }}</div>{% endif %}
+</div>

@@ -1,0 +1,1 @@
+{% load ehda_ui %}{% if type %}<span class="badge-blood{% if large %} is-large{% endif %}"><span aria-hidden="true">{{ type|blood_symbol }}</span><span class="visually-hidden">Blood type {{ type|blood_name }}</span></span>{% else %}<span class="badge-blood is-empty">Blood type not set</span>{% endif %}

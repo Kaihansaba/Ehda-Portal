@@ -1,0 +1,293 @@
+/*
+ * Ehda branding for the built-in Django admin (/admin/).
+ *
+ * Only overrides Django admin's own CSS variables (plus a few small
+ * header rules), so admin behaviour is unchanged. Loaded after Django's
+ * base.css and dark_mode.css and uses the same selectors, so these
+ * values win in light mode, dark mode and the admin theme toggle.
+ *
+ * Colours come from the tokens in ehda.css.
+ * Note: --header-bg is also used behind white text in module captions,
+ * fieldset headings and the calendar widget, so it must stay dark.
+ */
+
+/* LIGHT ---------------------------------------------------------------- */
+
+html[data-theme="light"],
+:root {
+    --primary: #b3261e;                /* ehda --color-primary */
+    --secondary: #8c1d18;              /* ehda --color-primary-hover */
+    --accent: #fceeec;                 /* ehda --color-primary-soft */
+    --primary-fg: #ffffff;
+
+    --body-fg: #1f1b1a;
+    --body-bg: #ffffff;
+    --body-quiet-color: #5f5654;
+    --body-medium-color: #3d3634;
+    --body-loud-color: #000000;
+
+    --header-color: #f6d9d5;
+    --header-branding-color: var(--accent);
+    --header-bg: #8c1d18;
+    --header-link-color: #ffffff;
+
+    --breadcrumbs-fg: #5f5654;
+    --breadcrumbs-link-fg: #8c1d18;
+    --breadcrumbs-bg: #fceeec;
+
+    --link-fg: #b3261e;
+    --link-hover-color: #8c1d18;
+    --link-selected-fg: #8c1d18;
+
+    --hairline-color: #efe7e4;
+    --border-color: #c9bdb9;
+
+    --error-fg: #a11d16;
+
+    --message-debug-bg: #f5f0ed;
+    --message-info-bg: #e8f0fb;
+    --message-success-bg: #e6f4ea;
+    --message-warning-bg: #fff4de;
+    --message-error-bg: #fceeec;
+
+    --darkened-bg: #fbf8f6;            /* ehda --color-bg */
+    --selected-bg: #f5f0ed;
+    --selected-row: #fdf6f5;
+
+    --button-fg: #ffffff;
+    --button-bg: #5f5654;
+    --button-hover-bg: #3d3634;
+    --default-button-bg: #b3261e;
+    --default-button-hover-bg: #8c1d18;
+    --close-button-bg: #5f5654;
+    --close-button-hover-bg: #3d3634;
+    --delete-button-bg: #a11d16;
+    --delete-button-hover-bg: #7f1611;
+
+    --object-tools-fg: var(--button-fg);
+    --object-tools-bg: var(--close-button-bg);
+    --object-tools-hover-bg: var(--close-button-hover-bg);
+
+    --font-family-primary: system-ui, -apple-system, "Segoe UI", Roboto,
+        "Noto Sans", "Helvetica Neue", Arial, "Noto Naskh Arabic", Tahoma,
+        sans-serif;
+}
+
+
+/* DARK ----------------------------------------------------------------- */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary: #8c1d18;
+        --secondary: #5c1512;
+        --accent: #f6d9d5;
+        --primary-fg: #fbeeec;
+
+        --body-fg: #ece6e4;
+        --body-bg: #141110;
+        --body-quiet-color: #b8aeab;
+        --body-medium-color: #d6cecb;
+        --body-loud-color: #ffffff;
+
+        --header-color: #e7cfcb;
+        --header-bg: #3a1512;
+        --header-link-color: #ffffff;
+
+        --breadcrumbs-fg: #c9bdb9;
+        --breadcrumbs-link-fg: #f2b8b5;
+        --breadcrumbs-bg: #241c1b;
+
+        --link-fg: #f2b8b5;
+        --link-hover-color: #ffd9d6;
+        --link-selected-fg: #e8a29d;
+
+        --hairline-color: #2b2523;
+        --border-color: #4a403d;
+
+        --error-fg: #ff8a80;
+
+        --message-debug-bg: #2b2523;
+        --message-info-bg: #1c2f4a;
+        --message-success-bg: #12391f;
+        --message-warning-bg: #3d2a05;
+        --message-error-bg: #4a1411;
+
+        --darkened-bg: #1f1a19;
+        --selected-bg: #2a2321;
+        --selected-row: #3a1a17;
+
+        --button-bg: #4b3f3c;
+        --button-hover-bg: #63544f;
+        --default-button-bg: #b3261e;
+        --default-button-hover-bg: #c8352c;
+        --close-button-bg: #4b3f3c;
+        --close-button-hover-bg: #63544f;
+        --delete-button-bg: #b3261e;
+        --delete-button-hover-bg: #c8352c;
+    }
+}
+
+/* Same values when dark is chosen with the admin's theme toggle. */
+html[data-theme="dark"] {
+    --primary: #8c1d18;
+    --secondary: #5c1512;
+    --accent: #f6d9d5;
+    --primary-fg: #fbeeec;
+
+    --body-fg: #ece6e4;
+    --body-bg: #141110;
+    --body-quiet-color: #b8aeab;
+    --body-medium-color: #d6cecb;
+    --body-loud-color: #ffffff;
+
+    --header-color: #e7cfcb;
+    --header-bg: #3a1512;
+    --header-link-color: #ffffff;
+
+    --breadcrumbs-fg: #c9bdb9;
+    --breadcrumbs-link-fg: #f2b8b5;
+    --breadcrumbs-bg: #241c1b;
+
+    --link-fg: #f2b8b5;
+    --link-hover-color: #ffd9d6;
+    --link-selected-fg: #e8a29d;
+
+    --hairline-color: #2b2523;
+    --border-color: #4a403d;
+
+    --error-fg: #ff8a80;
+
+    --message-debug-bg: #2b2523;
+    --message-info-bg: #1c2f4a;
+    --message-success-bg: #12391f;
+    --message-warning-bg: #3d2a05;
+    --message-error-bg: #4a1411;
+
+    --darkened-bg: #1f1a19;
+    --selected-bg: #2a2321;
+    --selected-row: #3a1a17;
+
+    --button-bg: #4b3f3c;
+    --button-hover-bg: #63544f;
+    --default-button-bg: #b3261e;
+    --default-button-hover-bg: #c8352c;
+    --close-button-bg: #4b3f3c;
+    --close-button-hover-bg: #63544f;
+    --delete-button-bg: #b3261e;
+    --delete-button-hover-bg: #c8352c;
+}
+
+
+/* HEADER BRANDING ------------------------------------------------------- */
+
+#site-name a.ehda-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.ehda-brand-mark {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    padding: 3px;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.ehda-brand-native {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--header-color);
+}
+
+
+/* DELETE LINK ------------------------------------------------------------
+ * Save and Delete would both be red, so Delete gets the outlined
+ * "danger" style used on the main site. ("body" raises specificity
+ * because forms.css loads after this file on change forms.)
+ */
+
+body .submit-row a.deletelink {
+    background: transparent;
+    color: var(--error-fg);
+    box-shadow: inset 0 0 0 2px var(--error-fg);
+}
+
+body .submit-row a.deletelink:focus,
+body .submit-row a.deletelink:hover,
+body .submit-row a.deletelink:active {
+    background: var(--error-fg);
+    color: var(--body-bg);
+}
+
+
+/* LINKS BACK TO THE EHDA APP ----------------------------------------------- */
+
+#branding {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+}
+
+/* "#header" outranks Django's own "#header a:link" colour rule. */
+.ehda-admin-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+}
+
+#header .ehda-admin-nav a:link,
+#header .ehda-admin-nav a:visited {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    color: var(--header-link-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#header .ehda-admin-nav a:hover,
+#header .ehda-admin-nav a:focus-visible {
+    background: rgba(255, 255, 255, 0.16);
+    color: var(--header-link-color);
+}
+
+/* "Back to Ehda": the most visible way out of the admin. */
+#header .ehda-admin-nav a.ehda-back:link,
+#header .ehda-admin-nav a.ehda-back:visited {
+    background: #ffffff;
+    color: #8c1d18;                    /* ehda --color-primary-hover */
+}
+
+#header .ehda-admin-nav a.ehda-back:hover,
+#header .ehda-admin-nav a.ehda-back:focus-visible {
+    background: #fceeec;
+    color: #8c1d18;
+}
+
+#header .ehda-admin-nav a:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.ehda-admin-nav .icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* The arrow points "back" in both reading directions. */
+.ehda-admin-nav .flip {
+    transform: scaleX(-1);
+}
+
+[dir="rtl"] .ehda-admin-nav .flip {
+    transform: none;
+}

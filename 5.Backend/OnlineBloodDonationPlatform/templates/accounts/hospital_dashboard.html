@@ -1,834 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block title %}Hospital dashboard{% endblock %}
 
-    <meta charset="UTF-8">
+{% block content %}
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <section class="dash-hero" aria-labelledby="greeting">
+        <div>
+            <h1 id="greeting">{{ request.user.first_name }}</h1>
+            <p class="lead">Hospital account</p>
+        </div>
 
-    <title>Hospital Dashboard | Ehda Portal</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
-            color: #222;
-            min-height: 100vh;
-        }
-
-
-        /* =========================
-           NAVBAR
-        ========================= */
-
-        .navbar {
-
-            height: 76px;
-
-            background: #1565c0;
-
-            color: white;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding: 0 50px;
-
-            box-shadow:
-                0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-
-        .logo {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-            font-size: 27px;
-
-            font-weight: 800;
-        }
-
-
-        .logo-icon {
-            font-size: 25px;
-        }
-
-
-        .nav-right {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 20px;
-        }
-
-
-        .user-name {
-
-            font-size: 14px;
-
-            color: #e3f2fd;
-        }
-
-
-        .logout-btn {
-
-            display: inline-block;
-
-            background: white;
-
-            color: #1565c0;
-
-            padding: 11px 21px;
-
-            border-radius: 9px;
-
-            text-decoration: none;
-
-            font-weight: 700;
-
-            transition: 0.2s ease;
-        }
-
-
-        .logout-btn:hover {
-
-            background: #e3f2fd;
-
-            transform: translateY(-1px);
-        }
-
-
-        /* =========================
-           MAIN
-        ========================= */
-
-        .main {
-
-            max-width: 1200px;
-
-            margin: 0 auto;
-
-            padding: 45px 25px 60px;
-        }
-
-
-        /* =========================
-           WELCOME
-        ========================= */
-
-        .welcome {
-
-            background: white;
-
-            border-radius: 20px;
-
-            padding: 35px 40px;
-
-            margin-bottom: 28px;
-
-            box-shadow:
-                0 8px 25px rgba(0, 0, 0, 0.06);
-
-            position: relative;
-
-            overflow: hidden;
-        }
-
-
-        .welcome::after {
-
-            content: "";
-
-            position: absolute;
-
-            width: 190px;
-
-            height: 190px;
-
-            border-radius: 50%;
-
-            background: rgba(21, 101, 192, 0.06);
-
-            right: -65px;
-
-            top: -75px;
-        }
-
-
-        .welcome h1 {
-
-            color: #1565c0;
-
-            font-size: 34px;
-
-            margin-bottom: 10px;
-
-            position: relative;
-
-            z-index: 1;
-        }
-
-
-        .welcome p {
-
-            color: #666;
-
-            font-size: 16px;
-
-            line-height: 1.6;
-
-            position: relative;
-
-            z-index: 1;
-        }
-
-
-        /* =========================
-           STATISTICS
-        ========================= */
-
-        .stats-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 20px;
-
-            margin-bottom: 28px;
-        }
-
-
-        .stat-card {
-
-            background: white;
-
-            border-radius: 17px;
-
-            padding: 25px;
-
-            box-shadow:
-                0 7px 22px rgba(0, 0, 0, 0.06);
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 18px;
-        }
-
-
-        .stat-icon {
-
-            width: 55px;
-
-            height: 55px;
-
-            border-radius: 14px;
-
-            background: #e3f2fd;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 28px;
-        }
-
-
-        .stat-info h3 {
-
-            font-size: 14px;
-
-            color: #777;
-
-            margin-bottom: 6px;
-        }
-
-
-        .stat-info p {
-
-            font-size: 20px;
-
-            font-weight: 700;
-
-            color: #222;
-        }
-
-
-        .active {
-
-            color: #2e7d32 !important;
-        }
-
-
-        /* =========================
-           SECTION TITLE
-        ========================= */
-
-        .section-title {
-
-            font-size: 23px;
-
-            color: #222;
-
-            margin-bottom: 18px;
-        }
-
-
-        /* =========================
-           QUICK ACTIONS
-        ========================= */
-
-        .actions-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 20px;
-
-            margin-bottom: 30px;
-        }
-
-
-        .action-card {
-
-            background: white;
-
-            border-radius: 17px;
-
-            padding: 28px;
-
-            box-shadow:
-                0 7px 22px rgba(0, 0, 0, 0.06);
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-
-        .action-card:hover {
-
-            transform: translateY(-4px);
-
-            box-shadow:
-                0 12px 28px rgba(0, 0, 0, 0.09);
-        }
-
-
-        .action-icon {
-
-            font-size: 35px;
-
-            margin-bottom: 15px;
-        }
-
-
-        .action-card h3 {
-
-            font-size: 18px;
-
-            margin-bottom: 8px;
-
-            color: #222;
-        }
-
-
-        .action-card p {
-
-            color: #777;
-
-            font-size: 14px;
-
-            line-height: 1.5;
-
-            margin-bottom: 18px;
-        }
-
-
-        .action-btn {
-
-            display: inline-block;
-
-            padding: 9px 16px;
-
-            border-radius: 8px;
-
-            background: #1565c0;
-
-            color: white;
-
-            text-decoration: none;
-
-            font-size: 13px;
-
-            font-weight: 700;
-        }
-
-
-        /* =========================
-           INFORMATION CARDS
-        ========================= */
-
-        .bottom-grid {
-
-            display: grid;
-
-            grid-template-columns: 1fr 1fr;
-
-            gap: 20px;
-        }
-
-
-        .info-card {
-
-            background: white;
-
-            border-radius: 17px;
-
-            padding: 28px;
-
-            box-shadow:
-                0 7px 22px rgba(0, 0, 0, 0.06);
-        }
-
-
-        .info-card h2 {
-
-            font-size: 20px;
-
-            margin-bottom: 15px;
-
-            color: #222;
-        }
-
-
-        .info-card p {
-
-            color: #777;
-
-            line-height: 1.6;
-
-            font-size: 14px;
-        }
-
-
-        .status {
-
-            display: inline-block;
-
-            margin-top: 15px;
-
-            padding: 8px 14px;
-
-            border-radius: 20px;
-
-            background: #e8f5e9;
-
-            color: #2e7d32;
-
-            font-size: 13px;
-
-            font-weight: 700;
-        }
-
-
-        /* =========================
-           FOOTER
-        ========================= */
-
-        .footer {
-
-            text-align: center;
-
-            color: #999;
-
-            font-size: 13px;
-
-            margin-top: 35px;
-        }
-
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 850px) {
-
-            .navbar {
-                padding: 0 25px;
-            }
-
-            .stats-grid,
-            .actions-grid {
-
-                grid-template-columns: 1fr;
-            }
-
-            .bottom-grid {
-
-                grid-template-columns: 1fr;
-            }
-        }
-
-
-        @media (max-width: 550px) {
-
-            .navbar {
-
-                height: auto;
-
-                padding: 18px 20px;
-
-                flex-direction: column;
-
-                gap: 15px;
-            }
-
-
-            .nav-right {
-
-                width: 100%;
-
-                justify-content: space-between;
-            }
-
-
-            .main {
-
-                padding:
-                    25px 15px 40px;
-            }
-
-
-            .welcome {
-
-                padding:
-                    28px 24px;
-            }
-
-
-            .welcome h1 {
-
-                font-size: 28px;
-            }
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<!-- =========================
-     NAVBAR
-========================= -->
-
-<nav class="navbar">
-
-
-    <div class="logo">
-
-        <span class="logo-icon">
-            🏥
-        </span>
-
-        Ehda Portal
-
-    </div>
-
-
-    <div class="nav-right">
-
-        <span class="user-name">
-            {{ request.user.first_name }}
-        </span>
-
-
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="logout-btn">
-                Logout
-            </button>
-        </form>
-
-    </div>
-
-
-</nav>
-
-
-
-<!-- =========================
-     MAIN
-========================= -->
-
-<main class="main">
-
-
-    <!-- Welcome -->
-
-    <section class="welcome">
-
-        <h1>
-            Welcome, {{ request.user.first_name }}! 🏥
-        </h1>
-
-        <p>
-            Manage blood requests, connect with donors,
-            and help patients receive the blood they need.
-        </p>
-
+        <div class="cluster">
+            <a href="{% url 'create_blood_request' %}" class="btn btn-primary btn-lg">New blood request</a>
+            <a href="{% url 'locations:search' %}" class="btn btn-secondary btn-lg">Find donors</a>
+        </div>
     </section>
 
+    <!-- Request counts need data from the view; placeholders until then -->
+    <section class="section" aria-labelledby="overview-title">
+        <h2 id="overview-title" class="visually-hidden">Overview</h2>
 
-
-    <!-- Statistics -->
-
-    <div class="stats-grid">
-
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                🩸
-            </div>
-
-            <div class="stat-info">
-
-                <h3>
-                    Active Requests
-                </h3>
-
-                <p>
-                    0
-                </p>
-
-            </div>
-
+        <div class="grid grid-3">
+            {% include "partials/stat_card.html" with label="Active requests" value="—" note="See Manage requests" %}
+            {% include "partials/stat_card.html" with label="Donors connected" value="—" note="Available when donors can respond" %}
+            {% include "partials/stat_card.html" with label="Account status" value="Active" %}
         </div>
+    </section>
 
+    <section class="section" aria-labelledby="requests-title">
+        <h2 id="requests-title" class="section-title">Blood requests</h2>
 
+        <ul class="link-list">
+            <li>
+                <a href="{% url 'create_blood_request' %}">
+                    <span>
+                        <span class="link-title">Create blood request</span>
+                        <span class="link-text">Ask for a blood type when a patient needs it</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'manage_blood_requests' %}">
+                    <span>
+                        <span class="link-title">Manage requests</span>
+                        <span class="link-text">See your requests and their status</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+        </ul>
+    </section>
 
-        <div class="stat-card">
+    <section class="section" aria-labelledby="actions-title">
+        <h2 id="actions-title" class="section-title">Find blood</h2>
 
-            <div class="stat-icon">
-                👥
+        <ul class="link-list">
+            <li>
+                <a href="{% url 'locations:search' %}">
+                    <span>
+                        <span class="link-title">Search donors</span>
+                        <span class="link-text">By blood type, compatible types and distance</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'locations:map' %}">
+                    <span>
+                        <span class="link-title">Donor map</span>
+                        <span class="link-text">Donors’ approximate areas, hospitals and donation centres</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section class="section" aria-labelledby="soon-title">
+        <h2 id="soon-title" class="section-title">Coming soon</h2>
+
+        <div class="grid grid-2">
+            <div class="card soon-card">
+                <h3 class="card-title">Donor responses</h3>
+                <p class="card-text">See which donors accepted or declined your requests.</p>
+                <span class="tag">Coming soon</span>
             </div>
 
-            <div class="stat-info">
-
-                <h3>
-                    Donors Connected
-                </h3>
-
-                <p>
-                    0
-                </p>
-
+            <div class="card soon-card">
+                <h3 class="card-title">Hospital profile</h3>
+                <p class="card-text">Your hospital’s details and contact information.</p>
+                <span class="tag">Coming soon</span>
             </div>
-
         </div>
+    </section>
 
-
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-                ❤️
-            </div>
-
-            <div class="stat-info">
-
-                <h3>
-                    Account Status
-                </h3>
-
-                <p class="active">
-                    Active
-                </p>
-
-            </div>
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- Quick Actions -->
-
-    <h2 class="section-title">
-        Hospital Actions
-    </h2>
-
-
-    <div class="actions-grid">
-
-
-        <!-- Blood Request -->
-
-        <div class="action-card">
-
-            <div class="action-icon">
-                🩸
-            </div>
-
-            <h3>
-                Create Blood Request
-            </h3>
-
-            <p>
-                Create a blood request when a patient
-                needs a specific blood type.
-            </p>
-
-            <a href="{% url 'create_blood_request' %}" class="action-btn">
-                Create Request
-            </a>
-
-        </div>
-
-
-
-        <!-- Find Donors -->
-
-        <div class="action-card">
-
-            <div class="action-icon">
-                🔎
-            </div>
-
-            <h3>
-                Find Donors
-            </h3>
-
-            <p>
-                Search for available donors based on
-                blood type and location.
-            </p>
-
-            <a href="{% url 'locations:search' %}" class="action-btn">
-                Search Donors
-            </a>
-
-        </div>
-
-
-
-        <!-- Requests -->
-
-        <div class="action-card">
-
-            <div class="action-icon">
-                📋
-            </div>
-
-            <h3>
-                Manage Requests
-            </h3>
-
-            <p>
-                View your active requests and monitor
-                their status.
-            </p>
-
-            <a href="{% url 'manage_blood_requests' %}" class="action-btn">
-                View Requests
-            </a>
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- Information -->
-
-    <div class="bottom-grid">
-
-
-        <div class="info-card">
-
-            <h2>
-                Hospital Profile
-            </h2>
-
-            <p>
-                Your hospital information and contact
-                details will appear here when the
-                hospital profile module is connected.
-            </p>
-
-            <span class="status">
-                ● Account Active
-            </span>
-
-        </div>
-
-
-
-        <div class="info-card">
-
-            <h2>
-                Recent Activity
-            </h2>
-
-            <p>
-                Your blood requests, donor responses,
-                and other hospital activity will
-                appear here.
-            </p>
-
-            <span class="status">
-                No Activity Yet
-            </span>
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="footer">
-
-        Ehda Portal © 2026 · Connecting people. Saving lives. ❤️
-
-    </div>
-
-
-</main>
-
-
-</body>
-
-</html>
+{% endblock %}

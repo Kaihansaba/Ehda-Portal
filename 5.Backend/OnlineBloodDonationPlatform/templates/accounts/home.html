@@ -1,113 +1,136 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | Ehda Portal</title>
+{% extends "base.html" %}
+{% load ehda_ui %}
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
+{% block title %}Find blood donors near you{% endblock %}
+{% block main_class %}is-flush{% endblock %}
 
-        body {
-            min-height: 100vh;
-            background: #f5f8fb;
-        }
+{% block page %}
 
-        .navbar {
-            background: #b71c1c;
-            color: white;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    <section class="hero" aria-labelledby="hero-title">
+        <div class="container">
+            {% include "partials/messages.html" %}
 
-        .logo {
-            font-size: 26px;
-            font-weight: bold;
-        }
+            <h1 id="hero-title">Find blood donors near you. Save a life.</h1>
 
-        .logout-btn {
-            background: white;
-            color: #b71c1c;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .content {
-            max-width: 1000px;
-            margin: 60px auto;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .content h1 {
-            font-size: 38px;
-            color: #222;
-            margin-bottom: 15px;
-        }
-
-        .content p {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 40px;
-        }
-
-        .card {
-            background: white;
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        }
-
-        .card h2 {
-            color: #b71c1c;
-            margin-bottom: 15px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <nav class="navbar">
-        <div class="logo">Ehda Portal</div>
-
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="logout-btn">
-                Logout
-            </button>
-        </form>
-    </nav>
-
-    <div class="content">
-
-        <div class="card">
-            <h1>Welcome to Ehda Portal</h1>
-
-            <p>
-                You have successfully logged in to your account.
+            <p class="lead">
+                Ehda lists people in Afghanistan who are willing to give blood,
+                so patients, families and hospitals can find a matching donor
+                nearby. It is free to use. Donors’ exact addresses are never shown.
             </p>
 
-            <h2>Authentication Successful</h2>
+            <div class="cluster">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'role_redirect' %}" class="btn btn-primary btn-lg">Go to my dashboard</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Become a donor</a>
+                {% endif %}
+                <a href="{% url 'locations:search' %}" class="btn btn-secondary btn-lg">Find blood</a>
+            </div>
 
-            <p>
-                Your account is protected and you can now access
-                the platform.
-            </p>
+            <p class="hero-note">Ehda (<span lang="fa-AF">اهدا</span>) means “donation” in Dari.</p>
         </div>
+    </section>
 
-    </div>
+    <section class="band" aria-labelledby="how-title">
+        <div class="container">
+            <div class="band-header">
+                <h2 id="how-title" class="section-title">How it works</h2>
+            </div>
 
-</body>
-</html>
+            <ol class="steps">
+                <li>
+                    <h3>Create an account</h3>
+                    <p>Sign up as a donor or as a hospital.</p>
+                </li>
+                <li>
+                    <h3>Add your blood type and area</h3>
+                    <p>Donors choose a rough location on a map. Others only see an area of about 1 km.</p>
+                </li>
+                <li>
+                    <h3>Search and get in touch</h3>
+                    <p>Search by blood type and distance to see available donors nearby.</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="band" aria-labelledby="types-title">
+        <div class="container">
+            <div class="band-header">
+                <h2 id="types-title" class="section-title">Blood type compatibility</h2>
+                <p>Which red blood cells each type can give and receive.</p>
+            </div>
+
+            {# Keep in sync with COMPATIBLE_DONORS in locations/constants.py #}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Blood type</th>
+                            <th scope="col">Can give to</th>
+                            <th scope="col">Can receive from</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">{% include "partials/blood_badge.html" with type="O-" %}</th>
+                            <td>Everyone</td>
+                            <td>O−</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{% include "partials/blood_badge.html" with type="O+" %}</th>
+                            <td>O+, A+, B+, AB+</td>
+                            <td>O+, O−</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{% include "partials/blood_badge.html" with type="A-" %}</th>
+                            <td>A−, A+, AB−, AB+</td>
+                            <td>A−, O−</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{% include "partials/blood_badge.html" with type="A+" %}</th>
+                            <td>A+, AB+</td>
+                            <td>A+, A−, O+, O−</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{% include "partials/blood_badge.html" with type="B-" %}</th>
+                            <td>B−, B+, AB−, AB+</td>
+                            <td>B−, O−</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{% include "partials/blood_badge.html" with type="B+" %}</th>
+                            <td>B+, AB+</td>
+                            <td>B+, B−, O+, O−</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{% include "partials/blood_badge.html" with type="AB-" %}</th>
+                            <td>AB−, AB+</td>
+                            <td>AB−, A−, B−, O−</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{% include "partials/blood_badge.html" with type="AB+" %}</th>
+                            <td>AB+</td>
+                            <td>Everyone</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="table-note">A hospital always confirms compatibility with a lab test before a transfusion.</p>
+        </div>
+    </section>
+
+    {% if not request.user.is_authenticated %}
+        <section class="band" aria-labelledby="join-title">
+            <div class="container">
+                <h2 id="join-title" class="section-title">Ready to help?</h2>
+                <p class="lead mb-5">One donation can help save up to three lives. Join the donors who are ready when someone nearby needs blood.</p>
+                <div class="cluster">
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Become a donor</a>
+                    <a href="{% url 'login' %}" class="btn btn-ghost btn-lg">I already have an account</a>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+{% endblock %}

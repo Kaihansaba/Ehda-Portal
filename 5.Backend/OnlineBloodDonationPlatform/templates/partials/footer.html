@@ -1,0 +1,24 @@
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="stack-sm">
+            <div class="footer-brand">
+                {% include "partials/logo.html" with class="footer-mark" %}
+                Ehda Portal
+            </div>
+            <p>Connecting donors, hospitals and people in need of blood across Afghanistan.</p>
+            <p>In a medical emergency, go to the nearest hospital straight away.</p>
+        </div>
+
+        <nav aria-label="Footer">
+            <ul class="footer-links" role="list">
+                <li><a href="{% url 'locations:search' %}">Find donors</a></li>
+                <li><a href="{% url 'locations:map' %}">Map</a></li>
+                {% if not request.user.is_authenticated %}
+                    <li><a href="{% url 'register' %}">Become a donor</a></li>
+                    <li><a href="{% url 'login' %}">Sign in</a></li>
+                {% endif %}
+            </ul>
+            <p>&copy; 2026 Ehda Portal</p>
+        </nav>
+    </div>
+</footer>

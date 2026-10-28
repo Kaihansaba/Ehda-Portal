@@ -1,108 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Manage Blood Requests | Ehda Portal</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 50px auto;
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            padding: 30px;
-        }
-        h1 {
-            color: #1565c0;
-            margin-bottom: 25px;
-        }
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            gap: 15px;
-        }
-        .btn {
-            text-decoration: none;
-            background: #1565c0;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-weight: 700;
-        }
-        .request-list {
-            display: grid;
-            gap: 16px;
-        }
-        .request-card {
-            border: 1px solid #e4e8ef;
-            border-radius: 12px;
-            padding: 18px;
-            background: #fafbfd;
-        }
-        .meta {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin: 8px 0;
-            color: #555;
-            font-size: 14px;
-        }
-        .status {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: #e8f5e9;
-            color: #2e7d32;
-            font-weight: 700;
-            font-size: 12px;
-        }
-        .empty {
-            padding: 20px;
-            background: #f8fafc;
-            border: 1px dashed #d7dce5;
-            border-radius: 12px;
-            color: #4b5563;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="topbar">
-            <h1>Blood Requests</h1>
-            <a href="{% url 'create_blood_request' %}" class="btn">+ New Request</a>
-        </div>
+{% extends "base.html" %}
+{% load ehda_ui %}
 
-        {% if requests %}
-            <div class="request-list">
-                {% for request in requests %}
-                    <div class="request-card">
-                        <h3>{{ request.blood_type }} Blood Needed</h3>
-                        <div class="meta">
-                            <span>Units: {{ request.units_needed }}</span>
-                            <span>Urgency: {{ request.get_urgency_display }}</span>
-                            <span>Status: {{ request.get_status_display }}</span>
-                        </div>
-                        <span class="status">{{ request.get_status_display }}</span>
-                        {% if request.notes %}
-                            <p><strong>Notes:</strong> {{ request.notes }}</p>
-                        {% endif %}
-                        <p><small>Created: {{ request.created_at|date:"M d, Y H:i" }}</small></p>
-                    </div>
-                {% endfor %}
+{% block title %}Blood requests{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'hospital_dashboard' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to dashboard
+        </a>
+
+        <div class="dash-hero">
+            <div>
+                <h1>Blood requests</h1>
+                <p class="lead">Requests from your hospital, newest first.</p>
             </div>
-        {% else %}
-            <div class="empty">
-                No blood requests yet. Create your first request to begin matching donors.
-            </div>
-        {% endif %}
+            <a href="{% url 'create_blood_request' %}" class="btn btn-primary">New request</a>
+        </div>
     </div>
-</body>
-</html>
+
+    {% if requests %}
+        <div class="results-list">
+            {# "blood_request", not "request", so Django's request object is not hidden #}
+            {% for blood_request in requests %}
+                <article class="card request-card">
+                    {% include "partials/blood_badge.html" with type=blood_request.blood_type large=True %}
+
+                    <div class="stack-sm">
+                        <h2 class="request-card-title">
+                            {{ blood_request.units_needed }} unit{{ blood_request.units_needed|pluralize }} of {{ blood_request.blood_type|blood_symbol }}
+                            {% if blood_request.urgency != "ROUTINE" %}
+                                <span class="tag{% if blood_request.urgency == 'EMERGENCY' %} tag-danger{% endif %}">{{ blood_request.get_urgency_display }}</span>
+                            {% endif %}
+                        </h2>
+
+                        <div class="donor-card-meta">
+                            {% if blood_request.status == "OPEN" or blood_request.status == "IN_REVIEW" %}
+                                <span class="availability is-pending">{{ blood_request.get_status_display }}</span>
+                            {% elif blood_request.status == "CANCELLED" %}
+                                <span class="availability is-unavailable">{{ blood_request.get_status_display }}</span>
+                            {% else %}
+                                <span class="availability is-available">{{ blood_request.get_status_display }}</span>
+                            {% endif %}
+
+                            {% if blood_request.urgency == "ROUTINE" %}
+                                <span class="meta-item">{{ blood_request.get_urgency_display }}</span>
+                            {% endif %}
+
+                            <span class="meta-item">
+                                {% include "partials/icon.html" with name="clock" %}
+                                <time datetime="{{ blood_request.created_at|date:'c' }}">{{ blood_request.created_at|date:"j M Y, H:i" }}</time>
+                            </span>
+                        </div>
+
+                        {% if blood_request.notes %}
+                            <p class="request-notes">{{ blood_request.notes }}</p>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card">
+            {% url 'create_blood_request' as create_url %}
+            {% include "partials/empty_state.html" with title="No blood requests yet" text="Create your first request when a patient needs blood." action_url=create_url action_label="New request" %}
+        </div>
+    {% endif %}
+
+{% endblock %}

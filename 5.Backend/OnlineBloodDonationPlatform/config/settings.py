@@ -157,6 +157,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Project-level static files (CSS, JS, icons). Served automatically by
+# runserver while DEBUG is True.
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.1/ref/settings/#default-auto-field
@@ -176,3 +180,9 @@ LOGIN_URL = "/login/"
 # For development, password-reset emails will appear
 # directly in the terminal running the Django server.
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
+# Send our site's origin (not the full URL) as the Referer to other sites.
+# OpenStreetMap's tile servers return 403 for requests without one.
+# Django's default ("same-origin") sends no Referer to other sites.
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"

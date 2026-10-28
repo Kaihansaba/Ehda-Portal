@@ -1,64 +1,45 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donation History | Ehda Portal</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: Arial, sans-serif; background: #f7f8fc; color: #252b36; }
-        nav { background: #b71c1c; color: white; padding: 18px 7%; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-        nav a { color: white; text-decoration: none; font-weight: bold; }
-        main { width: min(950px, 92%); margin: 40px auto; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px #0001; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 14px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #fff1f1; }
-        .empty { padding: 25px; text-align: center; color: #687080; }
-        .back { display: inline-block; margin-top: 20px; color: #b71c1c; text-decoration: none; font-weight: bold; }
-        @media (max-width: 600px) { main { margin: 25px auto; } .card { padding: 12px; } th, td { padding: 10px; } }
-    </style>
-</head>
-<body>
-    <nav>
-        <strong>Ehda Portal</strong>
-        <a href="{% url 'donor_dashboard' %}">Back to Dashboard</a>
-    </nav>
+{% extends "base.html" %}
 
-    <main>
-        <h1>My Donation History</h1>
-        <p>Review your recorded blood donations.</p>
+{% block title %}My donation history{% endblock %}
 
-        <section class="card">
-            {% if donations %}
-                <table>
-                    <thead>
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to dashboard
+        </a>
+        <h1>My donation history</h1>
+        <p class="lead">Your recorded blood donations, newest first. Only you can see this page.</p>
+    </div>
+
+    {% if donations %}
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Donation date</th>
+                        <th scope="col">Blood type</th>
+                        <th scope="col">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for donation in donations %}
                         <tr>
-                            <th>Donation Date</th>
-                            <th>Blood Type</th>
-                            <th>Notes</th>
+                            <th scope="row">
+                                <time datetime="{{ donation.donation_date|date:'Y-m-d' }}">{{ donation.donation_date|date:"j M Y" }}</time>
+                            </th>
+                            <td>{% include "partials/blood_badge.html" with type=donation.blood_type %}</td>
+                            <td>{{ donation.notes|default:"—" }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for donation in donations %}
-                            <tr>
-                                <td>{{ donation.donation_date|date:"M d, Y" }}</td>
-                                <td>{{ donation.blood_type }}</td>
-                                <td>{{ donation.notes|default:"—" }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <div class="empty">
-                    <h3>No donations recorded yet</h3>
-                    <p>Your donation history will appear here when donations are recorded.</p>
-                </div>
-            {% endif %}
-        </section>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="card">
+            {% include "partials/empty_state.html" with title="No donations recorded yet" text="Your donation history will appear here when donations are recorded." %}
+        </div>
+    {% endif %}
 
-        <a class="back" href="{% url 'donor_dashboard' %}">← Back to Dashboard</a>
-    </main>
-</body>
-</html>
+{% endblock %}
