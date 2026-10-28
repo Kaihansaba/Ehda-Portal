@@ -1511,6 +1511,9 @@ fieldset {
 
 /* Blood type compatibility table */
 .table-wrap {
+    /* relative: keeps absolutely positioned children (visually-hidden
+       text) inside the scroll area instead of widening the page */
+    position: relative;
     overflow-x: auto;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);

@@ -1,0 +1,34 @@
+{% comment %}
+    Status buttons for one blood request (hospital only). Parameter:
+    blood_request. The allowed changes are in BloodRequest.can_transition_to;
+    completed and cancelled requests have no buttons.
+{% endcomment %}
+{% if blood_request.status == "OPEN" or blood_request.status == "IN_REVIEW" or blood_request.status == "ACCEPTED" %}
+    <div class="cluster request-actions">
+        {% if blood_request.status == "OPEN" %}
+            <form method="post" action="{% url 'change_request_status' blood_request.pk 'IN_REVIEW' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary btn-sm">Mark in review</button>
+            </form>
+        {% elif blood_request.status == "IN_REVIEW" %}
+            <form method="post" action="{% url 'change_request_status' blood_request.pk 'ACCEPTED' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary btn-sm">Accept</button>
+            </form>
+        {% else %}
+            <form method="post" action="{% url 'close_blood_request' blood_request.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="COMPLETED">
+                <button type="submit" class="btn btn-secondary btn-sm">Mark completed</button>
+            </form>
+        {% endif %}
+
+        {% if blood_request.status != "ACCEPTED" %}
+            <form method="post" action="{% url 'close_blood_request' blood_request.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="CANCELLED">
+                <button type="submit" class="btn btn-ghost btn-sm">Cancel request</button>
+            </form>
+        {% endif %}
+    </div>
+{% endif %}

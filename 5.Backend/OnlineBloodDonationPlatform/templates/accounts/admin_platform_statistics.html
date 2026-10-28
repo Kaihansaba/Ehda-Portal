@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Platform statistics{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        {% include "partials/admin_back_link.html" %}
+        <h1>Platform statistics</h1>
+        <p class="lead">Key numbers for the whole platform.</p>
+    </div>
+
+    <section class="section" aria-labelledby="numbers-title">
+        <h2 id="numbers-title" class="visually-hidden">Numbers</h2>
+        <div class="grid grid-3">
+            {% include "partials/stat_card.html" with label="Total users" value=total_users %}
+            {% include "partials/stat_card.html" with label="Donors" value=total_donors %}
+            {% include "partials/stat_card.html" with label="Hospitals" value=total_hospitals %}
+            {% include "partials/stat_card.html" with label="Total requests" value=total_requests %}
+            {% include "partials/stat_card.html" with label="Active users" value=active_users %}
+            {% include "partials/stat_card.html" with label="Inactive users" value=inactive_users %}
+        </div>
+    </section>
+
+{% endblock %}

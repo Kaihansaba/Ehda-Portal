@@ -1,0 +1,18 @@
+{% comment %}
+    Activate / deactivate button for one account (admin pages).
+    Parameters: account, next (URL name to come back to), label (optional).
+    Admins can't deactivate themselves, so there is no button on their own row.
+{% endcomment %}
+{% if account == request.user %}
+    <span class="muted">You</span>
+{% else %}
+    <form method="post" action="{% url 'toggle_user_status' account.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% if account.is_active %}
+            <button type="submit" class="btn btn-danger btn-sm">Deactivate<span class="visually-hidden"> {{ account.email }}</span></button>
+        {% else %}
+            <button type="submit" class="btn btn-secondary btn-sm">{{ label|default:"Activate" }}<span class="visually-hidden"> {{ account.email }}</span></button>
+        {% endif %}
+    </form>
+{% endif %}

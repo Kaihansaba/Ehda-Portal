@@ -14,7 +14,7 @@ from django.contrib import admin
 from django.test import TestCase
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
-from accounts.models import User
+from accounts.models import BloodRequest, User
 from locations.models import DonorLocation
 from locations.search import search_donors
 
@@ -105,7 +105,29 @@ def expected(name, url):
         # Blood requests (Developer 3): hospitals only
         "manage_blood_requests": only("hospital"),
         "create_blood_request": only("hospital"),
+        "request_detail": only("hospital"),
+        # GET does not change a status; hospitals go back to their list.
+        "change_request_status": {
+            **only(),
+            "hospital": (302, reverse("manage_blood_requests")),
+        },
+        "close_blood_request": {
+            **only(),
+            "hospital": (302, reverse("manage_blood_requests")),
+        },
         "admin_dashboard": only("admin"),
+        # Admin tools (Developer 3): admins only
+        "admin_manage_users": only("admin"),
+        "admin_manage_hospitals": only("admin"),
+        "admin_reported_accounts": only("admin"),
+        "admin_platform_activity": only("admin"),
+        "admin_platform_statistics": only("admin"),
+        "admin_security_access": only("admin"),
+        # GET does not toggle; admins go back to Manage users.
+        "toggle_user_status": {
+            **only(),
+            "admin": (302, reverse("admin_manage_users")),
+        },
         "password_reset": public(),
         "password_reset_done": public(),
         "password_reset_confirm": public(),
@@ -139,6 +161,18 @@ class UrlSmokeTests(TestCase):
             user=self.users["donor"], province="Kabul",
             latitude=Decimal("34.531234"), longitude=Decimal("69.171234"),
         )
+        blood_request = BloodRequest.objects.create(
+            hospital=self.users["hospital"], blood_type="O-", notes="Surgery",
+        )
+
+        # URLs that need real objects: the hospital's own request, a donor.
+        self.url_args = {
+            **URL_ARGS,
+            "request_detail": {"pk": blood_request.pk},
+            "change_request_status": {"pk": blood_request.pk, "status": "IN_REVIEW"},
+            "close_blood_request": {"pk": blood_request.pk},
+            "toggle_user_status": {"pk": self.users["donor"].pk},
+        }
 
     def login_as(self, role):
         self.client.logout()
@@ -152,7 +186,7 @@ class UrlSmokeTests(TestCase):
 
     def test_every_url_for_every_role(self):
         for name in all_named_urls():
-            url = reverse(name, kwargs=URL_ARGS.get(name))
+            url = reverse(name, kwargs=self.url_args.get(name))
             expectations = expected(name, url)
 
             for role in ROLES:

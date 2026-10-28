@@ -1,0 +1,4 @@
+{% comment %}
+    A blood request's status as a coloured dot. Parameter: blood_request.
+{% endcomment %}
+{% if blood_request.status == "OPEN" or blood_request.status == "IN_REVIEW" %}<span class="availability is-pending">{{ blood_request.get_status_display }}</span>{% elif blood_request.status == "CANCELLED" %}<span class="availability is-unavailable">{{ blood_request.get_status_display }}</span>{% else %}<span class="availability is-available">{{ blood_request.get_status_display }}</span>{% endif %}

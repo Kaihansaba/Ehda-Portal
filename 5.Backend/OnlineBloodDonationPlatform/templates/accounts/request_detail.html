@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load ehda_ui %}
+
+{% block title %}Blood request{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'manage_blood_requests' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to requests
+        </a>
+        <h1>{{ blood_request.units_needed }} unit{{ blood_request.units_needed|pluralize }} of {{ blood_request.blood_type|blood_symbol }}</h1>
+        <p class="lead">Blood request from {{ blood_request.hospital.get_full_name|default:blood_request.hospital.email }}</p>
+    </div>
+
+    <section class="card section stack-sm" aria-labelledby="details-title">
+        <h2 id="details-title" class="card-title">Details</h2>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <tbody>
+                    <tr>
+                        <th scope="row">Blood type</th>
+                        <td>{% include "partials/blood_badge.html" with type=blood_request.blood_type %}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Units needed</th>
+                        <td>{{ blood_request.units_needed }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Urgency</th>
+                        <td>
+                            {% if blood_request.urgency == "ROUTINE" %}
+                                {{ blood_request.get_urgency_display }}
+                            {% else %}
+                                <span class="tag{% if blood_request.urgency == 'EMERGENCY' %} tag-danger{% endif %}">{{ blood_request.get_urgency_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Status</th>
+                        <td>{% include "partials/request_status.html" %}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Created</th>
+                        <td><time datetime="{{ blood_request.created_at|date:'c' }}">{{ blood_request.created_at|date:"j M Y, H:i" }}</time></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Notes</th>
+                        <td>{{ blood_request.notes|default:"—"|linebreaksbr }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {% if blood_request.status == "COMPLETED" or blood_request.status == "CANCELLED" %}
+        <p class="muted">This request is {{ blood_request.get_status_display|lower }} and can no longer be changed.</p>
+    {% else %}
+        <section class="section" aria-labelledby="actions-title">
+            <h2 id="actions-title" class="section-title">Update status</h2>
+            {% include "partials/request_actions.html" %}
+        </section>
+    {% endif %}
+
+{% endblock %}

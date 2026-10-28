@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load ehda_ui %}
+
+{% block title %}Platform activity{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        {% include "partials/admin_back_link.html" %}
+        <h1>Platform activity</h1>
+        <p class="lead">Accounts and blood requests across the platform.</p>
+    </div>
+
+    <section class="section" aria-labelledby="totals-title">
+        <h2 id="totals-title" class="visually-hidden">Totals</h2>
+        <div class="grid grid-4">
+            {% include "partials/stat_card.html" with label="Total users" value=summary.total_users %}
+            {% include "partials/stat_card.html" with label="Donors" value=summary.total_donors %}
+            {% include "partials/stat_card.html" with label="Hospitals" value=summary.total_hospitals %}
+            {% include "partials/stat_card.html" with label="Requests" value=summary.total_requests %}
+        </div>
+    </section>
+
+    <section class="section" aria-labelledby="status-title">
+        <h2 id="status-title" class="section-title">Request status summary</h2>
+        <div class="table-wrap">
+            <table class="data-table">
+                <tbody>
+                    <tr><th scope="row">Open</th><td>{{ summary.open_requests }}</td></tr>
+                    <tr><th scope="row">In review</th><td>{{ summary.in_review_requests }}</td></tr>
+                    <tr><th scope="row">Accepted</th><td>{{ summary.accepted_requests }}</td></tr>
+                    <tr><th scope="row">Completed</th><td>{{ summary.completed_requests }}</td></tr>
+                    <tr><th scope="row">Cancelled</th><td>{{ summary.cancelled_requests }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="section" aria-labelledby="recent-title">
+        <h2 id="recent-title" class="section-title">Recent requests</h2>
+
+        {% if recent_requests %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Hospital</th>
+                            <th scope="col">Blood type</th>
+                            <th scope="col">Urgency</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {# "blood_request", not "request", so Django's request object is not hidden #}
+                        {% for blood_request in recent_requests %}
+                            <tr>
+                                <th scope="row">{{ blood_request.hospital.get_full_name|default:blood_request.hospital.email }}</th>
+                                <td>{% include "partials/blood_badge.html" with type=blood_request.blood_type %}</td>
+                                <td>{{ blood_request.get_urgency_display }}</td>
+                                <td>{% include "partials/request_status.html" %}</td>
+                                <td><time datetime="{{ blood_request.created_at|date:'c' }}">{{ blood_request.created_at|date:"j M Y, H:i" }}</time></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card">
+                {% include "partials/empty_state.html" with title="No blood requests yet" %}
+            </div>
+        {% endif %}
+    </section>
+
+{% endblock %}

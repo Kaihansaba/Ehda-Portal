@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Manage hospitals{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        {% include "partials/admin_back_link.html" %}
+        <h1>Manage hospitals</h1>
+        <p class="lead">Hospital accounts. Places shown on the map are managed in the site admin.</p>
+    </div>
+
+    {% if hospitals %}
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Hospital</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in hospitals %}
+                        <tr>
+                            <th scope="row">{{ account.get_full_name|default:"—" }}</th>
+                            <td>{{ account.email }}</td>
+                            <td>{{ account.phone|default:"—" }}</td>
+                            <td>{% include "partials/account_status.html" %}</td>
+                            <td>{% include "partials/user_status_toggle.html" with next="admin_manage_hospitals" %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="card">
+            {% include "partials/empty_state.html" with title="No hospital accounts yet" %}
+        </div>
+    {% endif %}
+
+{% endblock %}

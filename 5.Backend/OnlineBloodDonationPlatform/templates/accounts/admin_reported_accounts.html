@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Reported accounts{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        {% include "partials/admin_back_link.html" %}
+        <h1>Reported accounts</h1>
+        <p class="lead">Deactivated accounts. They can't sign in until you reactivate them.</p>
+    </div>
+
+    {% if reported_users %}
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Person</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Review</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in reported_users %}
+                        <tr>
+                            <th scope="row">{{ account.get_full_name|default:"—" }}</th>
+                            <td>{{ account.email }}</td>
+                            <td>{{ account.get_role_display }}</td>
+                            <td><span class="availability is-unavailable">Reported</span></td>
+                            <td>{% include "partials/user_status_toggle.html" with next="admin_reported_accounts" label="Reactivate" %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="card">
+            {% include "partials/empty_state.html" with title="No reported accounts" text="Accounts you deactivate will be listed here." %}
+        </div>
+    {% endif %}
+
+{% endblock %}
