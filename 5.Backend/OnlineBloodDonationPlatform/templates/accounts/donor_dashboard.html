@@ -90,6 +90,15 @@
                     {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
                 </a>
             </li>
+            <li>
+                <a href="{% url 'donation_history' %}">
+                    <span>
+                        <span class="link-title">Donation history</span>
+                        <span class="link-text">{{ donation_count|default:0 }} donation{{ donation_count|default:0|pluralize }} recorded</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
         </ul>
     </section>
 
@@ -100,12 +109,6 @@
             <div class="card soon-card">
                 <h3 class="card-title">Blood requests</h3>
                 <p class="card-text">See requests from people who need your blood type, and accept or decline them.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-
-            <div class="card soon-card">
-                <h3 class="card-title">Donation history</h3>
-                <p class="card-text">Keep a private record of your past donations.</p>
                 <span class="tag">Coming soon</span>
             </div>
         </div>

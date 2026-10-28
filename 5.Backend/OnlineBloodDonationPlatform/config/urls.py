@@ -4,13 +4,14 @@ from django.contrib.auth import views as auth_views
 
 from accounts.views import (
     index,
+    home,
     register,
     user_login,
-    home,
     user_logout,
     role_redirect,
     donor_dashboard,
     donor_profile,
+    donation_history,
     toggle_availability,
     hospital_dashboard,
     admin_dashboard,
@@ -35,41 +36,34 @@ urlpatterns = [
     # Site root: dashboard if logged in, otherwise login
     path("", index, name="index"),
 
-    # Authentication
+    # Authentication and home
     path("register/", register, name="register"),
     path("login/", user_login, name="login"),
     path("logout/", user_logout, name="logout"),
-
-    # Home
     path("home/", home, name="home"),
 
-    # Role-based dashboard redirect
+    # Dashboards
     path("dashboard/", role_redirect, name="role_redirect"),
-
-    # Donor dashboard
     path("dashboard/donor/", donor_dashboard, name="donor_dashboard"),
-
-    # Donor profile and availability
     path(
         "dashboard/donor/profile/",
         donor_profile,
         name="donor_profile",
     ),
     path(
+        "dashboard/donor/donations/",
+        donation_history,
+        name="donation_history",
+    ),
+    path(
         "dashboard/donor/availability/",
         toggle_availability,
         name="toggle_availability",
     ),
+    path("dashboard/hospital/", hospital_dashboard, name="hospital_dashboard"),
+    path("dashboard/admin/", admin_dashboard, name="admin_dashboard"),
 
-    # Donor location, search and map (Developer 2)
-    path("", include("locations.urls")),
-
-    # Hospital dashboard
-    path(
-        "dashboard/hospital/",
-        hospital_dashboard,
-        name="hospital_dashboard",
-    ),
+    # Hospital blood requests
     path(
         "dashboard/hospital/requests/",
         manage_blood_requests,
@@ -81,12 +75,8 @@ urlpatterns = [
         name="create_blood_request",
     ),
 
-    # Admin dashboard
-    path(
-        "dashboard/admin/",
-        admin_dashboard,
-        name="admin_dashboard",
-    ),
+    # Donor location, search and map (Developer 2)
+    path("", include("locations.urls")),
 
     # Password reset
     path(
@@ -98,8 +88,6 @@ urlpatterns = [
         ),
         name="password_reset",
     ),
-
-    # Password reset email sent page
     path(
         "password-reset/done/",
         auth_views.PasswordResetDoneView.as_view(
@@ -107,8 +95,6 @@ urlpatterns = [
         ),
         name="password_reset_done",
     ),
-
-    # New password page
     path(
         "password-reset-confirm/<uidb64>/<token>/",
         auth_views.PasswordResetConfirmView.as_view(
@@ -116,8 +102,6 @@ urlpatterns = [
         ),
         name="password_reset_confirm",
     ),
-
-    # Password reset completed page
     path(
         "password-reset-complete/",
         auth_views.PasswordResetCompleteView.as_view(
