@@ -49,6 +49,32 @@ class SprintOneAuthenticationTests(TestCase):
             1,
         )
 
+    def test_registration_reactivates_inactive_account_with_same_email(self):
+        self.donor.is_active = False
+        self.donor.save(update_fields=["is_active"])
+
+        response = self.client.post(
+            reverse("register"),
+            {
+                "first_name": "Test",
+                "last_name": "Donor",
+                "email": "donor@example.com",
+                "phone": "0700000002",
+                "role": "DONOR",
+                "password": "NewStrongPass123!",
+                "confirm_password": "NewStrongPass123!",
+            },
+            follow=True,
+        )
+
+        self.donor.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(self.donor.is_active)
+        self.assertEqual(self.donor.email, "donor@example.com")
+        self.assertTrue(self.donor.check_password("NewStrongPass123!"))
+        self.assertEqual(User.objects.filter(email="donor@example.com").count(), 1)
+
     def test_registration_rejects_password_mismatch(self):
         response = self.client.post(
             reverse("register"),

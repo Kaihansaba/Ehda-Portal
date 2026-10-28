@@ -41,8 +41,9 @@ class RegistrationForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data["email"].lower().strip()
+        existing_user = User.objects.filter(email=email).first()
 
-        if User.objects.filter(email=email).exists():
+        if existing_user and existing_user.is_active:
             raise forms.ValidationError(
                 "An account with this email already exists."
             )
@@ -64,6 +65,23 @@ class RegistrationForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
+        email = self.cleaned_data["email"].lower().strip()
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user and not existing_user.is_active:
+            user = existing_user
+            user.first_name = self.cleaned_data["first_name"]
+            user.last_name = self.cleaned_data["last_name"]
+            user.phone = self.cleaned_data["phone"]
+            user.role = self.cleaned_data["role"]
+            user.is_active = True
+            user.set_password(self.cleaned_data["password"])
+
+            if commit:
+                user.save()
+
+            return user
+
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password"])
 

@@ -16,7 +16,8 @@
         body {
             font-family: Arial, sans-serif;
             background:
-                linear-gradient(135deg, rgba(120, 18, 18, 0.88), rgba(77, 13, 13, 0.86));
+                linear-gradient(rgba(102, 10, 10, 0.74), rgba(54, 8, 8, 0.76)),
+                url('https://images.unsplash.com/photo-1538108149393-fbbd81895973?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat fixed;
             color: #222;
             min-height: 100vh;
         }
@@ -24,7 +25,7 @@
         /* NAVBAR */
         .navbar {
             min-height: 76px;
-            background: rgba(122, 17, 17, 0.88);
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 35%, #b91c1c 100%);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.18);
             color: white;
@@ -142,12 +143,12 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(255,245,245,0.9));
-            border: 1px solid rgba(255, 202, 202, 0.8);
-            border-left: 5px solid #b71c1c;
+            background: linear-gradient(180deg, #fffdfd 0%, #ffffff 100%);
+            border: 3px solid #b91c1c;
+            border-left: 5px solid #b91c1c;
             border-radius: 17px;
             padding: 25px;
-            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 26px rgba(60, 8, 8, 0.08);
             display: flex;
             align-items: center;
             gap: 18px;
@@ -204,11 +205,12 @@
         }
 
         .action-card {
-            background: linear-gradient(135deg, rgba(255, 233, 233, 0.72), rgba(255, 250, 250, 0.82)), var(--card-bg) center/cover no-repeat;
-            border: 1px solid rgba(255, 202, 202, 0.9);
+            background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.9)),
+                        url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+            border: 3px solid #b91c1c;
             border-radius: 17px;
             padding: 28px;
-            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 26px rgba(60, 8, 8, 0.08);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             backdrop-filter: blur(8px);
             position: relative;
@@ -293,11 +295,12 @@
         }
 
         .info-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(255,244,244,0.8)), var(--card-bg) center/cover no-repeat;
-            border: 4px solid #ffffff;
+            background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.9)),
+                        url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+            border: 3px solid #b91c1c;
             border-radius: 17px;
             padding: 18px;
-            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 26px rgba(60, 8, 8, 0.08);
             backdrop-filter: blur(8px);
             position: relative;
             overflow: hidden;

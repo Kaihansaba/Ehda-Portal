@@ -94,36 +94,17 @@
         }
 
         .card {
-            background: linear-gradient(135deg, rgba(255, 235, 235, 0.72), rgba(255,255,255,0.8)), var(--card-bg) center/cover no-repeat;
+            background: linear-gradient(180deg, #fffdfd 0%, #ffffff 100%);
             border-radius: 18px;
+            box-shadow: 0 12px 28px rgba(127, 29, 29, 0.1);
             padding: 24px 22px;
-            box-shadow: 0 12px 28px rgba(60, 8, 8, 0.08);
             border: 3px solid #b91c1c;
-            position: relative;
-            overflow: hidden;
-            isolation: isolate;
-            backdrop-filter: blur(8px);
-        }
-
-        .card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.24), rgba(255,255,255,0.75));
-            z-index: 0;
-        }
-
-        .card > * {
-            position: relative;
-            z-index: 1;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            background: rgba(255,255,255,0.52);
-            backdrop-filter: blur(2px);
         }
 
         th, td {
@@ -238,7 +219,7 @@
             <a href="{% url 'admin_dashboard' %}" class="back-link">Back to Dashboard</a>
         </div>
 
-        <div class="card" style="--card-bg: url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=80');">
+        <div class="card">
             {% if users %}
                 <table>
                     <thead>
