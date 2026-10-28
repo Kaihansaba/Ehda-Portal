@@ -15,14 +15,14 @@
         {% endif %}
     </section>
 
-    <!-- Platform numbers need data from the view; placeholders until then -->
+    <!-- Reports has no data yet: the view always sends 0 -->
     <section class="section" aria-labelledby="overview-title">
         <h2 id="overview-title" class="visually-hidden">Overview</h2>
 
         <div class="grid grid-4">
-            {% include "partials/stat_card.html" with label="Total users" value="—" note="Coming soon" %}
-            {% include "partials/stat_card.html" with label="Donors" value="—" note="Coming soon" %}
-            {% include "partials/stat_card.html" with label="Hospitals" value="—" note="Coming soon" %}
+            {% include "partials/stat_card.html" with label="Total users" value=total_users %}
+            {% include "partials/stat_card.html" with label="Donors" value=donors %}
+            {% include "partials/stat_card.html" with label="Hospitals" value=hospitals %}
             {% include "partials/stat_card.html" with label="Reports" value="—" note="Coming soon" %}
         </div>
     </section>
@@ -46,6 +46,15 @@
                         <span>
                             <span class="link-title">Hospitals and donation centres</span>
                             <span class="link-text">Places shown on the map</span>
+                        </span>
+                        {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin:accounts_donation_changelist' %}">
+                        <span>
+                            <span class="link-title">Donation records</span>
+                            <span class="link-text">Donations by donor, date and blood type</span>
                         </span>
                         {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
                     </a>
@@ -91,12 +100,6 @@
             <div class="card soon-card">
                 <h3 class="card-title">Reported accounts</h3>
                 <p class="card-text">Review reports from users and take action.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-
-            <div class="card soon-card">
-                <h3 class="card-title">Donation records</h3>
-                <p class="card-text">Monitor donation activity across the platform.</p>
                 <span class="tag">Coming soon</span>
             </div>
 
