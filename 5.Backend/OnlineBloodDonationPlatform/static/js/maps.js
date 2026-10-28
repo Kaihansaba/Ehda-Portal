@@ -20,6 +20,8 @@ var EhdaMap = (function () {
             .setView([center.lat, center.lng], center.zoom || 6);
 
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            // OpenStreetMap blocks tile requests without a Referer (403).
+            referrerPolicy: "strict-origin-when-cross-origin",
             maxZoom: 19,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);

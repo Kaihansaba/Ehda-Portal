@@ -575,3 +575,18 @@ class DemoAccountsCommandTests(TestCase):
             self.run_command()
 
         self.assertFalse(User.objects.filter(email__endswith="@ehda.test").exists())
+
+
+# 10. Map tiles
+
+class MapTileReferrerTests(TestCase):
+
+    def test_pages_allow_a_referer_for_map_tiles(self):
+        # OpenStreetMap tiles return 403 without a Referer; Django's
+        # default policy ("same-origin") would not send one.
+        response = self.client.get(reverse("login"))
+
+        self.assertEqual(
+            response.headers["Referrer-Policy"],
+            "strict-origin-when-cross-origin",
+        )
