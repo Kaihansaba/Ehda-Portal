@@ -50,6 +50,11 @@ class CustomUserAdmin(UserAdmin):
                 "first_name",
                 "last_name",
                 "phone",
+            )
+        }),
+
+        ("Donor Information", {
+            "fields": (
                 "blood_type",
                 "is_available",
             )

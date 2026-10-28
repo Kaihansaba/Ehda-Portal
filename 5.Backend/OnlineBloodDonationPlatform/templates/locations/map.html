@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Donor Map{% endblock %}
+
+{% block extra_head %}
+    {% include "locations/_leaflet_assets.html" %}
+
+    <style>
+        .map-toolbar {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .map-filter {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .big-map {
+            height: 560px;
+        }
+
+        .legend {
+            background: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-swatch {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Marker styles (also used for legend swatches) */
+        .donor-swatch {
+            border-radius: 50%;
+            background: rgba(183, 28, 28, 0.35);
+            border: 2px solid #b71c1c;
+        }
+
+        .facility-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 12px;
+            border: 2px solid white;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        .facility-icon.hospital {
+            background: #1565c0;
+            border-radius: 5px;
+        }
+
+        .facility-icon.donation-center {
+            background: #2e7d32;
+            border-radius: 50%;
+        }
+
+        .popup-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .popup-line {
+            color: #555;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <h1 class="page-title">Donor Map</h1>
+
+    <p class="page-subtitle">
+        Hospitals, donation centres and available donors near you.
+        Donor positions are approximate (about 1 km) to protect their privacy.
+    </p>
+
+    <div class="card">
+        <div class="map-toolbar">
+            <form method="get" class="map-filter">
+                <div class="form-group">
+                    <label for="blood-type-filter">Donor blood type</label>
+                    <select name="blood_type" id="blood-type-filter">
+                        <option value="">All blood types</option>
+                        {% for value, label in blood_type_choices %}
+                            <option value="{{ value }}"{% if value == blood_type %} selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn">Filter</button>
+            </form>
+
+            <p class="muted">
+                Showing {{ donor_count }} available donor{{ donor_count|pluralize }}{% if blood_type %} with blood type {{ blood_type }}{% endif %}.
+            </p>
+        </div>
+
+        <div id="donor-map" class="map big-map"></div>
+    </div>
+
+    {{ map_data|json_script:"map-data" }}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const data = JSON.parse(document.getElementById("map-data").textContent);
+    const map = createOsmMap("donor-map", data.center);
+
+    // Build popups with textContent so user-entered names are never
+    // interpreted as HTML.
+    function popupContent(title, lines) {
+        const container = document.createElement("div");
+
+        const heading = document.createElement("div");
+        heading.className = "popup-title";
+        heading.textContent = title;
+        container.appendChild(heading);
+
+        lines.filter(Boolean).forEach(function (text) {
+            const line = document.createElement("div");
+            line.className = "popup-line";
+            line.textContent = text;
+            container.appendChild(line);
+        });
+
+        return container;
+    }
+
+    // Donors sharing the same approximate area get one marker.
+    const donorAreas = {};
+
+    data.donors.forEach(function (donor) {
+        const key = donor.lat + "," + donor.lng;
+        (donorAreas[key] = donorAreas[key] || []).push(donor);
+    });
+
+    Object.values(donorAreas).forEach(function (donors) {
+        const first = donors[0];
+
+        const title = donors.length === 1
+            ? "Donor"
+            : donors.length + " donors in this area";
+
+        const lines = donors.map(function (donor) {
+            return donor.name + " - " + donor.blood_type;
+        });
+
+        L.circleMarker([first.lat, first.lng], {
+            radius: 8 + Math.min(donors.length, 6),
+            color: "#b71c1c",
+            weight: 2,
+            fillColor: "#b71c1c",
+            fillOpacity: 0.35,
+        })
+            .bindPopup(popupContent(title, lines))
+            .addTo(map);
+    });
+
+    const facilityIcons = {
+        HOSPITAL: L.divIcon({
+            className: "",
+            html: '<div class="facility-icon hospital" style="width:24px;height:24px;">H</div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+            popupAnchor: [0, -12],
+        }),
+        DONATION_CENTER: L.divIcon({
+            className: "",
+            html: '<div class="facility-icon donation-center" style="width:24px;height:24px;">D</div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+            popupAnchor: [0, -12],
+        }),
+    };
+
+    data.facilities.forEach(function (facility) {
+        L.marker([facility.lat, facility.lng], {
+            icon: facilityIcons[facility.type] || facilityIcons.HOSPITAL,
+        })
+            .bindPopup(popupContent(facility.name, [
+                facility.type_label,
+                facility.address,
+                facility.phone ? "Phone: " + facility.phone : "",
+            ]))
+            .addTo(map);
+    });
+
+    // Legend
+    const legend = L.control({ position: "bottomright" });
+
+    legend.onAdd = function () {
+        const box = L.DomUtil.create("div", "legend");
+        box.innerHTML =
+            '<div class="legend-item"><span class="legend-swatch donor-swatch"></span>Donor (approximate area)</div>' +
+            '<div class="legend-item"><span class="legend-swatch facility-icon hospital"></span>Hospital</div>' +
+            '<div class="legend-item"><span class="legend-swatch facility-icon donation-center"></span>Donation centre</div>';
+        return box;
+    };
+
+    legend.addTo(map);
+</script>
+{% endblock %}

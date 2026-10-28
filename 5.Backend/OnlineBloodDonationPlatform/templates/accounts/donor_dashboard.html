@@ -453,9 +453,13 @@
                 <a href="{% url 'donor_profile' %}" class="action-btn">
                     Edit Profile
                 </a>
+
+                <a href="{% url 'locations:donor_location' %}" class="action-btn">
+                    Set My Location
+                </a>
             </div>
 
-            <!-- Donor Search - Future Feature -->
+            <!-- Donor Search -->
             <div class="action-card">
                 <div class="action-icon">🔎</div>
 
@@ -465,11 +469,9 @@
                     Search for nearby donors and hospitals
                     when you need blood.
                 </p>
-                <a href="{% url 'locations:donor_location' %}" class="action-btn">
-                    Set My Location
-                </a>
+
                 <a href="{% url 'locations:search' %}" class="action-btn">
-                    Find Donors
+                    Search Donors
                 </a>
             </div>
 

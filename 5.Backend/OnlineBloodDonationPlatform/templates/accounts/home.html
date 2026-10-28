@@ -39,6 +39,9 @@
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
         }
 
         .content {
@@ -79,7 +82,12 @@
     <nav class="navbar">
         <div class="logo">Ehda Portal</div>
 
-        <form method="post" action="/logout/">{% csrf_token %}<button type="submit" class="logout-btn">Logout</button></form>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">
+                Logout
+            </button>
+        </form>
     </nav>
 
     <div class="content">

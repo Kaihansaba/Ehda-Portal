@@ -3,12 +3,18 @@ from functools import wraps
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
 from .models import Donation, BloodRequest
+
+
+def index(request):
+    if request.user.is_authenticated:
+        return redirect("role_redirect")
+
+    return redirect("login")
 
 
 def register(request):
@@ -31,13 +37,18 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
-            next_url = request.GET.get("next", "")
+
+            # The login form posts back to the same URL, so a ?next=
+            # added by @login_required is still in the query string.
+            next_url = request.POST.get("next") or request.GET.get("next")
+
             if next_url and url_has_allowed_host_and_scheme(
                 next_url,
                 allowed_hosts={request.get_host()},
                 require_https=request.is_secure(),
             ):
                 return redirect(next_url)
+
             return redirect("role_redirect")
 
         return render(
@@ -124,12 +135,6 @@ def hospital_dashboard(request):
 @role_required("ADMIN")
 def admin_dashboard(request):
     return render(request, "accounts/admin_dashboard.html")
-
-
-def index(request):
-    if not request.user.is_authenticated:
-        return redirect("login")
-    return redirect("role_redirect")
 
 
 @role_required("HOSPITAL")

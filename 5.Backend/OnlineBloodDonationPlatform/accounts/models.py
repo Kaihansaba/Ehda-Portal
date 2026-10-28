@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -137,13 +136,15 @@ class BloodRequest(models.Model):
         )
 
     def clean(self):
-        if self.units_needed <= 0:
-            raise ValidationError("Units needed must be greater than 0.")
+        # ValidationError (not ValueError) so forms and the admin show the
+        # message next to the field instead of crashing with a 500 error.
+        errors = {}
 
-        if (
-            self.urgency in {self.Urgency.URGENT, self.Urgency.EMERGENCY}
-            and not self.notes.strip()
-        ):
-            raise ValidationError(
-                "Please add notes for urgent or emergency requests."
-            )
+        if self.units_needed is not None and self.units_needed <= 0:
+            errors["units_needed"] = "Units needed must be greater than 0."
+
+        if self.urgency in {self.Urgency.URGENT, self.Urgency.EMERGENCY} and not self.notes.strip():
+            errors["notes"] = "Please add notes for urgent or emergency requests."
+
+        if errors:
+            raise ValidationError(errors)

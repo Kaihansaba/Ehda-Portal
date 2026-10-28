@@ -1,19 +1,61 @@
+import os
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
 
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-change-this-in-production"
+def load_env_file(path):
+    """
+    Read KEY=VALUE lines from an optional .env file into os.environ.
 
+    Real environment variables always win. No extra package needed.
+    See .env.example for the supported settings.
+    """
+    if not path.exists():
+        return
+
+    for line in path.read_text().splitlines():
+        line = line.strip()
+
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+
+
+load_env_file(BASE_DIR / ".env")
+
+
+def env_bool(name, default):
+    return os.environ.get(name, str(default)).strip().lower() in ("1", "true", "yes", "on")
+
+
+# Development defaults: the app runs with no environment variables set.
+DEV_SECRET_KEY = "django-insecure-dev-only-change-this-in-production"
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", DEV_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_bool("DJANGO_DEBUG", True)
 
+# Comma-separated, e.g. "ehda.example.org,www.ehda.example.org".
+# Empty is fine while DEBUG is on (localhost is allowed automatically).
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if host.strip()
+]
 
-ALLOWED_HOSTS = []
+if not DEBUG and SECRET_KEY == DEV_SECRET_KEY:
+    raise ImproperlyConfigured(
+        "Set DJANGO_SECRET_KEY when DJANGO_DEBUG is off."
+    )
 
 
 # Application definition
@@ -27,6 +69,7 @@ INSTALLED_APPS = [
 
     # Our application
     "accounts.apps.AccountsConfig",
+    "locations.apps.LocationsConfig",
 ]
 
 

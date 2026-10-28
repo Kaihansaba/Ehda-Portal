@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
@@ -20,11 +19,15 @@ from accounts.views import (
     manage_blood_requests,
 )
 
+
 urlpatterns = [
+    # Admin
     path("admin/", admin.site.urls),
 
-    # Authentication and home
+    # Site root: dashboard if logged in, otherwise login
     path("", index, name="index"),
+
+    # Authentication and home
     path("register/", register, name="register"),
     path("login/", user_login, name="login"),
     path("logout/", user_logout, name="logout"),
@@ -63,7 +66,7 @@ urlpatterns = [
         name="create_blood_request",
     ),
 
-    # Donor search and map
+    # Donor location, search and map (Developer 2)
     path("", include("locations.urls")),
 
     # Password reset
