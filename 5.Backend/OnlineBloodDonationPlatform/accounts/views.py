@@ -1,17 +1,19 @@
-﻿from functools import wraps
+
+from functools import wraps
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .forms import RegistrationForm, DonorProfileForm
-from .models import Donation
+from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
+from .models import Donation, BloodRequest
+
 
 def register(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)
-
         if form.is_valid():
             form.save()
             return redirect("login")
@@ -25,17 +27,16 @@ def user_login(request):
     if request.method == "POST":
         email = request.POST.get("email", "").strip().lower()
         password = request.POST.get("password", "")
-
-        user = authenticate(
-            request,
-            email=email,
-            password=password,
-        )
+        user = authenticate(request, email=email, password=password)
 
         if user is not None:
             login(request, user)
             next_url = request.GET.get("next", "")
-            if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
                 return redirect(next_url)
             return redirect("role_redirect")
 
@@ -52,11 +53,10 @@ def user_login(request):
 def role_redirect(request):
     if request.user.role == "DONOR":
         return redirect("donor_dashboard")
-    elif request.user.role == "HOSPITAL":
+    if request.user.role == "HOSPITAL":
         return redirect("hospital_dashboard")
-    elif request.user.role == "ADMIN":
+    if request.user.role == "ADMIN":
         return redirect("admin_dashboard")
-
     return redirect("home")
 
 
@@ -71,12 +71,13 @@ def role_required(*allowed_roles):
                     "accounts/access_denied.html",
                     status=403,
                 )
-
             return view_func(request, *args, **kwargs)
-
-        return wrapper
-
+        return decorator_wrapper(wrapper)
     return decorator
+
+
+def decorator_wrapper(view_func):
+    return view_func
 
 
 @role_required("DONOR")
@@ -92,11 +93,7 @@ def donor_dashboard(request):
 @role_required("DONOR")
 def donor_profile(request):
     if request.method == "POST":
-        form = DonorProfileForm(
-            request.POST,
-            instance=request.user,
-        )
-
+        form = DonorProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             return redirect("donor_profile")
@@ -116,7 +113,6 @@ def toggle_availability(request):
         user = request.user
         user.is_available = not user.is_available
         user.save(update_fields=["is_available"])
-
     return redirect("donor_dashboard")
 
 
@@ -133,34 +129,59 @@ def admin_dashboard(request):
 def index(request):
     if not request.user.is_authenticated:
         return redirect("login")
-
     return redirect("role_redirect")
+
+
+@role_required("HOSPITAL")
+def create_blood_request(request):
+    if request.method == "POST":
+        form = BloodRequestForm(request.POST)
+        if form.is_valid():
+            blood_request = form.save(commit=False)
+            blood_request.hospital = request.user
+            blood_request.save()
+            return redirect("manage_blood_requests")
+    else:
+        form = BloodRequestForm()
+
+    return render(
+        request,
+        "accounts/create_blood_request.html",
+        {"form": form},
+    )
+
+
+@role_required("HOSPITAL")
+def manage_blood_requests(request):
+    requests = BloodRequest.objects.filter(
+        hospital=request.user
+    ).order_by("-created_at")
+    return render(
+        request,
+        "accounts/manage_blood_requests.html",
+        {"requests": requests},
+    )
 
 
 @login_required
 def home(request):
     return render(request, "accounts/home.html")
 
+
 def user_logout(request):
     if request.method == "POST":
         logout(request)
         return redirect("login")
-
     return redirect("role_redirect")
+
 
 @role_required("DONOR")
 def donation_history(request):
     donations = Donation.objects.filter(
         donor=request.user
     ).order_by("-donation_date")
-
     return render(
         request,
         "accounts/donation_history.html",
         {"donations": donations},
     )
-
-
-
-
-

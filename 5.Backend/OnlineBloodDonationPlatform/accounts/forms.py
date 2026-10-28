@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 
-from .models import User
+from .models import User, BloodRequest
 
 
 class RegistrationForm(forms.ModelForm):
@@ -111,3 +111,31 @@ class DonorProfileForm(forms.ModelForm):
             )
 
         return email
+
+
+class BloodRequestForm(forms.ModelForm):
+    class Meta:
+        model = BloodRequest
+        fields = ["blood_type", "units_needed", "urgency", "notes"]
+        widgets = {
+            "blood_type": forms.Select(attrs={"class": "form-control"}),
+            "units_needed": forms.NumberInput(attrs={"class": "form-control", "min": 1}),
+            "urgency": forms.Select(attrs={"class": "form-control"}),
+            "notes": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
+        }
+
+    def clean_units_needed(self):
+        units = self.cleaned_data.get("units_needed")
+        if units is not None and units <= 0:
+            raise forms.ValidationError("Units needed must be greater than 0.")
+        return units
+
+    def clean(self):
+        cleaned_data = super().clean()
+        urgency = cleaned_data.get("urgency")
+        notes = (cleaned_data.get("notes") or "").strip()
+
+        if urgency in {BloodRequest.Urgency.URGENT, BloodRequest.Urgency.EMERGENCY} and not notes:
+            self.add_error("notes", "Please add notes for urgent or emergency requests.")
+
+        return cleaned_data
