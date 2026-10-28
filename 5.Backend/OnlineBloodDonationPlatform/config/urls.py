@@ -1,3 +1,4 @@
+
 from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
@@ -15,12 +16,14 @@ from accounts.views import (
     toggle_availability,
     hospital_dashboard,
     admin_dashboard,
+    create_blood_request,
+    manage_blood_requests,
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # Home and authentication
+    # Authentication and home
     path("", index, name="index"),
     path("register/", register, name="register"),
     path("login/", user_login, name="login"),
@@ -47,6 +50,18 @@ urlpatterns = [
     ),
     path("dashboard/hospital/", hospital_dashboard, name="hospital_dashboard"),
     path("dashboard/admin/", admin_dashboard, name="admin_dashboard"),
+
+    # Hospital blood requests
+    path(
+        "dashboard/hospital/requests/",
+        manage_blood_requests,
+        name="manage_blood_requests",
+    ),
+    path(
+        "dashboard/hospital/requests/new/",
+        create_blood_request,
+        name="create_blood_request",
+    ),
 
     # Donor search and map
     path("", include("locations.urls")),
@@ -83,5 +98,3 @@ urlpatterns = [
         name="password_reset_complete",
     ),
 ]
-
-

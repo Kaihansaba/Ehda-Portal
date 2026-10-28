@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Blood Request | Ehda Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 60px auto;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            padding: 30px;
+        }
+        h1 {
+            color: #1565c0;
+            margin-bottom: 25px;
+        }
+        form {
+            display: grid;
+            gap: 18px;
+        }
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+        label {
+            font-weight: 700;
+            color: #333;
+        }
+        input, select, textarea, button {
+            font: inherit;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d7dce5;
+            border-radius: 10px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .btn {
+            text-decoration: none;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .primary {
+            background: #1565c0;
+            color: white;
+        }
+        .secondary {
+            background: #e7edf5;
+            color: #1f2d3d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Blood Request</h1>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div style="color:#b71c1c; font-size: 14px;">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="actions">
+                <button type="submit" class="btn primary">Submit Request</button>
+                <a href="{% url 'hospital_dashboard' %}" class="btn secondary">Back to Dashboard</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
