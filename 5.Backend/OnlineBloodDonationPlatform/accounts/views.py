@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import RegistrationForm, DonorProfileForm
-from .models import Donation
+from .models import User, Donation
 
 def register(request):
     if request.method == "POST":
@@ -127,7 +127,18 @@ def hospital_dashboard(request):
 
 @role_required("ADMIN")
 def admin_dashboard(request):
-    return render(request, "accounts/admin_dashboard.html")
+    total_users = User.objects.count()
+    donors = User.objects.filter(role="DONOR").count()
+    hospitals = User.objects.filter(role="HOSPITAL").count()
+
+    context = {
+        "total_users": total_users,
+        "donors": donors,
+        "hospitals": hospitals,
+        "reports": 0,
+    }
+
+    return render(request, "accounts/admin_dashboard.html", context)
 
 
 def index(request):

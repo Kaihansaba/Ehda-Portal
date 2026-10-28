@@ -1,0 +1,13 @@
+﻿{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | Ehda{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'index' %}">Ehda</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<a href="{% url 'index' %}">Back to Ehda</a>
+<a href="{% url 'locations:search' %}">Search donors</a>
+<a href="{% url 'locations:map' %}">Donor map</a>
+{% endblock %}

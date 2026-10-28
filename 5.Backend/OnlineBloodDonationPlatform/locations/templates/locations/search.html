@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Blood Donors</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .search-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #c62828;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #a91f1f;
+        }
+
+        .results {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .donor {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .blood {
+            font-weight: bold;
+            color: #c62828;
+        }
+
+        .available {
+            color: green;
+            font-weight: bold;
+        }
+
+        .unavailable {
+            color: #777;
+        }
+
+        .map-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #c62828;
+            text-decoration: none;
+        }
+
+        .error {
+            color: #c62828;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Find Blood Donors</h1>
+
+    <a href="{% url 'locations:map' %}" class="map-link">
+        View Donors on Map
+    </a>
+
+    <div class="search-box">
+
+        <form method="get">
+
+            {% if form.non_field_errors %}
+                <div class="error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="field">
+                {{ form.blood_type.label_tag }}
+                {{ form.blood_type }}
+                {{ form.blood_type.errors }}
+            </div>
+
+            <div class="field">
+                {{ form.include_compatible }}
+                {{ form.include_compatible.label }}
+            </div>
+
+            <div class="field">
+                {{ form.province.label_tag }}
+                {{ form.province }}
+                {{ form.province.errors }}
+            </div>
+
+            <div class="field">
+                {{ form.district.label_tag }}
+                {{ form.district }}
+                {{ form.district.errors }}
+            </div>
+
+            <div class="field">
+                {{ form.radius.label_tag }}
+                {{ form.radius }}
+                {{ form.radius.errors }}
+            </div>
+
+            {{ form.latitude }}
+            {{ form.longitude }}
+
+            <button type="submit">
+                Search Donors
+            </button>
+
+        </form>
+
+    </div>
+
+
+    {% if results is not None %}
+
+        <div class="results">
+
+            <h2>Search Results</h2>
+
+            {% if results %}
+
+                {% for donor in results %}
+
+                    <div class="donor">
+
+                        <h3>{{ donor.name }}</h3>
+
+                        <p>
+                            Blood Type:
+                            <span class="blood">
+                                {{ donor.blood_type }}
+                            </span>
+                        </p>
+
+                        <p>
+                            Location:
+                            {{ donor.province }}
+                            {% if donor.district %}
+                                - {{ donor.district }}
+                            {% endif %}
+                        </p>
+
+                        <p>
+                            Distance:
+                            {{ donor.distance_label }}
+                        </p>
+
+                        {% if donor.is_available %}
+                            <p class="available">Available</p>
+                        {% else %}
+                            <p class="unavailable">Not Available</p>
+                        {% endif %}
+
+                        {% if donor.request_url %}<a href="{{ donor.request_url }}">Send request</a>{% else %}<button type="button" disabled>Send request</button>{% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>No donors match your search</p>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
+

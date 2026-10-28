@@ -1,8 +1,8 @@
-﻿from django.contrib import admin
+from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.urls import reverse_lazy
 
-from .models import User
+from .models import User, Donation
 
 
 admin.site.site_url = reverse_lazy("role_redirect")
@@ -97,3 +97,9 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
+ 
+@admin.register(Donation)
+class DonationAdmin(admin.ModelAdmin):
+    list_display = ("donor", "donation_date", "blood_type", "notes")
+    list_filter = ("blood_type", "donation_date")
+    search_fields = ("donor__email", "donor__first_name", "donor__last_name")

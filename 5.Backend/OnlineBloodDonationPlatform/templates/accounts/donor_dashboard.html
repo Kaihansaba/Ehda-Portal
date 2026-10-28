@@ -352,7 +352,7 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">
-            <span class="logo-heart">â¤ï¸</span>
+            <span class="logo-heart">&#10084;</span>
             Ehda Portal
         </div>
 
@@ -399,118 +399,7 @@
                         {% if request.user.blood_type %}
                             {{ request.user.get_blood_type_display }}
                         {% else %}
-                            Not Set
-                        {% endif %}
-                    </p>
-                </div>
-            </div>
-
-            <!-- Availability -->
-            <div class="stat-card">
-                <div class="stat-icon">â¤ï¸</div>
-
-                <div class="stat-info">
-                    <h3>Availability</h3>
-
-                    <p class="{% if request.user.is_available %}available{% else %}unavailable{% endif %}">
-                        {% if request.user.is_available %}
-                            Available
-                        {% else %}
-                            Not Available
-                        {% endif %}
-                    </p>
-                </div>
-            </div>
-
-            <!-- Donations -->
-            <div class="stat-card">
-                <div class="stat-icon">📅</div>
-
-                <div class="stat-info">
-                    <h3>Donations</h3>
-                    <p>{{ donation_count }}</p>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Quick Actions -->
-        <h2 class="section-title">Quick Actions</h2>
-
-        <div class="actions-grid">
-
-            <!-- Profile -->
-            <div class="action-card">
-                <div class="action-icon">👤</div>
-
-                <h3>My Donor Profile</h3>
-
-                <p>
-                    View and update your donor information,
-                    including your name, phone number, and blood type.
-                </p>
-
-                <a href="{% url 'donor_profile' %}" class="action-btn">
-                    Edit Profile
-                </a>
-            </div>
-
-            <!-- Donor Search - Future Feature -->
-            <div class="action-card">
-                <div class="action-icon">🔎</div>
-
-                <h3>Find Blood Donors</h3>
-
-                <p>
-                    Search for nearby donors and hospitals
-                    when you need blood.
-                </p>
-                <a href="{% url 'locations:donor_location' %}" class="action-btn">
-                    Set My Location
-                </a>
-                <a href="{% url 'locations:search' %}" class="action-btn">
-                    Find Donors
-                </a>
-            </div>
-
-            <!-- Blood Requests - Future Feature -->
-            <div class="action-card">
-                <div class="action-icon">ðŸ¥</div>
-
-                <h3>Blood Requests</h3>
-
-                <p>
-                    View blood requests and respond when
-                    your donation can help someone.
-                </p>
-
-                <span class="action-btn secondary">
-                    Coming Soon
-                </span>
-            </div>
-
-        </div>
-
-        <!-- Bottom Information -->
-        <div class="bottom-grid">
-
-            <!-- Donation Status -->
-            <div class="info-card">
-                <h2>Donation Status</h2>
-
-                <p>
-                    {% if request.user.is_available %}
-                        You are currently marked as available to donate.
-                    {% else %}
-                        You are currently marked as unavailable to donate.
-                    {% endif %}
-                </p>
-
-                <span class="status {% if not request.user.is_available %}not-available{% endif %}">
-                    {% if request.user.is_available %}
-                        â— Available to Donate
-                    {% else %}
-                        â— Not Available
+                        &#9679; Not Available
                     {% endif %}
                 </span>
 
@@ -548,11 +437,12 @@
 
         <!-- Footer -->
         <div class="footer">
-            Ehda Portal © 2026 · Connecting people. Saving lives. â¤ï¸
+            Ehda Portal &copy; 2026 · Connecting people. Saving lives. &#10084;¤ï¸
         </div>
 
     </main>
 
 </body>
 </html>
+
 
