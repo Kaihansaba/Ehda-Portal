@@ -95,6 +95,7 @@ def expected(name, url):
         },
         "donor_dashboard": only("donor"),
         "donor_profile": only("donor"),
+        "donation_history": only("donor"),
         # GET does not toggle; donors are sent back to their dashboard.
         "toggle_availability": {
             **only(),

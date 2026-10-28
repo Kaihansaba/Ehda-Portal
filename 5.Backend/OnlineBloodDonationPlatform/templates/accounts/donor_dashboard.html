@@ -1,4 +1,4 @@
-
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -352,7 +352,7 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">
-            <span class="logo-heart">❤️</span>
+            <span class="logo-heart">â¤ï¸</span>
             Ehda Portal
         </div>
 
@@ -407,7 +407,7 @@
 
             <!-- Availability -->
             <div class="stat-card">
-                <div class="stat-icon">❤️</div>
+                <div class="stat-icon">â¤ï¸</div>
 
                 <div class="stat-info">
                     <h3>Availability</h3>
@@ -428,7 +428,7 @@
 
                 <div class="stat-info">
                     <h3>Donations</h3>
-                    <p>0</p>
+                    <p>{{ donation_count }}</p>
                 </div>
             </div>
 
@@ -477,7 +477,7 @@
 
             <!-- Blood Requests - Future Feature -->
             <div class="action-card">
-                <div class="action-icon">🏥</div>
+                <div class="action-icon">ðŸ¥</div>
 
                 <h3>Blood Requests</h3>
 
@@ -510,9 +510,9 @@
 
                 <span class="status {% if not request.user.is_available %}not-available{% endif %}">
                     {% if request.user.is_available %}
-                        ● Available to Donate
+                        â— Available to Donate
                     {% else %}
-                        ● Not Available
+                        â— Not Available
                     {% endif %}
                 </span>
 
@@ -538,23 +538,23 @@
                 <h2>Donation History</h2>
 
                 <p>
-                    Your previous blood donations will appear here
-                    after donation records are added to the platform.
+                    View your previous blood donation records and donation dates.
                 </p>
 
-                <span class="status">
-                    No Donations Yet
-                </span>
+                <a href="{% url 'donation_history' %}" class="action-btn">
+                    View Donation History
+                </a>
             </div>
 
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            Ehda Portal © 2026 · Connecting people. Saving lives. ❤️
+            Ehda Portal © 2026 · Connecting people. Saving lives. â¤ï¸
         </div>
 
     </main>
 
 </body>
 </html>
+

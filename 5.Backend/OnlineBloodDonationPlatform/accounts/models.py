@@ -1,11 +1,13 @@
-
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.core.exceptions import ValidationError
 from django.db import models
 
 
 class UserManager(BaseUserManager):
-
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("Users must have an email address.")
@@ -32,7 +34,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-
     class Role(models.TextChoices):
         DONOR = "DONOR", "Donor"
         HOSPITAL = "HOSPITAL", "Hospital"
@@ -48,44 +49,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         O_POSITIVE = "O+", "O+"
         O_NEGATIVE = "O-", "O-"
 
-    email = models.EmailField(
-        unique=True,
-        max_length=254
-    )
-
-    first_name = models.CharField(
-        max_length=100
-    )
-
-    last_name = models.CharField(
-        max_length=100
-    )
-
-    phone = models.CharField(
-        max_length=20
-    )
-
+    email = models.EmailField(unique=True, max_length=254)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20)
     blood_type = models.CharField(
-        max_length=3,
-        choices=BloodType.choices,
-        blank=True,
-        default=""
+        max_length=3, choices=BloodType.choices, blank=True, default=""
     )
-
-    is_available = models.BooleanField(
-        default=True
-    )
-
+    is_available = models.BooleanField(default=True)
     role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.DONOR
+        max_length=20, choices=Role.choices, default=Role.DONOR
     )
-
     is_active = models.BooleanField(default=True)
-
     is_staff = models.BooleanField(default=False)
-
     date_joined = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()
@@ -98,6 +74,24 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+
+class Donation(models.Model):
+    donor = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="donations"
+    )
+    donation_date = models.DateField()
+    blood_type = models.CharField(
+        max_length=3, choices=User.BloodType.choices
+    )
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-donation_date"]
+
+    def __str__(self):
+        return f"{self.donor.get_full_name()} - {self.donation_date}"
 
 
 class BloodRequest(models.Model):
@@ -120,20 +114,15 @@ class BloodRequest(models.Model):
         limit_choices_to={"role": User.Role.HOSPITAL},
     )
     blood_type = models.CharField(
-        max_length=3,
-        choices=User.BloodType.choices,
+        max_length=3, choices=User.BloodType.choices
     )
     units_needed = models.PositiveIntegerField(default=1)
     urgency = models.CharField(
-        max_length=20,
-        choices=Urgency.choices,
-        default=Urgency.ROUTINE,
+        max_length=20, choices=Urgency.choices, default=Urgency.ROUTINE
     )
     notes = models.TextField(blank=True, default="")
     status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.OPEN,
+        max_length=20, choices=Status.choices, default=Status.OPEN
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -141,7 +130,10 @@ class BloodRequest(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.hospital.get_full_name()} - {self.blood_type} ({self.urgency})"
+        return (
+            f"{self.hospital.get_full_name()} - "
+            f"{self.blood_type} ({self.urgency})"
+        )
 
     def clean(self):
         # ValidationError (not ValueError) so forms and the admin show the
