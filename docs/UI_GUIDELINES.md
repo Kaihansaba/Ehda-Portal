@@ -139,6 +139,11 @@ never a fake link.
 | `partials/donor_card.html` | `result` | One donor in search results |
 | `partials/empty_state.html` | `title`, `text`, `action_url`, `action_label` | “Nothing here yet” message |
 | `partials/stat_card.html` | `label`, `value`, `note` | A number on a dashboard |
+| `partials/request_status.html` | `blood_request` | A blood request's status as a coloured dot |
+| `partials/request_actions.html` | `blood_request` | Hospital status buttons (in review, accept, complete, cancel) |
+| `partials/account_status.html` | `account` | Active / inactive dot for a user account |
+| `partials/user_status_toggle.html` | `account`, `next`, `label` | Admin activate / deactivate button (none on your own row) |
+| `partials/admin_back_link.html` | none | “Back to dashboard” link on admin tool pages |
 | `partials/icon.html` | `name`, `class` | Inline SVG icon (see the file for names) |
 | `partials/messages.html` | none | Django messages (already in `base.html`) |
 | `partials/leaflet_assets.html` | none | Leaflet + `maps.js`; include in `extra_head` |

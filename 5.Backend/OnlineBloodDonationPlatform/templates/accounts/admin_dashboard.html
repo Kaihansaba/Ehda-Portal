@@ -15,16 +15,76 @@
         {% endif %}
     </section>
 
-    <!-- Reports has no data yet: the view always sends 0 -->
     <section class="section" aria-labelledby="overview-title">
         <h2 id="overview-title" class="visually-hidden">Overview</h2>
 
         <div class="grid grid-4">
             {% include "partials/stat_card.html" with label="Total users" value=total_users %}
-            {% include "partials/stat_card.html" with label="Donors" value=donors %}
-            {% include "partials/stat_card.html" with label="Hospitals" value=hospitals %}
-            {% include "partials/stat_card.html" with label="Reports" value="—" note="Coming soon" %}
+            {% include "partials/stat_card.html" with label="Donors" value=donor_count %}
+            {% include "partials/stat_card.html" with label="Hospitals" value=hospital_count %}
+            {% include "partials/stat_card.html" with label="Reported accounts" value=reported_count note="Deactivated" %}
         </div>
+    </section>
+
+    <section class="section" aria-labelledby="tools-title">
+        <h2 id="tools-title" class="section-title">Administration tools</h2>
+
+        <ul class="link-list">
+            <li>
+                <a href="{% url 'admin_manage_users' %}">
+                    <span>
+                        <span class="link-title">Manage users</span>
+                        <span class="link-text">View every account, activate or deactivate it</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin_manage_hospitals' %}">
+                    <span>
+                        <span class="link-title">Manage hospitals</span>
+                        <span class="link-text">Hospital accounts and their status</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin_reported_accounts' %}">
+                    <span>
+                        <span class="link-title">Reported accounts</span>
+                        <span class="link-text">{{ reported_count }} deactivated account{{ reported_count|pluralize }} to review</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin_platform_activity' %}">
+                    <span>
+                        <span class="link-title">Platform activity</span>
+                        <span class="link-text">Blood requests by status and the latest requests</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin_platform_statistics' %}">
+                    <span>
+                        <span class="link-title">Platform statistics</span>
+                        <span class="link-text">Users, requests and active accounts</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin_security_access' %}">
+                    <span>
+                        <span class="link-title">Security and access</span>
+                        <span class="link-text">Who can sign in, by role</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+        </ul>
     </section>
 
     {% if request.user.is_staff %}
@@ -77,42 +137,6 @@
                 <h3 class="card-title">Administrator access</h3>
                 <p class="card-text">You are signed in with administrator privileges.</p>
                 <span class="availability is-available">Active</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="section" aria-labelledby="soon-title">
-        <h2 id="soon-title" class="section-title">Administration tools</h2>
-
-        <div class="grid grid-3">
-            <div class="card soon-card">
-                <h3 class="card-title">Manage users</h3>
-                <p class="card-text">View, search, activate or deactivate accounts.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-
-            <div class="card soon-card">
-                <h3 class="card-title">Hospitals and centres</h3>
-                <p class="card-text">Add and update hospitals and donation centres shown on the map.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-
-            <div class="card soon-card">
-                <h3 class="card-title">Reported accounts</h3>
-                <p class="card-text">Review reports from users and take action.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-
-            <div class="card soon-card">
-                <h3 class="card-title">Platform statistics</h3>
-                <p class="card-text">Requests, response times and activity over time.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-
-            <div class="card soon-card">
-                <h3 class="card-title">Security and access</h3>
-                <p class="card-text">Monitor sign-ins and keep permissions up to date.</p>
-                <span class="tag">Coming soon</span>
             </div>
         </div>
     </section>

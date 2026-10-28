@@ -148,3 +148,27 @@ class BloodRequest(models.Model):
 
         if errors:
             raise ValidationError(errors)
+
+    def can_transition_to(self, new_status):
+        allowed = {
+            self.Status.OPEN: {
+                self.Status.IN_REVIEW,
+                self.Status.CANCELLED,
+                self.Status.COMPLETED,
+            },
+            self.Status.IN_REVIEW: {
+                self.Status.ACCEPTED,
+                self.Status.CANCELLED,
+                self.Status.COMPLETED,
+            },
+            self.Status.ACCEPTED: {self.Status.COMPLETED},
+            self.Status.COMPLETED: set(),
+            self.Status.CANCELLED: set(),
+        }
+        return new_status in allowed.get(self.status, set())
+
+    def update_status(self, new_status):
+        if not self.can_transition_to(new_status):
+            raise ValidationError("This status change is not allowed.")
+        self.status = new_status
+        self.save(update_fields=["status"])

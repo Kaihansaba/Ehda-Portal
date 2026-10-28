@@ -20,6 +20,10 @@
         </div>
     </div>
 
+    {% if error %}
+        <div class="alert alert-error" role="alert">{{ error }}</div>
+    {% endif %}
+
     {% if requests %}
         <div class="results-list">
             {# "blood_request", not "request", so Django's request object is not hidden #}
@@ -29,20 +33,14 @@
 
                     <div class="stack-sm">
                         <h2 class="request-card-title">
-                            {{ blood_request.units_needed }} unit{{ blood_request.units_needed|pluralize }} of {{ blood_request.blood_type|blood_symbol }}
+                            <a href="{% url 'request_detail' blood_request.pk %}">{{ blood_request.units_needed }} unit{{ blood_request.units_needed|pluralize }} of {{ blood_request.blood_type|blood_symbol }}</a>
                             {% if blood_request.urgency != "ROUTINE" %}
                                 <span class="tag{% if blood_request.urgency == 'EMERGENCY' %} tag-danger{% endif %}">{{ blood_request.get_urgency_display }}</span>
                             {% endif %}
                         </h2>
 
                         <div class="donor-card-meta">
-                            {% if blood_request.status == "OPEN" or blood_request.status == "IN_REVIEW" %}
-                                <span class="availability is-pending">{{ blood_request.get_status_display }}</span>
-                            {% elif blood_request.status == "CANCELLED" %}
-                                <span class="availability is-unavailable">{{ blood_request.get_status_display }}</span>
-                            {% else %}
-                                <span class="availability is-available">{{ blood_request.get_status_display }}</span>
-                            {% endif %}
+                            {% include "partials/request_status.html" %}
 
                             {% if blood_request.urgency == "ROUTINE" %}
                                 <span class="meta-item">{{ blood_request.get_urgency_display }}</span>
@@ -57,6 +55,8 @@
                         {% if blood_request.notes %}
                             <p class="request-notes">{{ blood_request.notes }}</p>
                         {% endif %}
+
+                        {% include "partials/request_actions.html" %}
                     </div>
                 </article>
             {% endfor %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Security and access{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        {% include "partials/admin_back_link.html" %}
+        <h1>Security and access</h1>
+        <p class="lead">Who can sign in, by role.</p>
+    </div>
+
+    <section class="section" aria-labelledby="summary-title">
+        <h2 id="summary-title" class="visually-hidden">Summary</h2>
+        <div class="grid grid-4">
+            {% include "partials/stat_card.html" with label="Total accounts" value=summary.total_users %}
+            {% include "partials/stat_card.html" with label="Active" value=summary.active_users %}
+            {% include "partials/stat_card.html" with label="Inactive" value=summary.inactive_users %}
+            {% include "partials/stat_card.html" with label="Admins" value=summary.admins %}
+        </div>
+    </section>
+
+    <section class="section" aria-labelledby="overview-title">
+        <h2 id="overview-title" class="section-title">Access overview</h2>
+        <div class="table-wrap">
+            <table class="data-table">
+                <tbody>
+                    <tr><th scope="row">Donors</th><td>{{ summary.donors }}</td></tr>
+                    <tr><th scope="row">Hospitals</th><td>{{ summary.hospitals }}</td></tr>
+                    <tr><th scope="row">Admins</th><td>{{ summary.admins }}</td></tr>
+                    <tr><th scope="row">Active accounts</th><td>{{ summary.active_users }}</td></tr>
+                    <tr><th scope="row">Inactive accounts</th><td>{{ summary.inactive_users }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="section" aria-labelledby="accounts-title">
+        <h2 id="accounts-title" class="section-title">Account status</h2>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in users %}
+                        <tr>
+                            <th scope="row">{{ account.get_full_name|default:account.email }}</th>
+                            <td>{{ account.get_role_display }}</td>
+                            <td>{% include "partials/account_status.html" %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+{% endblock %}

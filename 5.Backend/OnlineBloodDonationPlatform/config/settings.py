@@ -176,10 +176,20 @@ AUTH_USER_MODEL = "accounts.User"
 LOGIN_URL = "/login/"
 
 
-# Email backend
-# For development, password-reset emails will appear
-# directly in the terminal running the Django server.
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# Email
+# By default, password-reset emails appear in the terminal running the
+# server. To send real email (e.g. Gmail SMTP), set the EMAIL_* values in
+# .env; see .env.example.
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend",
+)
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@localhost")
 
 
 # Send our site's origin (not the full URL) as the Referer to other sites.

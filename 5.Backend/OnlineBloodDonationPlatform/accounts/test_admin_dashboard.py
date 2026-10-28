@@ -12,7 +12,7 @@ PASSWORD = "StrongPass123!"
 
 
 class AdminDashboardStatsTests(TestCase):
-    """Platform numbers on the admin dashboard (ported from Samira's work)."""
+    """Platform numbers on the admin dashboard (Samira's and Shafiqa's work)."""
 
     def setUp(self):
         self.admin_user = User.objects.create_superuser(
@@ -34,9 +34,9 @@ class AdminDashboardStatsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["total_users"], 5)
-        self.assertEqual(response.context["donors"], 3)
-        self.assertEqual(response.context["hospitals"], 1)
-        self.assertEqual(response.context["reports"], 0)
+        self.assertEqual(response.context["donor_count"], 3)
+        self.assertEqual(response.context["hospital_count"], 1)
+        self.assertEqual(response.context["reported_count"], 0)
 
     def test_numbers_are_shown_instead_of_coming_soon(self):
         response = self.client.get(reverse("admin_dashboard"))
@@ -44,15 +44,26 @@ class AdminDashboardStatsTests(TestCase):
         self.assertContains(response, '<div class="stat-value">5</div>', html=True)
         self.assertContains(response, '<div class="stat-value">3</div>', html=True)
         self.assertContains(response, '<div class="stat-value">1</div>', html=True)
-        # Reports has no feature behind it yet, so it stays a placeholder.
-        self.assertContains(response, "Coming soon")
+        self.assertNotContains(response, "Coming soon")
 
-    def test_inactive_users_are_still_counted(self):
+    def test_deactivated_accounts_count_as_reported(self):
         User.objects.filter(email="donor0@example.com").update(is_active=False)
 
         response = self.client.get(reverse("admin_dashboard"))
 
-        self.assertEqual(response.context["donors"], 3)
+        # Still a donor, and also counted as reported.
+        self.assertEqual(response.context["donor_count"], 3)
+        self.assertEqual(response.context["reported_count"], 1)
+
+    def test_links_to_every_admin_tool(self):
+        response = self.client.get(reverse("admin_dashboard"))
+
+        for name in (
+            "admin_manage_users", "admin_manage_hospitals", "admin_reported_accounts",
+            "admin_platform_activity", "admin_platform_statistics", "admin_security_access",
+        ):
+            with self.subTest(page=name):
+                self.assertContains(response, reverse(name))
 
     def test_links_to_donation_records(self):
         response = self.client.get(reverse("admin_dashboard"))
