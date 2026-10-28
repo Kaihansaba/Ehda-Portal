@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(102, 10, 10, 0.74), rgba(54, 8, 8, 0.76)),
+                        url('https://images.unsplash.com/photo-1538108149393-fbbd81895973?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat fixed;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 35%, #b91c1c 100%);
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 22px rgba(127, 29, 29, 0.28);
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .admin-badge {
+            background: rgba(255,255,255,0.12);
+            color: #fff7f7;
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            border: 1px solid rgba(255,255,255,0.35);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(185, 28, 28, 0.18);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            background: rgba(255,255,255,0.96);
+            border: 3px solid #b91c1c;
+            border-radius: 18px;
+            padding: 20px 24px;
+            box-shadow: 0 12px 28px rgba(60, 8, 8, 0.12);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            color: #7f1d1d;
+        }
+
+        .back-link {
+            text-decoration: none;
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(185, 28, 28, 0.18);
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255, 235, 235, 0.72), rgba(255,255,255,0.8)), var(--card-bg) center/cover no-repeat;
+            border-radius: 18px;
+            padding: 24px 22px;
+            box-shadow: 0 12px 28px rgba(60, 8, 8, 0.08);
+            border: 3px solid #b91c1c;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            backdrop-filter: blur(8px);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.24), rgba(255,255,255,0.75));
+            z-index: 0;
+        }
+
+        .card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.52);
+            backdrop-filter: blur(2px);
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid #f3d6d6;
+            vertical-align: middle;
+        }
+
+        th {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #7f1d1d;
+            font-weight: 800;
+        }
+
+        td {
+            font-size: 15px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .role-tag {
+            display: inline-block;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            border: 1px solid rgba(185, 28, 28, 0.2);
+        }
+
+        .status-active {
+            color: #2e7d32;
+            font-weight: 800;
+        }
+
+        .status-inactive {
+            color: #c62828;
+            font-weight: 800;
+        }
+
+        .toggle-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-weight: 800;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 8px 18px rgba(185, 28, 28, 0.15);
+        }
+
+        .activate { background: linear-gradient(135deg, #15803d 0%, #22c55e 100%); }
+        .deactivate { background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%); }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+            font-weight: 700;
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead { display: none; }
+            tr { border-bottom: 1px solid #f3d6d6; }
+            td {
+                border-bottom: none;
+                padding: 10px 0;
+            }
+            td::before {
+                content: attr(data-label);
+                display: block;
+                font-size: 11px;
+                text-transform: uppercase;
+                color: #7f1d1d;
+                margin-bottom: 4px;
+                font-weight: 800;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">Ehda Portal</div>
+        <div class="nav-right">
+            <span class="admin-badge">ADMIN</span>
+            <span>{{ request.user.first_name }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="header">
+            <h1>Manage Users</h1>
+            <a href="{% url 'admin_dashboard' %}" class="back-link">Back to Dashboard</a>
+        </div>
+
+        <div class="card" style="--card-bg: url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=80');">
+            {% if users %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td data-label="Name">{{ user.get_full_name }}</td>
+                                <td data-label="Email">{{ user.email }}</td>
+                                <td data-label="Role"><span class="role-tag">{{ user.role }}</span></td>
+                                <td data-label="Status">
+                                    {% if user.is_active %}
+                                        <span class="status-active">Active</span>
+                                    {% else %}
+                                        <span class="status-inactive">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Action">
+                                    <form method="post" action="{% url 'toggle_user_status' user.pk %}">
+                                        {% csrf_token %}
+                                        {% if user.is_active %}
+                                            <button type="submit" class="toggle-btn deactivate">Deactivate</button>
+                                        {% else %}
+                                            <button type="submit" class="toggle-btn activate">Activate</button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty">No users found.</div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>

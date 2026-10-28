@@ -14,6 +14,13 @@ from accounts.views import (
     toggle_availability,
     hospital_dashboard,
     admin_dashboard,
+    admin_manage_users,
+    admin_manage_hospitals,
+    admin_reported_accounts,
+    admin_platform_activity,
+    admin_platform_statistics,
+    admin_security_access,
+    toggle_user_status,
     create_blood_request,
     manage_blood_requests,
     close_blood_request,
@@ -80,6 +87,41 @@ urlpatterns = [
         "dashboard/admin/",
         admin_dashboard,
         name="admin_dashboard",
+    ),
+    path(
+        "dashboard/admin/users/",
+        admin_manage_users,
+        name="admin_manage_users",
+    ),
+    path(
+        "dashboard/admin/hospitals/",
+        admin_manage_hospitals,
+        name="admin_manage_hospitals",
+    ),
+    path(
+        "dashboard/admin/reported-accounts/",
+        admin_reported_accounts,
+        name="admin_reported_accounts",
+    ),
+    path(
+        "dashboard/admin/activity/",
+        admin_platform_activity,
+        name="admin_platform_activity",
+    ),
+    path(
+        "dashboard/admin/statistics/",
+        admin_platform_statistics,
+        name="admin_platform_statistics",
+    ),
+    path(
+        "dashboard/admin/security/",
+        admin_security_access,
+        name="admin_security_access",
+    ),
+    path(
+        "dashboard/admin/users/<int:pk>/toggle-status/",
+        toggle_user_status,
+        name="toggle_user_status",
     ),
 
     # Password reset

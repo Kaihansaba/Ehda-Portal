@@ -252,6 +252,42 @@ class SprintOneAuthenticationTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    def test_admin_can_view_user_management_page(self):
+        admin = User.objects.create_superuser(
+            email="admin@example.com",
+            password="StrongPass123!",
+            first_name="Test",
+            last_name="Admin",
+            phone="0700000004",
+            role="ADMIN",
+        )
+
+        self.client.force_login(admin)
+
+        response = self.client.get(reverse("admin_manage_users"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("users", response.context)
+        self.assertContains(response, self.donor.email)
+
+    def test_admin_can_toggle_user_status(self):
+        admin = User.objects.create_superuser(
+            email="admin@example.com",
+            password="StrongPass123!",
+            first_name="Test",
+            last_name="Admin",
+            phone="0700000004",
+            role="ADMIN",
+        )
+
+        self.client.force_login(admin)
+
+        response = self.client.post(reverse("toggle_user_status", args=[self.donor.pk]))
+
+        self.assertRedirects(response, reverse("admin_manage_users"))
+        self.donor.refresh_from_db()
+        self.assertFalse(self.donor.is_active)
+
     def test_admin_cannot_open_donor_dashboard(self):
         admin = User.objects.create_superuser(
             email="admin@example.com",
@@ -379,3 +415,63 @@ class SprintOneAuthenticationTests(TestCase):
         blood_request.refresh_from_db()
         self.assertEqual(blood_request.status, "COMPLETED")
         self.assertRedirects(response, reverse("manage_blood_requests"))
+
+    def test_admin_can_view_hospital_management_page(self):
+        admin = User.objects.create_superuser(
+            email="admin@example.com",
+            password="StrongPass123!",
+            first_name="Test",
+            last_name="Admin",
+            phone="0700000004",
+            role="ADMIN",
+        )
+
+        self.client.force_login(admin)
+        response = self.client.get(reverse("admin_manage_hospitals"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("hospitals", response.context)
+        self.assertContains(response, self.hospital.email)
+
+    def test_admin_can_view_reported_accounts(self):
+        admin = User.objects.create_superuser(
+            email="admin@example.com",
+            password="StrongPass123!",
+            first_name="Test",
+            last_name="Admin",
+            phone="0700000004",
+            role="ADMIN",
+        )
+        reported_user = User.objects.create_user(
+            email="reported@example.com",
+            password="StrongPass123!",
+            first_name="Reported",
+            last_name="User",
+            phone="0700000005",
+            role="DONOR",
+            is_active=False,
+        )
+
+        self.client.force_login(admin)
+        response = self.client.get(reverse("admin_reported_accounts"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("reported_users", response.context)
+        self.assertContains(response, reported_user.email)
+
+    def test_admin_can_view_platform_activity_page(self):
+        admin = User.objects.create_superuser(
+            email="admin@example.com",
+            password="StrongPass123!",
+            first_name="Test",
+            last_name="Admin",
+            phone="0700000004",
+            role="ADMIN",
+        )
+
+        self.client.force_login(admin)
+        response = self.client.get(reverse("admin_platform_activity"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("summary", response.context)
+        self.assertIn("recent_requests", response.context)

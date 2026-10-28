@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 
 from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
-from .models import BloodRequest
+from .models import BloodRequest, User
 
 
 def register(request):
@@ -119,7 +119,107 @@ def hospital_dashboard(request):
 
 @role_required("ADMIN")
 def admin_dashboard(request):
-    return render(request, "accounts/admin_dashboard.html")
+    total_users = User.objects.count()
+    donor_count = User.objects.filter(role=User.Role.DONOR).count()
+    hospital_count = User.objects.filter(role=User.Role.HOSPITAL).count()
+    reported_count = User.objects.filter(is_active=False).count()
+
+    context = {
+        "total_users": total_users,
+        "donor_count": donor_count,
+        "hospital_count": hospital_count,
+        "reported_count": reported_count,
+    }
+    return render(request, "accounts/admin_dashboard.html", context)
+
+
+@role_required("ADMIN")
+def admin_manage_users(request):
+    users = User.objects.order_by("role", "first_name", "last_name")
+    return render(request, "accounts/admin_manage_users.html", {"users": users})
+
+
+@role_required("ADMIN")
+def admin_manage_hospitals(request):
+    hospitals = User.objects.filter(role=User.Role.HOSPITAL).order_by("first_name", "last_name")
+    return render(request, "accounts/admin_manage_hospitals.html", {"hospitals": hospitals})
+
+
+@role_required("ADMIN")
+def admin_reported_accounts(request):
+    reported_users = User.objects.filter(is_active=False).order_by("role", "first_name", "last_name")
+    return render(request, "accounts/admin_reported_accounts.html", {"reported_users": reported_users})
+
+
+@role_required("ADMIN")
+def admin_platform_activity(request):
+    summary = {
+        "total_users": User.objects.count(),
+        "total_hospitals": User.objects.filter(role=User.Role.HOSPITAL).count(),
+        "total_donors": User.objects.filter(role=User.Role.DONOR).count(),
+        "total_requests": BloodRequest.objects.count(),
+        "open_requests": BloodRequest.objects.filter(status=BloodRequest.Status.OPEN).count(),
+        "in_review_requests": BloodRequest.objects.filter(status=BloodRequest.Status.IN_REVIEW).count(),
+        "accepted_requests": BloodRequest.objects.filter(status=BloodRequest.Status.ACCEPTED).count(),
+        "completed_requests": BloodRequest.objects.filter(status=BloodRequest.Status.COMPLETED).count(),
+        "cancelled_requests": BloodRequest.objects.filter(status=BloodRequest.Status.CANCELLED).count(),
+    }
+    recent_requests = BloodRequest.objects.select_related("hospital").order_by("-created_at")[:10]
+    return render(
+        request,
+        "accounts/admin_platform_activity.html",
+        {"summary": summary, "recent_requests": recent_requests},
+    )
+
+
+@role_required("ADMIN")
+def admin_platform_statistics(request):
+    total_users = User.objects.count()
+    total_donors = User.objects.filter(role=User.Role.DONOR).count()
+    total_hospitals = User.objects.filter(role=User.Role.HOSPITAL).count()
+    total_requests = BloodRequest.objects.count()
+    active_users = User.objects.filter(is_active=True).count()
+    inactive_users = User.objects.filter(is_active=False).count()
+
+    context = {
+        "total_users": total_users,
+        "total_donors": total_donors,
+        "total_hospitals": total_hospitals,
+        "total_requests": total_requests,
+        "active_users": active_users,
+        "inactive_users": inactive_users,
+    }
+    return render(request, "accounts/admin_platform_statistics.html", context)
+
+
+@role_required("ADMIN")
+def admin_security_access(request):
+    users = User.objects.order_by("-is_active", "role", "first_name", "last_name")
+    summary = {
+        "total_users": users.count(),
+        "active_users": users.filter(is_active=True).count(),
+        "inactive_users": users.filter(is_active=False).count(),
+        "admins": users.filter(role=User.Role.ADMIN).count(),
+        "hospitals": users.filter(role=User.Role.HOSPITAL).count(),
+        "donors": users.filter(role=User.Role.DONOR).count(),
+    }
+    return render(
+        request,
+        "accounts/admin_security_access.html",
+        {"summary": summary, "users": users},
+    )
+
+
+@role_required("ADMIN")
+def toggle_user_status(request, pk):
+    user = get_object_or_404(User, pk=pk)
+
+    if request.method == "POST":
+        user.is_active = not user.is_active
+        user.save(update_fields=["is_active"])
+
+    redirect_name = request.POST.get("next") or "admin_manage_users"
+    return redirect(redirect_name)
 
 
 @role_required("HOSPITAL")

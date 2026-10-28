@@ -20,8 +20,10 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #222;
+            background:
+                linear-gradient(rgba(102, 10, 10, 0.72), rgba(54, 8, 8, 0.74)),
+                url('https://images.unsplash.com/photo-1615461066841-6116e61058f4?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat fixed;
+            color: #1f2937;
             min-height: 100vh;
         }
 
@@ -32,7 +34,9 @@
 
         .navbar {
             height: 76px;
-            background: #263238;
+            background: rgba(104, 12, 12, 0.82);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.14);
             color: white;
 
             display: flex;
@@ -42,7 +46,7 @@
             padding: 0 50px;
 
             box-shadow:
-                0 4px 15px rgba(0, 0, 0, 0.10);
+                0 12px 30px rgba(57, 5, 5, 0.2);
         }
 
 
@@ -53,11 +57,13 @@
 
             font-size: 27px;
             font-weight: 800;
+            color: #fff7f7;
         }
 
 
         .logo-icon {
             font-size: 25px;
+            filter: drop-shadow(0 3px 8px rgba(255,255,255,0.25));
         }
 
 
@@ -75,23 +81,33 @@
 
 
         .admin-badge {
-            background: #455a64;
-            color: white;
+            background: #fff7f7;
+            color: #b91c1c;
 
             padding: 7px 12px;
 
+            border: 1px solid rgba(185, 28, 28, 0.2);
             border-radius: 20px;
 
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+
+        .user-name {
+            color: #fff5f5;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.02em;
         }
 
 
         .logout-btn {
             display: inline-block;
 
-            background: white;
-            color: #263238;
+            background: linear-gradient(135deg, #fff7f7 0%, #fee2e2 100%);
+            color: #991b1b;
 
             padding: 11px 21px;
 
@@ -99,15 +115,18 @@
 
             text-decoration: none;
 
-            font-weight: 700;
+            font-weight: 800;
 
             transition: 0.2s ease;
+            box-shadow: 0 8px 18px rgba(255, 255, 255, 0.15);
+            border: none;
+            cursor: pointer;
         }
 
 
         .logout-btn:hover {
-            background: #eceff1;
             transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.28);
         }
 
 
@@ -129,20 +148,33 @@
         ========================= */
 
         .welcome {
-            background: white;
+            background: radial-gradient(circle at top right, rgba(248, 113, 113, 0.18), transparent 25%),
+                        linear-gradient(135deg, rgba(255,255,255,0.97), rgba(255,242,242,0.9));
 
-            border-radius: 20px;
+            border-radius: 24px;
 
             padding: 35px 40px;
 
             margin-bottom: 28px;
 
             box-shadow:
-                0 8px 25px rgba(0, 0, 0, 0.06);
+                0 18px 40px rgba(60, 8, 8, 0.12);
 
             position: relative;
 
             overflow: hidden;
+            border: 1px solid rgba(254, 202, 202, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+
+        .welcome::before {
+            content: "🩺";
+            position: absolute;
+            right: 35px;
+            top: 18px;
+            font-size: 68px;
+            opacity: 0.14;
         }
 
 
@@ -151,12 +183,12 @@
 
             position: absolute;
 
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
 
             border-radius: 50%;
 
-            background: rgba(38, 50, 56, 0.06);
+            background: rgba(185, 28, 28, 0.06);
 
             right: -65px;
             top: -80px;
@@ -206,20 +238,23 @@
 
 
         .stat-card {
-            background: white;
+            background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(255,245,245,0.9));
 
             border-radius: 17px;
 
             padding: 23px;
 
             box-shadow:
-                0 7px 22px rgba(0, 0, 0, 0.06);
+                0 10px 26px rgba(60, 8, 8, 0.08);
 
             display: flex;
 
             align-items: center;
 
             gap: 15px;
+            border: 1px solid rgba(254, 202, 202, 0.8);
+            border-left: 5px solid #dc2626;
+            backdrop-filter: blur(8px);
         }
 
 
@@ -276,11 +311,30 @@
         ========================= */
 
         .section-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             font-size: 23px;
-
-            color: #222;
-
+            color: #7f1d1d;
             margin-bottom: 18px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            background: rgba(255, 255, 255, 0.96);
+            padding: 12px 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(185, 28, 28, 0.18);
+            box-shadow: 0 10px 24px rgba(60, 8, 8, 0.08);
+        }
+
+        .section-title span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            box-shadow: 0 8px 18px rgba(185, 28, 28, 0.12);
         }
 
 
@@ -301,18 +355,54 @@
 
 
         .action-card {
-            background: white;
+            background: linear-gradient(135deg, rgba(255, 235, 235, 0.72), rgba(255,255,255,0.8)), var(--card-bg) center/cover no-repeat;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 12px 28px rgba(60, 8, 8, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 3px solid #b91c1c;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+            isolation: isolate;
+        }
 
-            border-radius: 17px;
+        .action-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.24), rgba(255,255,255,0.75));
+            z-index: 0;
+        }
 
-            padding: 28px;
+        .action-card > * {
+            position: relative;
+            z-index: 1;
+        }
 
-            box-shadow:
-                0 7px 22px rgba(0, 0, 0, 0.06);
+        .action-media {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+            border: 3px solid #ffffff;
+            box-shadow: 0 12px 24px rgba(185, 28, 28, 0.22);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
 
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
+        .action-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .action-card > * {
+            position: relative;
+            z-index: 1;
         }
 
 
@@ -320,14 +410,25 @@
             transform: translateY(-4px);
 
             box-shadow:
-                0 12px 28px rgba(0, 0, 0, 0.09);
+                0 16px 32px rgba(127, 29, 29, 0.12);
         }
 
 
         .action-icon {
-            font-size: 35px;
-
-            margin-bottom: 15px;
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.94);
+            border: 2px solid rgba(185, 28, 28, 0.18);
+            box-shadow: 0 8px 20px rgba(127, 29, 29, 0.14);
+            font-size: 20px;
+            z-index: 2;
         }
 
 
@@ -336,18 +437,20 @@
 
             margin-bottom: 8px;
 
-            color: #222;
+            color: #1f2937;
+            font-weight: 800;
         }
 
 
         .action-card p {
-            color: #777;
+            color: #374151;
 
             font-size: 14px;
 
             line-height: 1.5;
 
             margin-bottom: 18px;
+            font-weight: 600;
         }
 
 
@@ -358,7 +461,7 @@
 
             border-radius: 8px;
 
-            background: #263238;
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
 
             color: white;
 
@@ -367,6 +470,7 @@
             font-size: 13px;
 
             font-weight: 700;
+            box-shadow: 0 8px 18px rgba(185, 28, 28, 0.18);
         }
 
 
@@ -384,51 +488,112 @@
 
 
         .info-card {
-            background: white;
+            background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(255,245,245,0.8)), var(--card-bg) center/cover no-repeat;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 12px 26px rgba(60, 8, 8, 0.08);
+            border: 4px solid #ffffff;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+            isolation: isolate;
+        }
 
-            border-radius: 17px;
+        .info-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.75));
+            z-index: 0;
+        }
 
-            padding: 28px;
+        .info-card > * {
+            position: relative;
+            z-index: 1;
+        }
 
-            box-shadow:
-                0 7px 22px rgba(0, 0, 0, 0.06);
+        .info-media {
+            position: relative;
+            height: 140px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 2px solid rgba(185, 28, 28, 0.18);
+            box-shadow: 0 12px 22px rgba(60, 8, 8, 0.08);
+        }
+
+        .info-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .info-icon {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 2px solid rgba(185, 28, 28, 0.18);
+            box-shadow: 0 8px 20px rgba(127, 29, 29, 0.12);
+            font-size: 20px;
+            z-index: 2;
         }
 
 
         .info-card h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 20px;
 
             margin-bottom: 15px;
 
-            color: #222;
+            color: #7f1d1d;
+            position: relative;
+            z-index: 1;
+            font-weight: 800;
         }
 
 
         .info-card p {
-            color: #777;
+            color: #1f2937;
 
-            line-height: 1.6;
+            line-height: 1.7;
 
             font-size: 14px;
+            position: relative;
+            z-index: 1;
+            font-weight: 600;
         }
 
 
         .status {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
 
-            margin-top: 15px;
+            margin-top: 18px;
 
             padding: 8px 14px;
 
             border-radius: 20px;
 
-            background: #e8f5e9;
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
 
-            color: #2e7d32;
+            color: #166534;
 
             font-size: 13px;
 
-            font-weight: 700;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
         }
 
 
@@ -612,7 +777,7 @@
                 </h3>
 
                 <p>
-                    0
+                    {{ total_users }}
                 </p>
 
             </div>
@@ -634,7 +799,7 @@
                 </h3>
 
                 <p>
-                    0
+                    {{ donor_count }}
                 </p>
 
             </div>
@@ -656,7 +821,7 @@
                 </h3>
 
                 <p>
-                    0
+                    {{ hospital_count }}
                 </p>
 
             </div>
@@ -678,7 +843,7 @@
                 </h3>
 
                 <p class="red">
-                    0
+                    {{ reported_count }}
                 </p>
 
             </div>
@@ -693,7 +858,7 @@
     <!-- Management -->
 
     <h2 class="section-title">
-        Administration
+        <span>⚕️</span> Administration
     </h2>
 
 
@@ -702,10 +867,11 @@
 
         <!-- Users -->
 
-        <div class="action-card">
+        <div class="action-card" style="--card-bg: url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=900&q=80');">
 
-            <div class="action-icon">
-                👥
+            <div class="action-media">
+                <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80" alt="Manage users">
+                <span class="action-icon">👥</span>
             </div>
 
             <h3>
@@ -717,9 +883,9 @@
                 Ehda Portal user accounts.
             </p>
 
-            <span class="action-btn">
-                Coming Soon
-            </span>
+            <a href="{% url 'admin_manage_users' %}" class="action-btn">
+                Open Panel
+            </a>
 
         </div>
 
@@ -727,10 +893,11 @@
 
         <!-- Hospitals -->
 
-        <div class="action-card">
+        <div class="action-card" style="--card-bg: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=900&q=80');">
 
-            <div class="action-icon">
-                🏥
+            <div class="action-media">
+                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80" alt="Manage hospitals">
+                <span class="action-icon">🏥</span>
             </div>
 
             <h3>
@@ -742,9 +909,9 @@
                 hospital information.
             </p>
 
-            <span class="action-btn">
-                Coming Soon
-            </span>
+            <a href="{% url 'admin_manage_hospitals' %}" class="action-btn">
+                Open Panel
+            </a>
 
         </div>
 
@@ -752,10 +919,11 @@
 
         <!-- Reports -->
 
-        <div class="action-card">
+        <div class="action-card" style="--card-bg: url('https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&w=900&q=80');">
 
-            <div class="action-icon">
-                🚨
+            <div class="action-media">
+                <img src="https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&w=600&q=80" alt="Reported accounts">
+                <span class="action-icon">🚨</span>
             </div>
 
             <h3>
@@ -767,9 +935,9 @@
                 account-related issues.
             </p>
 
-            <span class="action-btn">
-                Coming Soon
-            </span>
+            <a href="{% url 'admin_reported_accounts' %}" class="action-btn">
+                Open Panel
+            </a>
 
         </div>
 
@@ -777,24 +945,25 @@
 
         <!-- Donations -->
 
-        <div class="action-card">
+        <div class="action-card" style="--card-bg: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80');">
 
-            <div class="action-icon">
-                🩸
+            <div class="action-media">
+                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="Platform activity">
+                <span class="action-icon">📊</span>
             </div>
 
             <h3>
-                Donation Records
+                Platform Activity
             </h3>
 
             <p>
                 Monitor blood donation activity and
-                donation records across the platform.
+                the recent operational status of the platform.
             </p>
 
-            <span class="action-btn">
-                Coming Soon
-            </span>
+            <a href="{% url 'admin_platform_activity' %}" class="action-btn">
+                View Activity
+            </a>
 
         </div>
 
@@ -802,10 +971,11 @@
 
         <!-- Platform -->
 
-        <div class="action-card">
+        <div class="action-card" style="--card-bg: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80');">
 
-            <div class="action-icon">
-                📊
+            <div class="action-media">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" alt="Platform statistics">
+                <span class="action-icon">📈</span>
             </div>
 
             <h3>
@@ -817,9 +987,9 @@
                 across the Ehda Portal platform.
             </p>
 
-            <span class="action-btn">
-                Coming Soon
-            </span>
+            <a href="{% url 'admin_platform_statistics' %}" class="action-btn">
+                View Statistics
+            </a>
 
         </div>
 
@@ -827,10 +997,11 @@
 
         <!-- Security -->
 
-        <div class="action-card">
+        <div class="action-card" style="--card-bg: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80');">
 
-            <div class="action-icon">
-                🔐
+            <div class="action-media">
+                <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80" alt="Security and access">
+                <span class="action-icon">🔐</span>
             </div>
 
             <h3>
@@ -842,9 +1013,9 @@
                 secure platform permissions.
             </p>
 
-            <span class="action-btn">
-                Coming Soon
-            </span>
+            <a href="{% url 'admin_security_access' %}" class="action-btn">
+                View Security
+            </a>
 
         </div>
 
@@ -858,10 +1029,15 @@
     <div class="bottom-grid">
 
 
-        <div class="info-card">
+        <div class="info-card" style="--card-bg: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80');">
+
+            <div class="info-media">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80" alt="System monitoring status">
+                <span class="info-icon">🩺</span>
+            </div>
 
             <h2>
-                System Status
+                🩺 System Status
             </h2>
 
             <p>
@@ -877,16 +1053,21 @@
 
 
 
-        <div class="info-card">
+        <div class="info-card" style="--card-bg: url('https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80');">
+
+            <div class="info-media">
+                <img src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80" alt="Administrator access in a medical office">
+                <span class="info-icon">🔐</span>
+            </div>
 
             <h2>
-                Administrator Access
+                🔐 Administrator Access
             </h2>
 
             <p>
                 You are signed in with administrator
-                privileges. Admin-only features will
-                be connected to the management module.
+                privileges. Admin-only features are available
+                and connected to the management module.
             </p>
 
             <span class="status">

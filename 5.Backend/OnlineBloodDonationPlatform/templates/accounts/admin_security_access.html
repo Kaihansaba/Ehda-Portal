@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security & Access</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(102, 10, 10, 0.74), rgba(54, 8, 8, 0.76)),
+                        url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat fixed;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 35%, #b91c1c 100%);
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 22px rgba(127, 29, 29, 0.28);
+        }
+
+        .brand { font-size: 24px; font-weight: 700; }
+        .nav-right { display: flex; align-items: center; gap: 18px; }
+        .admin-badge {
+            background: rgba(255,255,255,0.12);
+            color: #fff7f7;
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            border: 1px solid rgba(255,255,255,0.35);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(185, 28, 28, 0.18);
+        }
+
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px 40px; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            background: rgba(255,255,255,0.96);
+            border: 3px solid #b91c1c;
+            border-radius: 18px;
+            padding: 20px 24px;
+            box-shadow: 0 12px 28px rgba(60, 8, 8, 0.12);
+        }
+
+        .header h1 { margin: 0; font-size: 32px; color: #7f1d1d; }
+        .back-link {
+            text-decoration: none;
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(185, 28, 28, 0.18);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(180deg, #fffafa 0%, #ffffff 100%);
+            border-radius: 18px;
+            box-shadow: 0 10px 26px rgba(127, 29, 29, 0.1);
+            padding: 20px;
+            border: 3px solid #b91c1c;
+        }
+
+        .stat-card h3 {
+            color: #7f1d1d;
+            font-size: 14px;
+            margin: 0 0 10px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .stat-card p {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            color: #1f2937;
+        }
+
+        .card {
+            background: linear-gradient(180deg, #fffdfd 0%, #ffffff 100%);
+            border-radius: 18px;
+            box-shadow: 0 12px 28px rgba(127, 29, 29, 0.1);
+            padding: 22px;
+            margin-top: 30px;
+            border: 3px solid #b91c1c;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #f3d6d6; }
+        th {
+            text-transform: uppercase;
+            color: #7f1d1d;
+            font-size: 13px;
+            letter-spacing: 0.05em;
+            font-weight: 800;
+        }
+        td { color: #1f2937; font-weight: 600; }
+        .active { color: #2e7d32; font-weight: 800; }
+        .inactive { color: #c62828; font-weight: 800; }
+
+        @media (max-width: 800px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 16px 20px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">Ehda Portal</div>
+        <div class="nav-right">
+            <span class="admin-badge">ADMIN</span>
+            <span>{{ request.user.first_name }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="header">
+            <h1>Security & Access</h1>
+            <a href="{% url 'admin_dashboard' %}" class="back-link">Back to Dashboard</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Accounts</h3>
+                <p>{{ summary.total_users }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active</h3>
+                <p>{{ summary.active_users }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Inactive</h3>
+                <p>{{ summary.inactive_users }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Admins</h3>
+                <p>{{ summary.admins }}</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Access Overview</h2>
+            <table>
+                <tr><th>Donors</th><td>{{ summary.donors }}</td></tr>
+                <tr><th>Hospitals</th><td>{{ summary.hospitals }}</td></tr>
+                <tr><th>Admins</th><td>{{ summary.admins }}</td></tr>
+                <tr><th>Active Accounts</th><td>{{ summary.active_users }}</td></tr>
+                <tr><th>Inactive Accounts</th><td>{{ summary.inactive_users }}</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Account Status</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.get_full_name }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>
+                                {% if user.is_active %}
+                                    <span class="active">Active</span>
+                                {% else %}
+                                    <span class="inactive">Inactive</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

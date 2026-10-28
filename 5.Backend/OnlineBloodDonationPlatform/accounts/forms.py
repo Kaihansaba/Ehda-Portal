@@ -24,6 +24,7 @@ class RegistrationForm(forms.ModelForm):
         choices=[
             (User.Role.DONOR, "Donor"),
             (User.Role.HOSPITAL, "Hospital"),
+            (User.Role.ADMIN, "Admin"),
         ],
         widget=forms.Select(),
     )
