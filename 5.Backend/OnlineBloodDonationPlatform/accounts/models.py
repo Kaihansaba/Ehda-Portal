@@ -172,3 +172,52 @@ class BloodRequest(models.Model):
             raise ValidationError("This status change is not allowed.")
         self.status = new_status
         self.save(update_fields=["status"])
+
+    # Donors can answer (and change their answer) until the request closes.
+    CLOSED_STATUSES = (Status.COMPLETED, Status.CANCELLED)
+
+    @property
+    def is_closed(self):
+        return self.status in self.CLOSED_STATUSES
+
+    @property
+    def accepted_responses_count(self):
+        return self.responses.filter(response="ACCEPTED").count()
+
+
+class DonorResponse(models.Model):
+    """
+    A donor's answer to a blood request (#012). One per donor per request;
+    the donor can change it until the request is completed or cancelled.
+    The request's status is still changed by the hospital only.
+    """
+
+    class Answer(models.TextChoices):
+        ACCEPTED = "ACCEPTED", "Accepted"
+        DECLINED = "DECLINED", "Declined"
+
+    blood_request = models.ForeignKey(
+        BloodRequest, on_delete=models.CASCADE, related_name="responses",
+    )
+    donor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="request_responses",
+        limit_choices_to={"role": User.Role.DONOR},
+    )
+    response = models.CharField(max_length=10, choices=Answer.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # Changes when the donor changes their answer.
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["blood_request", "donor"],
+                name="one_response_per_donor_per_request",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.donor.email} - {self.get_response_display()} ({self.blood_request_id})"
