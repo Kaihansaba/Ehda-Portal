@@ -25,6 +25,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Your account has been created. Please sign in.")
             return redirect("login")
     else:
         form = RegistrationForm()
@@ -86,12 +87,8 @@ def role_required(*allowed_roles):
                     status=403,
                 )
             return view_func(request, *args, **kwargs)
-        return decorator_wrapper(wrapper)
+        return wrapper
     return decorator
-
-
-def decorator_wrapper(view_func):
-    return view_func
 
 
 @role_required("DONOR")
@@ -318,6 +315,8 @@ def toggle_user_status(request, pk):
         else:
             user.is_active = not user.is_active
             user.save(update_fields=["is_active"])
+            state = "activated" if user.is_active else "deactivated"
+            messages.success(request, f"{user.email} has been {state}.")
 
     redirect_name = request.POST.get("next")
     if redirect_name not in TOGGLE_RETURN_PAGES:
@@ -333,6 +332,7 @@ def create_blood_request(request):
             blood_request = form.save(commit=False)
             blood_request.hospital = request.user
             blood_request.save()
+            messages.success(request, "Your blood request has been created. Compatible available donors can now see it.")
             return redirect("manage_blood_requests")
     else:
         form = BloodRequestForm()
