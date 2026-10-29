@@ -91,6 +91,26 @@
                 </a>
             </li>
             <li>
+                <a href="{% url 'donor_blood_requests' %}">
+                    <span>
+                        <span class="link-title">
+                            Blood requests
+                            {% if donor_request_count %}<span class="count-badge">{{ donor_request_count }} new</span>{% endif %}
+                        </span>
+                        <span class="link-text">
+                            {% if not request.user.is_available %}
+                                Hidden while you’re not available
+                            {% elif donor_request_count %}
+                                {{ donor_request_count }} request{{ donor_request_count|pluralize }} for your blood type waiting for your answer
+                            {% else %}
+                                Requests from hospitals that need your blood type
+                            {% endif %}
+                        </span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
                 <a href="{% url 'donation_history' %}">
                     <span>
                         <span class="link-title">Donation history</span>
@@ -100,18 +120,6 @@
                 </a>
             </li>
         </ul>
-    </section>
-
-    <section class="section" aria-labelledby="soon-title">
-        <h2 id="soon-title" class="section-title">Coming soon</h2>
-
-        <div class="grid grid-2">
-            <div class="card soon-card">
-                <h3 class="card-title">Blood requests</h3>
-                <p class="card-text">See requests from people who need your blood type, and accept or decline them.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-        </div>
     </section>
 
 {% endblock %}

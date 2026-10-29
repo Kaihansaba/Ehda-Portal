@@ -48,6 +48,16 @@
                     {% endif %}
                     {% if role == "DONOR" %}
                         <li>
+                            <a class="nav-link" href="{% url 'donor_blood_requests' %}"{% if view == "donor_blood_requests" %} aria-current="page"{% endif %}>
+                                {% include "partials/icon.html" with name="list" %}
+                                Requests
+                                {% if donor_request_count %}
+                                    <span class="count-badge" aria-hidden="true">{{ donor_request_count }}</span>
+                                    <span class="visually-hidden">({{ donor_request_count }} new)</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li>
                             <a class="nav-link" href="{% url 'locations:donor_location' %}"{% if view == "locations:donor_location" %} aria-current="page"{% endif %}>
                                 {% include "partials/icon.html" with name="pin" %}
                                 My location
