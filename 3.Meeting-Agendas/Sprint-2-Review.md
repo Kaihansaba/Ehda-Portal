@@ -10,7 +10,7 @@
 
 **Date:** 21 October 2026
 
-**Duration:** 25 minutes
+**Duration:** 15 minutes
 
 ## Participants
 
