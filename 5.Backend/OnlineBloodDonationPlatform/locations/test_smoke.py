@@ -14,7 +14,7 @@ from django.contrib import admin
 from django.test import TestCase
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
-from accounts.models import BloodRequest, Notification, User
+from accounts.models import BloodRequest, DonorResponse, Notification, User
 from locations.models import DonorLocation
 from locations.search import search_donors
 
@@ -123,6 +123,9 @@ def expected(name, url):
             "hospital": (302, reverse("manage_blood_requests")),
         },
         "admin_dashboard": only("admin"),
+        # Messaging (#014): the hospital and the donor of that request
+        "conversation": {**only("donor", "hospital")},
+        "conversation_messages": {**only("donor", "hospital")},
         # Notifications (#011): every signed-in user has their own
         "notifications": logged_in(),
         # Only the owner (the donor here) can open it; others get 404.
@@ -181,6 +184,9 @@ class UrlSmokeTests(TestCase):
             hospital=self.users["hospital"], blood_type="O-", notes="Surgery",
         )
 
+        DonorResponse.objects.create(
+            blood_request=blood_request, donor=self.users["donor"], response="ACCEPTED",
+        )
         notification = Notification.objects.create(
             user=self.users["donor"], message="Test", link=reverse("donor_blood_requests"),
         )
@@ -188,6 +194,8 @@ class UrlSmokeTests(TestCase):
         # URLs that need real objects: the hospital's own request, a donor.
         self.url_args = {
             "open_notification": {"pk": notification.pk},
+            "conversation": {"pk": blood_request.pk, "donor_pk": self.users["donor"].pk},
+            "conversation_messages": {"pk": blood_request.pk, "donor_pk": self.users["donor"].pk},
             **URL_ARGS,
             "request_detail": {"pk": blood_request.pk},
             "change_request_status": {"pk": blood_request.pk, "status": "IN_REVIEW"},

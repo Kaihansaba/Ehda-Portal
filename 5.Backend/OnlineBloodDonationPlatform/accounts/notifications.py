@@ -95,3 +95,14 @@ def notify_account_status(user, request=None):
         notify(user, "Your Ehda account has been reactivated. You can sign in again.", reverse("login"), request)
     else:
         notify(user, "Your Ehda account has been deactivated by an administrator.", "", request)
+
+
+def notify_new_message(message, recipient, request=None):
+    sender = message.sender
+    if sender.role == User.Role.DONOR:
+        name = public_name(sender)
+    else:
+        name = sender.get_full_name() or "The hospital"
+    text = f"New message from {name} about the request for {describe(message.blood_request)}."
+    link = reverse("conversation", args=[message.blood_request_id, message.donor_id])
+    notify(recipient, text, link, request)

@@ -79,6 +79,10 @@
                                             <a href="mailto:{{ blood_request.hospital.email }}">{{ blood_request.hospital.email }}</a>
                                         {% endif %}
                                         <p class="contact-note">Shared because you accepted. The hospital can see your name and phone number until you decline.</p>
+                                        <a class="btn btn-secondary btn-sm mt-2" href="{% url 'conversation' blood_request.pk request.user.pk %}">
+                                            {% include "partials/icon.html" with name="chat" %}
+                                            Message the hospital
+                                        </a>
                                     </div>
                                 {% endif %}
                             {% endif %}

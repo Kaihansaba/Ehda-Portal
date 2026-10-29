@@ -13,10 +13,12 @@ from locations.utils import public_name
 
 from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
 from .donor_requests import can_see_requests, requests_for_donor, responses_by_request
-from .models import User, Donation, BloodRequest, DonorResponse, Notification
+from .messaging import get_conversation
+from .models import User, Donation, BloodRequest, DonorResponse, Message, Notification
 from .notifications import (
     notify_account_status,
     notify_donor_response,
+    notify_new_message,
     notify_new_request,
     notify_status_change,
 )
@@ -525,3 +527,36 @@ def mark_all_notifications_read(request):
         if updated:
             messages.success(request, "All notifications are marked as read.")
     return redirect("notifications")
+
+
+MAX_MESSAGE_LENGTH = 2000
+
+
+@role_required("DONOR", "HOSPITAL")
+def conversation(request, pk, donor_pk):
+    convo = get_conversation(request.user, pk, donor_pk)
+
+    if request.method == "POST":
+        body = request.POST.get("body", "").strip()
+
+        if not convo.can_send:
+            messages.error(request, convo.read_only_reason)
+        elif not body:
+            messages.error(request, "Please write a message first.")
+        elif len(body) > MAX_MESSAGE_LENGTH:
+            messages.error(request, f"Messages can be at most {MAX_MESSAGE_LENGTH} characters.")
+        else:
+            message = Message.objects.create(
+                blood_request=convo.blood_request, donor=convo.donor, sender=request.user, body=body,
+            )
+            notify_new_message(message, convo.other_party, request)
+        return redirect("conversation", pk=pk, donor_pk=donor_pk)
+
+    return render(request, "accounts/conversation.html", {"convo": convo})
+
+
+@role_required("DONOR", "HOSPITAL")
+def conversation_messages(request, pk, donor_pk):
+    """The message list only, for the page's 10-second refresh."""
+    convo = get_conversation(request.user, pk, donor_pk)
+    return render(request, "partials/message_list.html", {"convo": convo})

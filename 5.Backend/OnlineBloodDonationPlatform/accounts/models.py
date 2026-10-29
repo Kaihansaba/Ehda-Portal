@@ -245,6 +245,15 @@ class DonorResponse(models.Model):
         """Contact details are exchanged only while the answer is Accepted."""
         return self.response == self.Answer.ACCEPTED
 
+    @property
+    def can_message(self):
+        """Messaging (#014) is open while accepted and the request is open."""
+        return self.response == self.Answer.ACCEPTED and not self.blood_request.is_closed
+
+    @property
+    def has_messages(self):
+        return Message.objects.filter(blood_request_id=self.blood_request_id, donor_id=self.donor_id).exists()
+
 
 class Notification(models.Model):
     """An in-app notification (#011). Also sent by email; see accounts/notifications.py."""
@@ -262,3 +271,25 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user.email}: {self.message}"
+
+
+class Message(models.Model):
+    """
+    A message in the conversation between a hospital and one donor about
+    one blood request (#014). Sending is only allowed while the donor's
+    answer is Accepted and the request is open; see accounts/messaging.py.
+    """
+
+    blood_request = models.ForeignKey(BloodRequest, on_delete=models.CASCADE, related_name="messages")
+    # The donor this conversation is with (one conversation per donor per request).
+    donor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="conversation_messages")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
+    body = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at", "pk"]
+        indexes = [models.Index(fields=["blood_request", "donor"])]
+
+    def __str__(self):
+        return f"{self.sender.email} on request {self.blood_request_id}"

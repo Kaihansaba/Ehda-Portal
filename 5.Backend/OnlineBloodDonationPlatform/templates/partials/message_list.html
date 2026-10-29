@@ -1,0 +1,16 @@
+{% comment %}
+    The messages of one conversation, oldest first (newest at the bottom).
+    Rendered inside conversation.html and on its own for the 10-second
+    refresh (accounts.views.conversation_messages). Parameter: convo.
+{% endcomment %}
+{% for message in convo.messages %}
+    <li class="chat-message{% if message.sender_id == request.user.pk %} is-mine{% endif %}">
+        <p class="chat-body">{{ message.body|linebreaksbr }}</p>
+        <p class="chat-meta">
+            {% if message.sender_id == request.user.pk %}You{% else %}{% if message.sender_id == convo.hospital.pk %}{{ convo.hospital.get_full_name|default:"The hospital" }}{% else %}{{ convo.other_party_name }}{% endif %}{% endif %}
+            · <time datetime="{{ message.created_at|date:'c' }}">{{ message.created_at|date:"j M, H:i" }}</time>
+        </p>
+    </li>
+{% empty %}
+    <li class="chat-empty muted">No messages yet.{% if convo.can_send %} Say hello and agree when and where to donate.{% endif %}</li>
+{% endfor %}

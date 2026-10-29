@@ -102,6 +102,12 @@
                                         {% else %}
                                             <span class="muted">Not shared</span>
                                         {% endif %}
+                                        {% if response.can_message or response.has_messages %}
+                                            <a class="btn btn-secondary btn-sm mt-2" href="{% url 'conversation' blood_request.pk response.donor_id %}">
+                                                {% include "partials/icon.html" with name="chat" %}
+                                                {% if response.can_message %}Message{% else %}View messages{% endif %}
+                                            </a>
+                                        {% endif %}
                                     </td>
                                     <td><time datetime="{{ response.updated_at|date:'c' }}">{{ response.updated_at|date:"j M Y, H:i" }}</time></td>
                                 </tr>

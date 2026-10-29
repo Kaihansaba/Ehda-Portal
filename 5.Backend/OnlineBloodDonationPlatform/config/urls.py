@@ -32,6 +32,8 @@ from accounts.views import (
     notifications,
     open_notification,
     mark_all_notifications_read,
+    conversation,
+    conversation_messages,
 )
 
 
@@ -150,6 +152,18 @@ urlpatterns = [
         "dashboard/hospital/requests/<int:pk>/close/",
         close_blood_request,
         name="close_blood_request",
+    ),
+
+    # Messaging after a donor accepts (#014)
+    path(
+        "requests/<int:pk>/conversation/<int:donor_pk>/",
+        conversation,
+        name="conversation",
+    ),
+    path(
+        "requests/<int:pk>/conversation/<int:donor_pk>/messages/",
+        conversation_messages,
+        name="conversation_messages",
     ),
 
     # Notifications (#011)
