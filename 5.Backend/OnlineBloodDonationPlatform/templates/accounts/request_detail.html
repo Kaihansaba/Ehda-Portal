@@ -43,6 +43,16 @@
                         <td>{% include "partials/request_status.html" %}</td>
                     </tr>
                     <tr>
+                        <th scope="row">Sent to</th>
+                        <td>
+                            {% if blood_request.target_donor %}
+                                {{ blood_request.target_donor|public_name }} only
+                            {% else %}
+                                All available donors with a compatible blood type
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
                         <th scope="row">Created</th>
                         <td><time datetime="{{ blood_request.created_at|date:'c' }}">{{ blood_request.created_at|date:"j M Y, H:i" }}</time></td>
                     </tr>

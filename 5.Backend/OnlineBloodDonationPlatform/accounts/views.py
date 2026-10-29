@@ -8,6 +8,9 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 
+from locations.search import searchable_donors
+from locations.utils import public_name
+
 from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
 from .donor_requests import can_see_requests, requests_for_donor, responses_by_request
 from .models import User, Donation, BloodRequest, DonorResponse
@@ -324,23 +327,49 @@ def toggle_user_status(request, pk):
     return redirect(redirect_name)
 
 
+def chosen_donor(hospital, donor_id):
+    """
+    The donor a hospital picked in search (#010), or None. Only donors the
+    hospital could find in search qualify: active, available, with a
+    location set.
+    """
+    if not str(donor_id or "").isdigit():
+        return None
+
+    location = searchable_donors(hospital).filter(user_id=int(donor_id)).first()
+    return location.user if location else None
+
+
 @role_required("HOSPITAL")
 def create_blood_request(request):
+    donor_id = request.POST.get("target_donor") or request.GET.get("donor")
+    target_donor = chosen_donor(request.user, donor_id)
+
+    if donor_id and target_donor is None:
+        messages.error(request, "That donor is no longer available. You can still send the request to all compatible donors.")
+
     if request.method == "POST":
-        form = BloodRequestForm(request.POST)
+        form = BloodRequestForm(request.POST, target_donor=target_donor)
         if form.is_valid():
             blood_request = form.save(commit=False)
             blood_request.hospital = request.user
+            blood_request.target_donor = target_donor
             blood_request.save()
-            messages.success(request, "Your blood request has been created. Compatible available donors can now see it.")
+            if target_donor:
+                # public_name ends with "." when it has an initial ("Dina D.").
+                name = public_name(target_donor)
+                messages.success(request, f"Your blood request has been sent to {name}{'' if name.endswith('.') else '.'}")
+            else:
+                messages.success(request, "Your blood request has been created. Compatible available donors can now see it.")
             return redirect("manage_blood_requests")
     else:
-        form = BloodRequestForm()
+        initial = {"blood_type": target_donor.blood_type} if target_donor else {}
+        form = BloodRequestForm(initial=initial, target_donor=target_donor)
 
     return render(
         request,
         "accounts/create_blood_request.html",
-        {"form": form},
+        {"form": form, "target_donor": target_donor},
     )
 
 

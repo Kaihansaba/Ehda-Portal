@@ -38,7 +38,7 @@
                 Send request
             </a>
         {% else %}
-            {# TODO(#010): becomes a link automatically once requests:create exists #}
+            {# Only hospitals get a request_url (locations.views.blood_request_url) #}
             <button type="button" class="btn" disabled aria-describedby="requests-soon">
                 {% include "partials/icon.html" with name="send" %}
                 Send request

@@ -246,11 +246,21 @@ class SearchViewTests(TestCase):
 
         self.assertTrue(response.context["form"].errors.get("radius"))
 
-    def test_send_request_button_is_disabled_until_requests_exist(self):
+    def test_hospital_gets_a_send_request_link(self):
+        response = self.client.get(reverse("locations:search"), {"blood_type": "A+"})
+
+        donor_id = response.context["results"][0].donor_id
+        self.assertContains(response, f"{reverse('create_blood_request')}?donor={donor_id}")
+        self.assertNotContains(response, "Only hospitals can send blood requests")
+
+    def test_other_roles_see_a_disabled_send_request_button(self):
+        self.client.force_login(make_user("other-donor@example.com", role="DONOR"))
+
         response = self.client.get(reverse("locations:search"), {"blood_type": "A+"})
 
         self.assertContains(response, "Send request")
         self.assertContains(response, "disabled")
+        self.assertContains(response, "Only hospitals can send blood requests")
 
     def test_search_page_does_not_leak_private_donor_data(self):
         response = self.client.get(

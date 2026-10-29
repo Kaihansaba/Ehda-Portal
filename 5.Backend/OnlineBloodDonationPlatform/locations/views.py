@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.urls import NoReverseMatch, reverse
+from django.urls import reverse
 
 from accounts.models import User
 from accounts.views import role_required
@@ -12,17 +12,15 @@ from .search import search_donors, searchable_donors
 from .utils import public_name
 
 
-def blood_request_url(donor_id):
+def blood_request_url(searcher, donor_id):
     """
-    Link for the "Send request" button.
-
-    TODO(#010, Developer 3): the `requests:create` route does not exist
-    yet. Until it does, this returns None and the button is disabled.
+    Link for the "Send request" button (#010): the new-request form,
+    targeted at this donor. Only hospitals send requests; for other roles
+    this returns None and the button is not shown.
     """
-    try:
-        return reverse("requests:create", args=[donor_id])
-    except NoReverseMatch:
+    if searcher.role != User.Role.HOSPITAL:
         return None
+    return f"{reverse('create_blood_request')}?donor={donor_id}"
 
 
 def province_centres():
@@ -96,7 +94,7 @@ def donor_search(request):
         )
 
         for result in results:
-            result.request_url = blood_request_url(result.donor_id)
+            result.request_url = blood_request_url(request.user, result.donor_id)
 
     return render(
         request,

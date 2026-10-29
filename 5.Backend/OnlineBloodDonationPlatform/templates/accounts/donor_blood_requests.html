@@ -42,6 +42,7 @@
                             {% if blood_request.urgency != "ROUTINE" %}
                                 <span class="tag{% if blood_request.urgency == 'EMERGENCY' %} tag-danger{% endif %}">{{ blood_request.get_urgency_display }}</span>
                             {% endif %}
+                            {% if blood_request.target_donor_id %}<span class="tag">Sent to you</span>{% endif %}
                         </h2>
 
                         <div class="donor-card-meta">

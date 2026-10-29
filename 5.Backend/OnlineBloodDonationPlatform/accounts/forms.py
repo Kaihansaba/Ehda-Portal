@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 
+from locations.utils import compatible_donor_types, public_name
+
 from .models import User, BloodRequest
 
 
@@ -123,6 +125,22 @@ class BloodRequestForm(forms.ModelForm):
             "urgency": forms.Select(attrs={"class": "form-control"}),
             "notes": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
         }
+
+    def __init__(self, *args, target_donor=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        # A donor chosen in search (#010); the request is sent to them only.
+        self.target_donor = target_donor
+
+    def clean_blood_type(self):
+        blood_type = self.cleaned_data.get("blood_type")
+        donor = self.target_donor
+
+        if donor and blood_type and donor.blood_type not in compatible_donor_types(blood_type):
+            raise forms.ValidationError(
+                f"{public_name(donor)} has blood type {donor.blood_type}, which can't be "
+                f"given to a patient who needs {blood_type}."
+            )
+        return blood_type
 
     def clean_units_needed(self):
         units = self.cleaned_data.get("units_needed")

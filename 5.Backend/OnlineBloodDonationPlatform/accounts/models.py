@@ -124,6 +124,16 @@ class BloodRequest(models.Model):
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.OPEN
     )
+    # Set when a hospital sends the request to one donor chosen in search
+    # (#010). Empty: the request goes to every compatible available donor.
+    target_donor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="targeted_requests",
+        limit_choices_to={"role": User.Role.DONOR},
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
