@@ -1,12 +1,22 @@
-from .donor_requests import unanswered_count
+from .donor_requests import new_acceptances_count, unanswered_count
 from .models import User
 
 
-def donor_requests(request):
-    """Unanswered matching requests, for the donor navbar badge (#011)."""
+def request_badges(request):
+    """
+    Counts for the navbar and dashboard badges:
+    donors - matching requests they haven't answered (#011);
+    hospitals - accepted responses they haven't seen yet.
+    """
     user = getattr(request, "user", None)
 
-    if user is None or not user.is_authenticated or user.role != User.Role.DONOR:
+    if user is None or not user.is_authenticated:
         return {}
 
-    return {"donor_request_count": unanswered_count(user)}
+    if user.role == User.Role.DONOR:
+        return {"donor_request_count": unanswered_count(user)}
+
+    if user.role == User.Role.HOSPITAL:
+        return {"hospital_new_accepted_count": new_acceptances_count(user)}
+
+    return {}

@@ -34,9 +34,9 @@ class DonorRequestsTestCase(TestCase):
     def make_donor(self, email, blood_type, **fields):
         fields.setdefault("first_name", "Don")
         fields.setdefault("last_name", "Or")
+        fields.setdefault("phone", "0799888777")
         return User.objects.create_user(
-            email=email, password=PASSWORD, role="DONOR", blood_type=blood_type,
-            phone="0799888777", **fields,
+            email=email, password=PASSWORD, role="DONOR", blood_type=blood_type, **fields,
         )
 
     def make_request(self, blood_type="A+", status=Status.OPEN, hospital=None, **fields):
@@ -295,7 +295,9 @@ class HospitalSeesResponsesTests(DonorRequestsTestCase):
     def setUp(self):
         super().setUp()
         self.blood_request = self.make_request()
-        self.decliner = self.make_donor("ahmad@example.com", "A+", first_name="Ahmad", last_name="Saba")
+        self.decliner = self.make_donor(
+            "ahmad@example.com", "A+", first_name="Ahmad", last_name="Saba", phone="0788555444",
+        )
         DonorResponse.objects.create(blood_request=self.blood_request, donor=self.donor, response="ACCEPTED")
         DonorResponse.objects.create(blood_request=self.blood_request, donor=self.decliner, response="DECLINED")
         self.client.force_login(self.hospital)
@@ -303,8 +305,10 @@ class HospitalSeesResponsesTests(DonorRequestsTestCase):
     def test_detail_page_lists_responses(self):
         response = self.client.get(reverse("request_detail", args=[self.blood_request.pk]))
 
-        self.assertContains(response, "Dina D.")
+        # Dina accepted: full name. Ahmad declined: first name + last initial.
+        self.assertContains(response, "Dina Donoryan")
         self.assertContains(response, "Ahmad S.")
+        self.assertNotContains(response, "Ahmad Saba")
         self.assertContains(response, "Accepted")
         self.assertContains(response, "Declined")
 
@@ -313,7 +317,7 @@ class HospitalSeesResponsesTests(DonorRequestsTestCase):
 
         self.assertContains(response, "1 donor accepted")
 
-    def test_privacy_no_contact_details_or_location(self):
+    def test_privacy_no_email_location_or_decliner_contact(self):
         pages = (
             reverse("request_detail", args=[self.blood_request.pk]),
             reverse("manage_blood_requests"),
@@ -323,10 +327,16 @@ class HospitalSeesResponsesTests(DonorRequestsTestCase):
             with self.subTest(url=url):
                 response = self.client.get(url)
                 for private in (
-                    self.donor.email, self.decliner.email, self.donor.phone,
-                    "Donoryan", "34.531234", "69.171234", "34.53", "69.17",
+                    self.donor.email, self.decliner.email, self.decliner.phone,
+                    "Saba", "34.531234", "69.171234", "34.53", "69.17",
                 ):
                     self.assertNotContains(response, private)
+
+    def test_manage_list_never_shows_contact_details(self):
+        response = self.client.get(reverse("manage_blood_requests"))
+
+        self.assertNotContains(response, self.donor.phone)
+        self.assertNotContains(response, "Donoryan")
 
     def test_other_hospital_cannot_see_responses(self):
         self.client.force_login(self.other_hospital)

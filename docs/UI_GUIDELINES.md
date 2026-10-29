@@ -165,7 +165,11 @@ the meaning too, e.g. a `visually-hidden` “(3 new)”.
 Donor names shown to hospitals or other users go through the
 `public_name` filter (`{% load ehda_ui %}`, then `{{ donor|public_name }}`
 gives “Ahmad S.”). Never show a donor’s email, phone or exact location
-outside their own pages and the site admin.
+outside their own pages and the site admin. The one exception: while a
+donor has accepted a request, that hospital’s request page shows the
+donor’s full name and phone with the note “Shared because the donor
+accepted” (`DonorResponse.shares_contact`), and the donor sees the
+hospital’s phone in a `contact-box`.
 
 Blood types are stored as `O-`, `AB+` and so on. Show them with the
 badge partial or the `blood_symbol` filter (real minus sign, “O−”), and

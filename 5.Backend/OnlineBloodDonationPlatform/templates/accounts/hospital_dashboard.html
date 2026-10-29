@@ -43,8 +43,17 @@
             <li>
                 <a href="{% url 'manage_blood_requests' %}">
                     <span>
-                        <span class="link-title">Manage requests</span>
-                        <span class="link-text">Your requests, their status and donor responses</span>
+                        <span class="link-title">
+                            Manage requests
+                            {% if hospital_new_accepted_count %}<span class="count-badge">{{ hospital_new_accepted_count }} new</span>{% endif %}
+                        </span>
+                        <span class="link-text">
+                            {% if hospital_new_accepted_count %}
+                                {{ hospital_new_accepted_count }} donor{{ hospital_new_accepted_count|pluralize }} accepted since you last looked
+                            {% else %}
+                                Your requests, their status and donor responses
+                            {% endif %}
+                        </span>
                     </span>
                     {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
                 </a>
