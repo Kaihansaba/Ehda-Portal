@@ -50,6 +50,13 @@
                                 {% include "partials/icon.html" with name="clock" %}
                                 <time datetime="{{ blood_request.created_at|date:'c' }}">{{ blood_request.created_at|date:"j M Y, H:i" }}</time>
                             </span>
+
+                            {% with accepted=blood_request.accepted_responses_count %}
+                                <a class="meta-item" href="{% url 'request_detail' blood_request.pk %}#responses-title">
+                                    {% include "partials/icon.html" with name="users" %}
+                                    {{ accepted }} donor{{ accepted|pluralize }} accepted
+                                </a>
+                            {% endwith %}
                         </div>
 
                         {% if blood_request.notes %}

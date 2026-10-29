@@ -96,6 +96,13 @@ def expected(name, url):
         "donor_dashboard": only("donor"),
         "donor_profile": only("donor"),
         "donation_history": only("donor"),
+        # Donor side of blood requests (#011, #012)
+        "donor_blood_requests": only("donor"),
+        # GET does not answer; donors go back to their request list.
+        "respond_to_request": {
+            **only(),
+            "donor": (302, reverse("donor_blood_requests")),
+        },
         # GET does not toggle; donors are sent back to their dashboard.
         "toggle_availability": {
             **only(),
@@ -171,6 +178,7 @@ class UrlSmokeTests(TestCase):
             "request_detail": {"pk": blood_request.pk},
             "change_request_status": {"pk": blood_request.pk, "status": "IN_REVIEW"},
             "close_blood_request": {"pk": blood_request.pk},
+            "respond_to_request": {"pk": blood_request.pk},
             "toggle_user_status": {"pk": self.users["donor"].pk},
         }
 

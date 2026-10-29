@@ -158,6 +158,15 @@ never a fake link.
 <span class="availability is-pending">Pending</span>
 ```
 
+A count that needs attention (e.g. new blood requests in the donor
+navbar) uses `<span class="count-badge">3</span>`. Give screen readers
+the meaning too, e.g. a `visually-hidden` “(3 new)”.
+
+Donor names shown to hospitals or other users go through the
+`public_name` filter (`{% load ehda_ui %}`, then `{{ donor|public_name }}`
+gives “Ahmad S.”). Never show a donor’s email, phone or exact location
+outside their own pages and the site admin.
+
 Blood types are stored as `O-`, `AB+` and so on. Show them with the
 badge partial or the `blood_symbol` filter (real minus sign, “O−”), and
 give screen readers `blood_name` (“O negative”).
