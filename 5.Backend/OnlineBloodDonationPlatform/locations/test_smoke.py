@@ -8,13 +8,14 @@ Smoke and edge-case tests for the whole site.
 3. Search and map edge cases: missing locations, no donors, invalid or
    extreme query-string values.
 """
+import datetime
 from decimal import Decimal
 
 from django.contrib import admin
 from django.test import TestCase
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
-from accounts.models import BloodRequest, DonorResponse, Notification, Report, User
+from accounts.models import BloodRequest, Donation, DonorResponse, Notification, Report, User
 from locations.models import DonorLocation
 from locations.search import search_donors
 
@@ -96,6 +97,9 @@ def expected(name, url):
         "donor_dashboard": only("donor"),
         "donor_profile": only("donor"),
         "donation_history": only("donor"),
+        # Own donation records only (#015)
+        "edit_donation": only("donor"),
+        "delete_donation": only("donor"),
         # Donor side of blood requests (#011, #012)
         "donor_blood_requests": only("donor"),
         # GET does not answer; donors go back to their request list.
@@ -198,6 +202,9 @@ class UrlSmokeTests(TestCase):
         DonorResponse.objects.create(
             blood_request=blood_request, donor=self.users["donor"], response="ACCEPTED",
         )
+        donation = Donation.objects.create(
+            donor=self.users["donor"], donation_date=datetime.date(2026, 5, 1), blood_type="O-",
+        )
         notification = Notification.objects.create(
             user=self.users["donor"], message="Test", link=reverse("donor_blood_requests"),
         )
@@ -205,6 +212,8 @@ class UrlSmokeTests(TestCase):
         # URLs that need real objects: the hospital's own request, a donor.
         self.url_args = {
             "open_notification": {"pk": notification.pk},
+            "edit_donation": {"pk": donation.pk},
+            "delete_donation": {"pk": donation.pk},
             "report_user": {"pk": self.users["hospital"].pk},
             "review_report": {"pk": Report.objects.create(
                 reporter=self.users["donor"], reported_user=self.users["hospital"],

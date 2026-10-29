@@ -14,7 +14,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from locations.search import searchable_donors
 from locations.utils import public_name
 
-from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm, ReportForm
+from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm, DonationForm, ReportForm
 from .donor_requests import can_see_requests, requests_for_donor, responses_by_request
 from .messaging import get_conversation
 from .reports import can_report, display_name
@@ -531,16 +531,89 @@ def user_logout(request):
     return redirect("role_redirect")
 
 
+def completed_requests_to_record(donor):
+    """Completed requests this donor accepted and hasn't recorded yet (#015)."""
+    return (
+        BloodRequest.objects.filter(
+            status=BloodRequest.Status.COMPLETED,
+            responses__donor=donor,
+            responses__response=DonorResponse.Answer.ACCEPTED,
+        )
+        .exclude(donations__donor=donor)
+        .select_related("hospital")
+        .order_by("-created_at")
+    )
+
+
 @role_required("DONOR")
 def donation_history(request):
     donations = Donation.objects.filter(
         donor=request.user
-    ).order_by("-donation_date")
+    ).order_by("-donation_date", "-pk")
+    suggestions = completed_requests_to_record(request.user)
+
+    # "Add this donation" pre-fills the form from a completed request.
+    from_request = None
+    request_id = request.POST.get("blood_request") or request.GET.get("request")
+    if str(request_id or "").isdigit():
+        from_request = suggestions.filter(pk=int(request_id)).first()
+
+    if request.method == "POST":
+        form = DonationForm(request.POST)
+        if not request.user.blood_type:
+            messages.error(request, "Add your blood type to your profile before recording a donation.")
+        elif form.is_valid():
+            donation = form.save(commit=False)
+            donation.donor = request.user
+            donation.blood_type = request.user.blood_type
+            donation.blood_request = from_request
+            donation.save()
+            messages.success(request, "Your donation has been added. Thank you!")
+            return redirect("donation_history")
+    else:
+        initial = {"donation_date": timezone.localdate()}
+        if from_request:
+            initial["place"] = from_request.hospital.get_full_name()
+        form = DonationForm(initial=initial)
+
     return render(
         request,
         "accounts/donation_history.html",
-        {"donations": donations},
+        {
+            "donations": donations,
+            "form": form,
+            "suggestions": suggestions,
+            "from_request": from_request,
+        },
     )
+
+
+@role_required("DONOR")
+def edit_donation(request, pk):
+    donation = get_object_or_404(Donation, pk=pk, donor=request.user)
+
+    if request.method == "POST":
+        form = DonationForm(request.POST, instance=donation)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your donation record has been updated.")
+            return redirect("donation_history")
+    else:
+        form = DonationForm(instance=donation)
+
+    return render(request, "accounts/donation_form.html", {"form": form, "donation": donation})
+
+
+@role_required("DONOR")
+def delete_donation(request, pk):
+    donation = get_object_or_404(Donation, pk=pk, donor=request.user)
+
+    if request.method == "POST":
+        donation.delete()
+        messages.success(request, "The donation record has been deleted.")
+        return redirect("donation_history")
+
+    return render(request, "accounts/donation_confirm_delete.html", {"donation": donation})
 
 
 def is_safe_internal_path(link):

@@ -12,6 +12,8 @@ from accounts.views import (
     donor_dashboard,
     donor_profile,
     donation_history,
+    edit_donation,
+    delete_donation,
     donor_blood_requests,
     respond_to_request,
     toggle_availability,
@@ -73,6 +75,16 @@ urlpatterns = [
         "dashboard/donor/donations/",
         donation_history,
         name="donation_history",
+    ),
+    path(
+        "dashboard/donor/donations/<int:pk>/edit/",
+        edit_donation,
+        name="edit_donation",
+    ),
+    path(
+        "dashboard/donor/donations/<int:pk>/delete/",
+        delete_donation,
+        name="delete_donation",
     ),
     path(
         "dashboard/donor/availability/",

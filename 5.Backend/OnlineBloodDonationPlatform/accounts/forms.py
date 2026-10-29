@@ -1,9 +1,10 @@
 from django import forms
 from django.contrib.auth.password_validation import validate_password
+from django.utils import timezone
 
 from locations.utils import compatible_donor_types, public_name
 
-from .models import User, BloodRequest, Report
+from .models import User, BloodRequest, Donation, Report
 
 
 class RegistrationForm(forms.ModelForm):
@@ -172,3 +173,27 @@ class ReportForm(forms.ModelForm):
         if len(details) < 10:
             raise forms.ValidationError("Please describe what happened (at least 10 characters).")
         return details
+
+
+class DonationForm(forms.ModelForm):
+    """A donor's own donation record (#015). Blood type comes from the profile."""
+
+    class Meta:
+        model = Donation
+        fields = ["donation_date", "place", "notes"]
+        widgets = {
+            "donation_date": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+            "place": forms.TextInput(attrs={"placeholder": "e.g. Kabul Blood Bank", "maxlength": 200}),
+            "notes": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        today = timezone.localdate()
+        self.fields["donation_date"].widget.attrs["max"] = today.isoformat()
+
+    def clean_donation_date(self):
+        donation_date = self.cleaned_data["donation_date"]
+        if donation_date > timezone.localdate():
+            raise forms.ValidationError("The donation date can't be in the future.")
+        return donation_date

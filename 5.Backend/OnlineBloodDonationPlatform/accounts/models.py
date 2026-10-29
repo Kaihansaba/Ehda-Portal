@@ -84,11 +84,17 @@ class Donation(models.Model):
     blood_type = models.CharField(
         max_length=3, choices=User.BloodType.choices
     )
+    # Where the donor gave blood, e.g. a hospital or blood bank (#015).
+    place = models.CharField(max_length=200, blank=True)
     notes = models.TextField(blank=True)
+    # Set when the record was added from a completed blood request.
+    blood_request = models.ForeignKey(
+        "BloodRequest", on_delete=models.SET_NULL, null=True, blank=True, related_name="donations",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["-donation_date"]
+        ordering = ["-donation_date", "-pk"]
 
     def __str__(self):
         return f"{self.donor.get_full_name()} - {self.donation_date}"

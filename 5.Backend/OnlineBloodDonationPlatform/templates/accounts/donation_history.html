@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ehda_ui %}
 
 {% block title %}My donation history{% endblock %}
 
@@ -10,36 +11,101 @@
             Back to dashboard
         </a>
         <h1>My donation history</h1>
-        <p class="lead">Your recorded blood donations, newest first. Only you can see this page.</p>
+        <p class="lead">Your blood donations, newest first. Only you can see this page.</p>
     </div>
 
-    {% if donations %}
-        <div class="table-wrap">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Donation date</th>
-                        <th scope="col">Blood type</th>
-                        <th scope="col">Notes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for donation in donations %}
-                        <tr>
-                            <th scope="row">
-                                <time datetime="{{ donation.donation_date|date:'Y-m-d' }}">{{ donation.donation_date|date:"j M Y" }}</time>
-                            </th>
-                            <td>{% include "partials/blood_badge.html" with type=donation.blood_type %}</td>
-                            <td>{{ donation.notes|default:"—" }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <div class="card">
-            {% include "partials/empty_state.html" with title="No donations recorded yet" text="Your donation history will appear here when donations are recorded." %}
-        </div>
+    {% if suggestions %}
+        <section class="section" aria-labelledby="suggest-title">
+            <h2 id="suggest-title" class="section-title">Did you donate for these requests?</h2>
+            <ul class="link-list">
+                {% for blood_request in suggestions %}
+                    <li>
+                        <a href="{% url 'donation_history' %}?request={{ blood_request.pk }}#add-title">
+                            <span>
+                                <span class="link-title">Add this donation</span>
+                                <span class="link-text">{{ blood_request.hospital.get_full_name }} · {{ blood_request.blood_type|blood_symbol }} · completed</span>
+                            </span>
+                            {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
     {% endif %}
+
+    <section class="section" aria-labelledby="records-title">
+        <h2 id="records-title" class="section-title">Recorded donations</h2>
+
+        {% if donations %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Blood type</th>
+                            <th scope="col">Place</th>
+                            <th scope="col">Notes</th>
+                            <th scope="col"><span class="visually-hidden">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donation in donations %}
+                            <tr>
+                                <th scope="row">
+                                    <time datetime="{{ donation.donation_date|date:'Y-m-d' }}">{{ donation.donation_date|date:"j M Y" }}</time>
+                                </th>
+                                <td>{% include "partials/blood_badge.html" with type=donation.blood_type %}</td>
+                                <td>{{ donation.place|default:"—" }}</td>
+                                <td>{{ donation.notes|default:"—" }}</td>
+                                <td>
+                                    <div class="cluster">
+                                        <a class="btn btn-ghost btn-sm" href="{% url 'edit_donation' donation.pk %}">Edit<span class="visually-hidden"> donation of {{ donation.donation_date|date:"j M Y" }}</span></a>
+                                        <a class="btn btn-ghost btn-sm" href="{% url 'delete_donation' donation.pk %}">Delete<span class="visually-hidden"> donation of {{ donation.donation_date|date:"j M Y" }}</span></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card">
+                {% include "partials/empty_state.html" with title="No donations recorded yet" text="Add your first donation below." %}
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="section" aria-labelledby="add-title">
+        <h2 id="add-title" class="section-title">Add a donation</h2>
+
+        {% if not request.user.blood_type %}
+            <div class="prompt">
+                <div>
+                    <h3 class="prompt-title">Add your blood type first</h3>
+                    <p class="muted">Each record uses the blood type in your profile.</p>
+                </div>
+                <a href="{% url 'donor_profile' %}" class="btn btn-primary">Add blood type</a>
+            </div>
+        {% else %}
+            <form method="post" class="card form-stack">
+                {% csrf_token %}
+                {% if from_request %}
+                    <input type="hidden" name="blood_request" value="{{ from_request.pk }}">
+                    <p class="muted">For the completed request from {{ from_request.hospital.get_full_name }}.</p>
+                {% endif %}
+
+                <div class="form-row">
+                    {% include "partials/form_field.html" with field=form.donation_date label="Date" %}
+                    {% include "partials/form_field.html" with field=form.place label="Place or hospital" optional=True %}
+                </div>
+                {% include "partials/form_field.html" with field=form.notes label="Notes" optional=True %}
+                <p class="field-help">Blood type: {{ request.user.blood_type|blood_symbol }} (from your profile).</p>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add donation</button>
+                </div>
+            </form>
+        {% endif %}
+    </section>
 
 {% endblock %}
