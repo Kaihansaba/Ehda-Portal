@@ -4,41 +4,66 @@
 for Afghanistan. It connects people who need blood with willing donors and
 with hospitals and donation centres.
 
-- Donors create a profile with their blood type, availability and an
-  approximate location.
-- People who need blood search for donors by blood type (optionally
-  including compatible types) and distance, or browse a map.
-- Donors’ exact locations, email addresses and phone numbers are never
-  shown to other users; locations are rounded to about 1 km.
+- **Donors** register, set their blood type, availability and an
+  approximate location, and answer blood requests that match their blood
+  type.
+- **Hospitals** create blood requests, search for donors by blood type
+  (including compatible types) and distance, see who accepted, and get the
+  donor's phone number once the donor accepts.
+- **Administrators** manage users, hospitals and donation centres, and
+  monitor requests and platform activity.
+- **Privacy:** donors' exact locations are never shown (rounded to about
+  1 km), and their email address is never shown to other users. A donor's
+  phone number is shared only with the hospital whose request they
+  accepted.
 
-Software Engineering project, American University of Afghanistan (AUAF).
+Software Engineering project, American University of Afghanistan (AUAF),
+built in four Scrum sprints.
 
 ## Team
 
-The team works in Scrum sprints. See
-[`0.Project-documents/Roles and Responsibilities.docx`](0.Project-documents/) for details.
-
 | Name | Role | Responsibilities |
 |---|---|---|
-| Madina Pasun | Product Owner | Product backlog, requirements, sprint planning and review |
-| Madina Afshar | Scrum Master | Daily Scrum, sprint coordination, removing blockers |
-| Samira Azizi | Developer 1 | Authentication, user management, donor profiles, donation history |
-| Ahmad Kaihan Saba | Developer 2 | Donor search, interactive map, location features |
-| Shafiqa Taraki | Developer 3 | Blood requests, notifications, messaging, admin dashboard |
+| Madina Pasun | Product Owner | Product backlog, requirements (SRS, user stories, acceptance criteria), sprint planning and review documents |
+| Madina Afshar | Scrum Master | Daily Scrum, sprint coordination, burndown charts, removing blockers |
+| Samira Azizi | Developer 1 | Registration, login, donor profile, availability, donation history |
+| Ahmad Kaihan Saba | Developer 2 | Donor search, interactive map, location privacy, shared UI design |
+| Shafiqa Taraki | Developer 3 | Blood requests and status rules, admin tools |
 
-## Features
+Details: [Roles and Responsibilities](0.Project-documents/Roles-and-Responsibilities.md).
 
-| Story | Feature | Status |
-|---|---|---|
-| #001–#002 | Registration, login, logout, password reset | Done |
-| #003–#005 | Donor profile, blood type, availability | Done |
-| #006 | Search donors by blood type (with ABO/Rh compatibility) | Done |
-| #007 | Search by location and distance, nearest first | Done |
-| #008 | Map of donors, hospitals and donation centres | Done |
-| #009 | Location privacy (approximate locations only) | Done |
-| #010 | Hospitals create and manage blood requests | In progress |
-| #011–#014 | Notifications, accept/decline, responses, messaging | Planned |
-| #015–#020 | Donation history, account and admin management | Planned |
+## Features by user story
+
+Checked against the acceptance criteria in
+[0.Project-documents/Acceptance-Criteria.md](0.Project-documents/Acceptance-Criteria.md).
+“Partial” means the feature works but some criteria are not met yet; the
+last column says which.
+
+| Story | Feature | Status | Not done yet |
+|---|---|---|---|
+| #001 | Registration | Done | |
+| #002 | Login, logout, password reset | Done | |
+| #003 | Donor profile | Partial | Donors can't choose which profile fields others see |
+| #004 | Blood type and donation information | Partial | Donors can't enter donation records themselves (admins add them) |
+| #005 | Availability status | Done | |
+| #006 | Search by blood type (with ABO/Rh compatibility) | Done | |
+| #007 | Search by location and distance, nearest first | Done | |
+| #008 | Map of donors, hospitals and donation centres | Done | |
+| #009 | Location privacy (approximate locations only) | Done | |
+| #010 | Blood requests | Partial | Requests go to all compatible available donors; a hospital can't send one to a donor it selected in search |
+| #011 | Request notifications | Partial | In-app count of new matching requests (navbar and dashboard); no stored per-request notifications, no email or push |
+| #012 | Accept or decline a request | Partial | A donor's answer doesn't change the request status (the hospital updates it) |
+| #013 | Request responses for the seeker | Done | Hospitals act as the blood seeker; they see each donor's answer and a badge for new acceptances |
+| #014 | Messaging after acceptance | Partial | No in-app messaging; after acceptance both sides see each other's phone number instead |
+| #015 | Donation history | Partial | Donors can view their history; adding and editing records is admin-only |
+| #016 | Account management | Partial | Donors edit their profile; hospitals and admins can't edit their own account in the app; no password change while signed in (reset by email works) |
+| #017 | User management (admin) | Done | Search is in the site admin (`/admin/`) |
+| #018 | Hospitals and donation centres (admin) | Done | Managed in the site admin; shown on the map |
+| #019 | Reported accounts | Partial | Users can't submit reports; “reported” means deactivated by an admin |
+| #020 | Platform monitoring | Done | |
+
+Not built: a separate “blood seeker” account type (hospitals play that
+role), in-app messaging, email or push notifications, and user reports.
 
 ## Tech stack
 
@@ -49,41 +74,10 @@ The team works in Scrum sprints. See
   [docs/UI_GUIDELINES.md](docs/UI_GUIDELINES.md)
 - [Leaflet](https://leafletjs.com/) and OpenStreetMap tiles for maps (free, no API key)
 
-## Folder structure
-
-```
-Ehda-Portal/
-├── 0.Project-documents/        Project description, user stories, acceptance criteria, roles, UML diagrams
-├── 1.Project-Backlogs/         Product and sprint backlogs
-├── 2.Meeting-Recordings/
-├── 3.Meeting-Agendas/
-├── 4.Frontend/                 README only: points to the Django templates
-├── 5.Backend/
-│   └── OnlineBloodDonationPlatform/    The Django project (all code)
-│       ├── manage.py
-│       ├── requirements.txt
-│       ├── .env.example                Optional settings (copy to .env)
-│       ├── config/                     Settings and URL routes
-│       ├── accounts/                   Users, login, dashboards, donor profile
-│       ├── locations/                  Donor locations, facilities, search, map
-│       ├── static/                     ehda.css, ehda-admin.css, ehda.js, maps.js, favicon
-│       └── templates/                  All page templates
-│           ├── base.html               Layout every page extends
-│           ├── partials/               Navbar, footer, form field, donor card, icons...
-│           ├── accounts/
-│           ├── locations/
-│           └── admin/                  Ehda branding for /admin/
-├── 6.Database/                 README only: points to models and migrations
-├── 7.Tests/                    README only: points to the test files
-├── 8.Scrum Master Documents/   Burndown charts and daily scrum notes
-├── Data/, Models/              Unused C# (ASP.NET) files, not part of the app; to be removed
-└── docs/
-    └── UI_GUIDELINES.md        How to build pages that match the design
-```
-
 ## Setup and run
 
-You need Python 3.12 or newer. All commands run from the Django project folder.
+You need Python 3.12 or newer. All commands run from the Django project
+folder, `5.Backend/OnlineBloodDonationPlatform`.
 
 ### macOS / Linux
 
@@ -95,6 +89,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 python manage.py migrate
+python manage.py create_demo_accounts   # optional, see below
 python manage.py runserver
 ```
 
@@ -108,27 +103,37 @@ py -m venv .venv
 pip install -r requirements.txt
 
 python manage.py migrate
+python manage.py create_demo_accounts   # optional, see below
 python manage.py runserver
 ```
 
-If PowerShell blocks the activate script, run
-`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, or use
-Command Prompt with `.venv\Scripts\activate.bat`.
+**If PowerShell says “running scripts is disabled on this system”** when
+you activate, allow local scripts for your user once, then activate again:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+.venv\Scripts\Activate.ps1
+```
+
+Or use Command Prompt instead: `.venv\Scripts\activate.bat`.
 
 Then open <http://127.0.0.1:8000/>.
+
+After pulling new code, run `python manage.py migrate` again: new
+features can add database tables.
 
 ### Settings
 
 The app runs with no configuration. To change settings, copy
-`.env.example` to `.env` in the same folder and edit it:
+`.env.example` to `.env` in the same folder and edit it. `.env` is
+git-ignored; never commit it.
 
 | Variable | Default | Notes |
 |---|---|---|
-| `DJANGO_SECRET_KEY` | development key | Required when `DJANGO_DEBUG` is `False` |
+| `DJANGO_SECRET_KEY` | development key | Required (a long random value) when `DJANGO_DEBUG` is `False`; placeholders are refused |
 | `DJANGO_DEBUG` | `True` | Use `False` in production |
 | `DJANGO_ALLOWED_HOSTS` | empty | Comma-separated host names, needed when `DEBUG` is off |
-
-Password-reset emails are printed in the terminal running the server.
+| `EMAIL_*` | console | Password-reset emails print in the terminal. Set the `EMAIL_*` values (see `.env.example`) to send real email, e.g. with a Gmail app password |
 
 ## Demo accounts
 
@@ -151,15 +156,57 @@ run more than once. To create your own administrator instead, run
 
 ## Running tests
 
+From `5.Backend/OnlineBloodDonationPlatform`, with the virtual
+environment active:
+
 ```bash
-python manage.py test                    # everything
+python manage.py test                    # everything (about 200 tests)
 python manage.py test accounts           # one app
 python manage.py test locations.test_smoke
 ```
 
-The tests cover accounts and permissions, search and distance, map data,
-location privacy, and a smoke test that opens every page as every role.
-See [`7.Tests/README.md`](7.Tests/README.md).
+The tests cover registration and permissions, search and distance, the
+map, location privacy, blood requests and their status rules, donor
+answers and contact sharing, admin tools, error pages, and a smoke test
+that opens every page as every role. See
+[7.Tests/README.md](7.Tests/README.md).
+
+## Folder structure
+
+```
+Ehda-Portal/
+├── 0.Project-documents/        Project description, SRS, user stories, acceptance criteria,
+│                               roles, Sprint 3–4 requirements and traceability matrix (PDF)
+├── 1.Project-Backlogs/         Product backlog and sprint backlogs (Sprints 1–4)
+├── 2.Meeting-Recordings/       Links to meeting recordings
+├── 3.Meeting-Agendas/          Kickoff, sprint planning and review agendas
+├── 4.Frontend/                 README only: points to the Django templates and static files
+├── 5.Backend/
+│   └── OnlineBloodDonationPlatform/    The Django project (all code)
+│       ├── manage.py
+│       ├── requirements.txt
+│       ├── .env.example                Optional settings (copy to .env)
+│       ├── config/                     Settings and URL routes
+│       ├── accounts/                   Users, dashboards, profiles, blood requests,
+│       │                               donor answers, admin tools
+│       ├── locations/                  Donor locations, facilities, search, map
+│       ├── static/                     ehda.css, ehda-admin.css, ehda.js, maps.js, favicon
+│       └── templates/                  All page templates
+│           ├── base.html               Layout every page extends
+│           ├── 404.html, 500.html      Error pages
+│           ├── partials/               Navbar, footer, form field, badges, icons...
+│           ├── accounts/
+│           ├── locations/
+│           └── admin/                  Ehda branding for /admin/
+├── 6.Database/                 README only: points to models and migrations
+├── 7.Tests/                    README only: points to the test files
+├── 8.Scrum Master Documents/   Burndown chart and daily scrum notes
+├── 9.Diagrams/                 UML diagrams
+│   ├── Sequence-Diagrams/      One per sprint, named “Sprint-N - Topic (Author)”
+│   └── Use-Case-Diagrams/
+└── docs/
+    └── UI_GUIDELINES.md        How to build pages that match the design
+```
 
 ## Design
 
@@ -167,11 +214,11 @@ Read [docs/UI_GUIDELINES.md](docs/UI_GUIDELINES.md) before adding or
 changing pages: design tokens, components and partials, forms, maps,
 privacy rules, accessibility checklist and right-to-left support.
 
-## Open decisions
+## Before real use
 
-- **Who can search for donors:** the “blood seeker” role is not decided
-  yet. The allowed roles are set in one place: `DONOR_SEARCH_ROLES` in
-  `locations/constants.py`.
 - **Facility data:** the hospitals and donation centres added by the
   `0002_sample_facilities` migration are samples. Their names, addresses
-  and coordinates must be verified before real use (editable in `/admin/`).
+  and coordinates must be checked before real use (editable in `/admin/`).
+- **Deployment:** `python manage.py check --deploy` lists the HTTPS
+  settings to turn on (HSTS, secure cookies, SSL redirect) once the site
+  runs behind HTTPS.

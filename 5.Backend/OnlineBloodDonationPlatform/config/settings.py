@@ -52,9 +52,13 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
-if not DEBUG and SECRET_KEY == DEV_SECRET_KEY:
+# Placeholder values (the dev key, .env.example's "change-me", or an
+# empty value) must never be used in production.
+INSECURE_SECRET_KEYS = {DEV_SECRET_KEY, "change-me", ""}
+
+if not DEBUG and SECRET_KEY.strip() in INSECURE_SECRET_KEYS:
     raise ImproperlyConfigured(
-        "Set DJANGO_SECRET_KEY when DJANGO_DEBUG is off."
+        "Set DJANGO_SECRET_KEY to a long random value when DJANGO_DEBUG is off."
     )
 
 
