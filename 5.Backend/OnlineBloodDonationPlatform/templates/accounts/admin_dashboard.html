@@ -22,7 +22,7 @@
             {% include "partials/stat_card.html" with label="Total users" value=total_users %}
             {% include "partials/stat_card.html" with label="Donors" value=donor_count %}
             {% include "partials/stat_card.html" with label="Hospitals" value=hospital_count %}
-            {% include "partials/stat_card.html" with label="Reported accounts" value=reported_count note="Deactivated" %}
+            {% include "partials/stat_card.html" with label="Open reports" value=open_report_count note="Waiting for review" %}
         </div>
     </section>
 
@@ -52,7 +52,7 @@
                 <a href="{% url 'admin_reported_accounts' %}">
                     <span>
                         <span class="link-title">Reported accounts</span>
-                        <span class="link-text">{{ reported_count }} deactivated account{{ reported_count|pluralize }} to review</span>
+                        <span class="link-text">{{ open_report_count }} open report{{ open_report_count|pluralize }} to review, and deactivated accounts</span>
                     </span>
                     {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
                 </a>

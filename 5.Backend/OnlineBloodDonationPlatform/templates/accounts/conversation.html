@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load ehda_ui %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        {% if request.user.role == "HOSPITAL" %}
+            <a href="{% url 'request_detail' convo.blood_request.pk %}" class="btn btn-ghost btn-sm back-link">
+                {% include "partials/icon.html" with name="arrow" class="flip" %}
+                Back to the request
+            </a>
+        {% else %}
+            <a href="{% url 'donor_blood_requests' %}" class="btn btn-ghost btn-sm back-link">
+                {% include "partials/icon.html" with name="arrow" class="flip" %}
+                Back to blood requests
+            </a>
+        {% endif %}
+        <h1>Messages with {{ convo.other_party_name }}</h1>
+        <p class="lead">
+            About the request for {{ convo.blood_request.units_needed }} unit{{ convo.blood_request.units_needed|pluralize }}
+            of {{ convo.blood_request.blood_type|blood_symbol }}
+            · {% include "partials/request_status.html" with blood_request=convo.blood_request %}
+        </p>
+    </div>
+
+    <section class="card chat" aria-labelledby="chat-title">
+        <h2 id="chat-title" class="visually-hidden">Conversation</h2>
+
+        <ol class="chat-log" role="log" aria-live="polite" data-chat-log
+            data-poll-url="{% url 'conversation_messages' convo.blood_request.pk convo.donor.pk %}">
+            {% include "partials/message_list.html" %}
+        </ol>
+
+        {% if convo.can_send %}
+            <form method="post" class="chat-compose">
+                {% csrf_token %}
+                <label class="visually-hidden" for="id_body">Message</label>
+                <textarea id="id_body" name="body" rows="2" maxlength="2000" required placeholder="Write a message…"></textarea>
+                <button type="submit" class="btn btn-primary">
+                    {% include "partials/icon.html" with name="send" %}
+                    Send
+                </button>
+            </form>
+        {% else %}
+            <p class="chat-closed muted">{{ convo.read_only_reason }}</p>
+        {% endif %}
+    </section>
+
+    <p class="table-note">
+        Messages refresh every 10 seconds. Never share passwords or bank details here.
+        <a class="report-link" href="{% url 'report_user' convo.other_party.pk %}?next={{ request.get_full_path|urlencode }}">Report this account</a>
+    </p>
+
+{% endblock %}

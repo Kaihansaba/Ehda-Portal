@@ -51,6 +51,13 @@
                                 <time datetime="{{ blood_request.created_at|date:'c' }}">{{ blood_request.created_at|date:"j M Y, H:i" }}</time>
                             </span>
 
+                            {% if blood_request.target_donor %}
+                                <span class="meta-item">
+                                    {% include "partials/icon.html" with name="send" %}
+                                    Sent to {{ blood_request.target_donor|public_name }}
+                                </span>
+                            {% endif %}
+
                             {% with accepted=blood_request.accepted_responses_count %}
                                 <a class="meta-item" href="{% url 'request_detail' blood_request.pk %}#responses-title">
                                     {% include "partials/icon.html" with name="users" %}

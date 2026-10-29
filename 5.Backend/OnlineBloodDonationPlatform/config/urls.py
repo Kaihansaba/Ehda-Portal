@@ -12,10 +12,13 @@ from accounts.views import (
     donor_dashboard,
     donor_profile,
     donation_history,
+    edit_donation,
+    delete_donation,
     donor_blood_requests,
     respond_to_request,
     toggle_availability,
     hospital_dashboard,
+    account,
     admin_dashboard,
     admin_manage_users,
     admin_manage_hospitals,
@@ -29,6 +32,13 @@ from accounts.views import (
     request_detail,
     change_request_status,
     close_blood_request,
+    notifications,
+    open_notification,
+    mark_all_notifications_read,
+    conversation,
+    conversation_messages,
+    report_user,
+    review_report,
 )
 
 
@@ -66,6 +76,16 @@ urlpatterns = [
         "dashboard/donor/donations/",
         donation_history,
         name="donation_history",
+    ),
+    path(
+        "dashboard/donor/donations/<int:pk>/edit/",
+        edit_donation,
+        name="edit_donation",
+    ),
+    path(
+        "dashboard/donor/donations/<int:pk>/delete/",
+        delete_donation,
+        name="delete_donation",
     ),
     path(
         "dashboard/donor/availability/",
@@ -117,6 +137,11 @@ urlpatterns = [
         name="admin_security_access",
     ),
     path(
+        "dashboard/admin/reports/<int:pk>/review/",
+        review_report,
+        name="review_report",
+    ),
+    path(
         "dashboard/admin/users/<int:pk>/toggle-status/",
         toggle_user_status,
         name="toggle_user_status",
@@ -147,6 +172,52 @@ urlpatterns = [
         "dashboard/hospital/requests/<int:pk>/close/",
         close_blood_request,
         name="close_blood_request",
+    ),
+
+    # Messaging after a donor accepts (#014)
+    path(
+        "requests/<int:pk>/conversation/<int:donor_pk>/",
+        conversation,
+        name="conversation",
+    ),
+    path(
+        "requests/<int:pk>/conversation/<int:donor_pk>/messages/",
+        conversation_messages,
+        name="conversation_messages",
+    ),
+
+    # Report an account (#019)
+    path("report/<int:pk>/", report_user, name="report_user"),
+
+    # Account details and password change for every role (#016)
+    path("account/", account, name="account"),
+    path(
+        "account/password/",
+        auth_views.PasswordChangeView.as_view(
+            template_name="accounts/password_change.html",
+            success_url=reverse_lazy("password_change_done"),
+        ),
+        name="password_change",
+    ),
+    path(
+        "account/password/done/",
+        auth_views.PasswordChangeDoneView.as_view(
+            template_name="accounts/password_change_done.html",
+        ),
+        name="password_change_done",
+    ),
+
+    # Notifications (#011)
+    path("notifications/", notifications, name="notifications"),
+    path(
+        "notifications/<int:pk>/open/",
+        open_notification,
+        name="open_notification",
+    ),
+    path(
+        "notifications/read-all/",
+        mark_all_notifications_read,
+        name="mark_all_notifications_read",
     ),
 
     # Donor location, search and map (Developer 2)

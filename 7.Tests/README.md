@@ -15,6 +15,13 @@ project, so Django's test runner can find them.
 | Admin dashboard and donation records | [`test_admin_dashboard.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_admin_dashboard.py) |
 | Admin tools: users, hospitals, reported accounts, activity | [`test_admin_tools.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_admin_tools.py) |
 | Error pages, feedback messages, secret-key check | [`test_final_fixes.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_final_fixes.py) |
+| Sending a request to one chosen donor (#010) | [`test_targeted_requests.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_targeted_requests.py) |
+| Notifications and email (#011) | [`test_notifications.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_notifications.py) |
+| Messaging after acceptance (#014) | [`test_messaging.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_messaging.py) |
+| Reports and admin review (#019) | [`test_reports.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_reports.py) |
+| Donors' own donation records (#015) | [`test_donations.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_donations.py) |
+| Account page and password change (#016) | [`test_account.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_account.py) |
+| Donor privacy settings (#003) | [`test_privacy_settings.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/test_privacy_settings.py) |
 | Every URL for every role, search/map edge cases | [`test_smoke.py`](../5.Backend/OnlineBloodDonationPlatform/locations/test_smoke.py) |
 
 Run them all from `5.Backend/OnlineBloodDonationPlatform/`:

@@ -144,6 +144,7 @@ never a fake link.
 | `partials/account_status.html` | `account` | Active / inactive dot for a user account |
 | `partials/user_status_toggle.html` | `account`, `next`, `label` | Admin activate / deactivate button (none on your own row) |
 | `partials/admin_back_link.html` | none | “Back to dashboard” link on admin tool pages |
+| `partials/message_list.html` | `convo` | Messages of one conversation; also returned alone for the 10-second refresh |
 | `partials/icon.html` | `name`, `class` | Inline SVG icon (see the file for names) |
 | `partials/messages.html` | none | Django messages (already in `base.html`) |
 | `partials/leaflet_assets.html` | none | Leaflet + `maps.js`; include in `extra_head` |
@@ -167,9 +168,33 @@ Donor names shown to hospitals or other users go through the
 gives “Ahmad S.”). Never show a donor’s email, phone or exact location
 outside their own pages and the site admin. The one exception: while a
 donor has accepted a request, that hospital’s request page shows the
-donor’s full name and phone with the note “Shared because the donor
-accepted” (`DonorResponse.shares_contact`), and the donor sees the
-hospital’s phone in a `contact-box`.
+donor’s full name and, unless the donor turned it off, their phone, with
+the note “Shared because the donor accepted” (`DonorResponse.shares_contact`
+for the name, `DonorResponse.shares_phone` for the phone), and the donor
+sees the hospital’s phone and address in a `contact-box`.
+
+Donors control two privacy settings on their profile (#003):
+`User.share_phone_after_accept` and `User.show_district`. With
+`show_district` off, the donor's district is never shown, district
+searches don't match them, and they are left off the map. Respect both
+on every new page.
+
+### Notifications, messages and reports
+
+- Create notifications with `accounts.notifications.notify(user,
+  message, link, request)`. It saves the in-app notification and sends
+  the email; never call `send_mail` from a view. Links are site paths
+  (`reverse(...)`). Name donors with `public_name` in messages.
+- Conversations (`accounts.messaging.get_conversation`) are only for the
+  hospital and the donor of a request. Name participants with
+  `convo.name_of(user)`, which follows the contact rule above. The chat
+  uses `.chat`, `.chat-log`, `.chat-message` (`.is-mine` for the
+  viewer's own) and `.chat-compose`.
+- Put a small `.report-link` (“Report”) wherever two people deal with
+  each other. `accounts.reports.can_report` decides who may report whom.
+- A list of radio options with long labels uses `.radio-list` with
+  `<label class="radio-option">`; a single form on its own page uses
+  `.form-narrow`.
 
 Blood types are stored as `O-`, `AB+` and so on. Show them with the
 badge partial or the `blood_symbol` filter (real minus sign, “O−”), and
@@ -210,7 +235,9 @@ These rules are covered by tests. Do not break them.
 
 - Search results, the map and any page another user can see may show
   only: first name + last initial, blood type, availability,
-  province/district, and a rounded distance (“about 4 km”).
+  province/district (only if the donor allows it), and a rounded
+  distance (“about 4 km”). The contact-after-accept rule above is the
+  only exception.
 - Never show a donor’s email, phone number, full last name or exact
   coordinates. Only `DonorLocation.approximate_coordinates` (rounded to
   about 1 km) may reach a template, JSON or the browser.

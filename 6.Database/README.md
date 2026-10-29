@@ -6,7 +6,7 @@ and not committed to git).
 
 | What | Where |
 |---|---|
-| Users (email login, role, blood type, availability), donations, blood requests and donor responses | [`5.Backend/OnlineBloodDonationPlatform/accounts/models.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/models.py) |
+| Users (email login, role, blood type, availability, privacy settings), donations, blood requests and donor responses, notifications, messages, reports | [`5.Backend/OnlineBloodDonationPlatform/accounts/models.py`](../5.Backend/OnlineBloodDonationPlatform/accounts/models.py) |
 | Donor locations and facilities (hospitals, donation centres) | [`5.Backend/OnlineBloodDonationPlatform/locations/models.py`](../5.Backend/OnlineBloodDonationPlatform/locations/models.py) |
 | Migrations (schema history) | [`5.Backend/OnlineBloodDonationPlatform/accounts/migrations/`](../5.Backend/OnlineBloodDonationPlatform/accounts/migrations/), [`5.Backend/OnlineBloodDonationPlatform/locations/migrations/`](../5.Backend/OnlineBloodDonationPlatform/locations/migrations/) |
 | Sample facilities (data migration) | [`5.Backend/OnlineBloodDonationPlatform/locations/migrations/0002_sample_facilities.py`](../5.Backend/OnlineBloodDonationPlatform/locations/migrations/0002_sample_facilities.py) |

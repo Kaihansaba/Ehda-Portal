@@ -14,9 +14,17 @@
         <p class="lead">Tell us which blood type you need, how much, and how soon.</p>
     </div>
 
+    {% if target_donor %}
+        <div class="alert alert-info" role="status">
+            {% include "partials/icon.html" with name="send" %}
+            <span>This request will be sent only to <strong>{{ target_donor|public_name }}</strong> (blood type {{ target_donor.blood_type|blood_symbol }}). Other donors won’t see it.</span>
+        </div>
+    {% endif %}
+
     <div class="form-layout">
         <form method="post" class="card form-stack">
             {% csrf_token %}
+            {% if target_donor %}<input type="hidden" name="target_donor" value="{{ target_donor.pk }}">{% endif %}
 
             {% if form.non_field_errors %}
                 <div class="alert alert-error" role="alert">
@@ -90,7 +98,11 @@
                 Your requests are listed under Manage requests, where you can
                 follow their status.
             </p>
-            <p class="card-text">Sending requests directly to matching donors is coming soon.</p>
+            <p class="card-text">
+                A new request goes to every available donor whose blood is
+                compatible. To ask one donor, use <strong>Send request</strong>
+                on their search result.
+            </p>
             <a href="{% url 'manage_blood_requests' %}" class="btn btn-secondary btn-sm">Manage requests</a>
         </aside>
     </div>

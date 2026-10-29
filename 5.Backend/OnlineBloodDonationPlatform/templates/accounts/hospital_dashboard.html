@@ -85,16 +85,29 @@
         </ul>
     </section>
 
-    <section class="section" aria-labelledby="soon-title">
-        <h2 id="soon-title" class="section-title">Coming soon</h2>
+    <section class="section" aria-labelledby="account-title">
+        <h2 id="account-title" class="section-title">Your hospital</h2>
 
-        <div class="grid grid-2">
-            <div class="card soon-card">
-                <h3 class="card-title">Hospital profile</h3>
-                <p class="card-text">Your hospital’s details and contact information.</p>
-                <span class="tag">Coming soon</span>
-            </div>
-        </div>
+        <ul class="link-list">
+            <li>
+                <a href="{% url 'account' %}">
+                    <span>
+                        <span class="link-title">Hospital account</span>
+                        <span class="link-text">Name, contact details and address</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'password_change' %}">
+                    <span>
+                        <span class="link-title">Change password</span>
+                        <span class="link-text">Keep your account secure</span>
+                    </span>
+                    {% include "partials/icon.html" with name="arrow" class="flip-rtl" %}
+                </a>
+            </li>
+        </ul>
     </section>
 
 {% endblock %}

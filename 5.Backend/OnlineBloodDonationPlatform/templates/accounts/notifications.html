@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'role_redirect' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to dashboard
+        </a>
+
+        <div class="dash-hero">
+            <div>
+                <h1>Notifications</h1>
+                <p class="lead">Updates about your blood requests, messages and account. We also email them to you.</p>
+            </div>
+            {% if unread_notification_count %}
+                <form method="post" action="{% url 'mark_all_notifications_read' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">Mark all as read</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if notifications %}
+        <ul class="notification-list" role="list">
+            {% for notification in notifications %}
+                <li class="notification{% if not notification.read %} is-unread{% endif %}">
+                    <a href="{% url 'open_notification' notification.pk %}">
+                        <span class="notification-message">
+                            {% if not notification.read %}<span class="visually-hidden">Unread: </span>{% endif %}
+                            {{ notification.message }}
+                        </span>
+                        <time class="notification-time" datetime="{{ notification.created_at|date:'c' }}">{{ notification.created_at|date:"j M Y, H:i" }}</time>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="card">
+            {% include "partials/empty_state.html" with title="No notifications yet" text="You’ll see updates about blood requests, messages and your account here." %}
+        </div>
+    {% endif %}
+
+{% endblock %}

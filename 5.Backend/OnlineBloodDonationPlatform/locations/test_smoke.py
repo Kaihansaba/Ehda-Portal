@@ -8,13 +8,14 @@ Smoke and edge-case tests for the whole site.
 3. Search and map edge cases: missing locations, no donors, invalid or
    extreme query-string values.
 """
+import datetime
 from decimal import Decimal
 
 from django.contrib import admin
 from django.test import TestCase
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
-from accounts.models import BloodRequest, User
+from accounts.models import BloodRequest, Donation, DonorResponse, Notification, Report, User
 from locations.models import DonorLocation
 from locations.search import search_donors
 
@@ -96,6 +97,9 @@ def expected(name, url):
         "donor_dashboard": only("donor"),
         "donor_profile": only("donor"),
         "donation_history": only("donor"),
+        # Own donation records only (#015)
+        "edit_donation": only("donor"),
+        "delete_donation": only("donor"),
         # Donor side of blood requests (#011, #012)
         "donor_blood_requests": only("donor"),
         # GET does not answer; donors go back to their request list.
@@ -123,6 +127,33 @@ def expected(name, url):
             "hospital": (302, reverse("manage_blood_requests")),
         },
         "admin_dashboard": only("admin"),
+        # Messaging (#014): the hospital and the donor of that request
+        "conversation": {**only("donor", "hospital")},
+        "conversation_messages": {**only("donor", "hospital")},
+        # Reports (#019): here the URL is the hospital's account. The donor
+        # dealt with it (can report); the hospital can't report itself.
+        "report_user": {
+            **only("donor"),
+            "hospital": (404, None),
+        },
+        # GET does nothing; admins go back to the reports page.
+        "review_report": {
+            **only(),
+            "admin": (302, reverse("admin_reported_accounts")),
+        },
+        # Account details (#016): hospitals and admins; donors have a profile
+        "account": only("hospital", "admin"),
+        "password_change": logged_in(),
+        "password_change_done": logged_in(),
+        # Notifications (#011): every signed-in user has their own
+        "notifications": logged_in(),
+        # Only the owner (the donor here) can open it; others get 404.
+        "open_notification": {
+            **logged_in((404, None)),
+            "donor": (302, reverse("donor_blood_requests")),
+        },
+        # GET does nothing; back to the notifications page.
+        "mark_all_notifications_read": logged_in((302, reverse("notifications"))),
         # Admin tools (Developer 3): admins only
         "admin_manage_users": only("admin"),
         "admin_manage_hospitals": only("admin"),
@@ -172,8 +203,28 @@ class UrlSmokeTests(TestCase):
             hospital=self.users["hospital"], blood_type="O-", notes="Surgery",
         )
 
+        DonorResponse.objects.create(
+            blood_request=blood_request, donor=self.users["donor"], response="ACCEPTED",
+        )
+        donation = Donation.objects.create(
+            donor=self.users["donor"], donation_date=datetime.date(2026, 5, 1), blood_type="O-",
+        )
+        notification = Notification.objects.create(
+            user=self.users["donor"], message="Test", link=reverse("donor_blood_requests"),
+        )
+
         # URLs that need real objects: the hospital's own request, a donor.
         self.url_args = {
+            "open_notification": {"pk": notification.pk},
+            "edit_donation": {"pk": donation.pk},
+            "delete_donation": {"pk": donation.pk},
+            "report_user": {"pk": self.users["hospital"].pk},
+            "review_report": {"pk": Report.objects.create(
+                reporter=self.users["donor"], reported_user=self.users["hospital"],
+                reason="OTHER", details="Smoke test report",
+            ).pk},
+            "conversation": {"pk": blood_request.pk, "donor_pk": self.users["donor"].pk},
+            "conversation_messages": {"pk": blood_request.pk, "donor_pk": self.users["donor"].pk},
             **URL_ARGS,
             "request_detail": {"pk": blood_request.pk},
             "change_request_status": {"pk": blood_request.pk, "status": "IN_REVIEW"},

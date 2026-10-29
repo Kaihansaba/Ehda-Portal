@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load ehda_ui %}
+
+{% block title %}Edit donation{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'donation_history' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to donation history
+        </a>
+        <h1>Edit donation</h1>
+        <p class="lead">Blood type: {{ donation.blood_type|blood_symbol }}</p>
+    </div>
+
+    <form method="post" class="card form-stack form-narrow">
+        {% csrf_token %}
+        <div class="form-row">
+            {% include "partials/form_field.html" with field=form.donation_date label="Date" %}
+            {% include "partials/form_field.html" with field=form.place label="Place or hospital" optional=True %}
+        </div>
+        {% include "partials/form_field.html" with field=form.notes label="Notes" optional=True %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a href="{% url 'donation_history' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+
+{% endblock %}

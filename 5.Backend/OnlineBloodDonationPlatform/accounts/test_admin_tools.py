@@ -50,17 +50,19 @@ class AdminToolsTests(TestCase):
         self.assertContains(response, self.hospital.email)
         self.assertNotContains(response, self.donor.email)
 
-    def test_admin_can_view_reported_accounts(self):
-        reported_user = User.objects.create_user(
-            email="reported@example.com", password=PASSWORD,
-            first_name="Reported", last_name="User", role="DONOR", is_active=False,
+    def test_reported_accounts_page_lists_deactivated_accounts_separately(self):
+        deactivated = User.objects.create_user(
+            email="deactivated@example.com", password=PASSWORD,
+            first_name="Gone", last_name="User", role="DONOR", is_active=False,
         )
 
         response = self.client.get(reverse("admin_reported_accounts"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(list(response.context["reported_users"]), [reported_user])
-        self.assertContains(response, reported_user.email)
+        self.assertEqual(list(response.context["deactivated_users"]), [deactivated])
+        self.assertEqual(list(response.context["reports"]), [])
+        self.assertContains(response, "No reports yet")
+        self.assertContains(response, deactivated.email)
         self.assertNotContains(response, self.donor.email)
 
     def test_admin_can_view_platform_activity_page(self):

@@ -5,12 +5,35 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.db.models import Case, IntegerField, Value, When
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
+from locations.search import searchable_donors
+from locations.utils import public_name
+
+from .forms import (
+    AccountForm,
+    BloodRequestForm,
+    DonationForm,
+    DonorProfileForm,
+    RegistrationForm,
+    ReportForm,
+)
 from .donor_requests import can_see_requests, requests_for_donor, responses_by_request
-from .models import User, Donation, BloodRequest, DonorResponse
+from .messaging import get_conversation
+from .reports import can_report, display_name
+from .models import User, Donation, BloodRequest, DonorResponse, Message, Notification, Report
+from .notifications import (
+    notify_account_status,
+    notify_admins_of_report,
+    notify_donor_response,
+    notify_new_message,
+    notify_new_request,
+    notify_status_change,
+)
 
 
 def index(request):
@@ -135,14 +158,20 @@ def respond_to_request(request, pk):
         # Not compatible, not available, or no longer open for new answers.
         messages.error(request, "You can't answer this request.")
     else:
-        DonorResponse.objects.update_or_create(
+        previous = DonorResponse.objects.filter(blood_request=blood_request, donor=request.user).first()
+        response, _ = DonorResponse.objects.update_or_create(
             blood_request=blood_request,
             donor=request.user,
             # A changed answer is new to the hospital again (badge).
             defaults={"response": answer, "seen_by_hospital": False},
         )
+        if previous is None or previous.response != answer:
+            notify_donor_response(response, request)
         if answer == DonorResponse.Answer.ACCEPTED:
-            messages.success(request, "Thank you. The hospital can now see your name and phone number so they can contact you.")
+            if request.user.share_phone_after_accept:
+                messages.success(request, "Thank you. The hospital can now see your name and phone number so they can contact you.")
+            else:
+                messages.success(request, "Thank you. The hospital can now see your name and message you here. Your phone number stays private.")
         else:
             messages.success(request, "You declined this request. Your contact details are not shared. You can change your answer while it is open.")
 
@@ -155,6 +184,7 @@ def donor_profile(request):
         form = DonorProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request, "Your profile has been saved.")
             return redirect("donor_profile")
     else:
         form = DonorProfileForm(instance=request.user)
@@ -164,6 +194,21 @@ def donor_profile(request):
         "accounts/donor_profile.html",
         {"form": form},
     )
+
+
+@role_required("HOSPITAL", "ADMIN")
+def account(request):
+    """Hospitals and admins edit their account (#016). Donors use donor_profile."""
+    if request.method == "POST":
+        form = AccountForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your account details have been saved.")
+            return redirect("account")
+    else:
+        form = AccountForm(instance=request.user)
+
+    return render(request, "accounts/account.html", {"form": form})
 
 
 @role_required("DONOR")
@@ -204,13 +249,13 @@ def admin_dashboard(request):
     total_users = User.objects.count()
     donor_count = User.objects.filter(role=User.Role.DONOR).count()
     hospital_count = User.objects.filter(role=User.Role.HOSPITAL).count()
-    reported_count = User.objects.filter(is_active=False).count()
+    open_report_count = Report.objects.filter(status=Report.Status.OPEN).count()
 
     context = {
         "total_users": total_users,
         "donor_count": donor_count,
         "hospital_count": hospital_count,
-        "reported_count": reported_count,
+        "open_report_count": open_report_count,
     }
     return render(request, "accounts/admin_dashboard.html", context)
 
@@ -229,8 +274,50 @@ def admin_manage_hospitals(request):
 
 @role_required("ADMIN")
 def admin_reported_accounts(request):
-    reported_users = User.objects.filter(is_active=False).order_by("role", "first_name", "last_name")
-    return render(request, "accounts/admin_reported_accounts.html", {"reported_users": reported_users})
+    """Reports from users (#019), open first; deactivated accounts below."""
+    open_first = Case(
+        When(status=Report.Status.OPEN, then=Value(0)), default=Value(1), output_field=IntegerField(),
+    )
+    reports = Report.objects.select_related("reporter", "reported_user", "reviewed_by").order_by(
+        open_first, "-created_at",
+    )
+    deactivated_users = User.objects.filter(is_active=False).order_by("role", "first_name", "last_name")
+    return render(
+        request,
+        "accounts/admin_reported_accounts.html",
+        {"reports": reports, "deactivated_users": deactivated_users},
+    )
+
+
+@role_required("ADMIN")
+def review_report(request, pk):
+    report = get_object_or_404(Report.objects.select_related("reported_user"), pk=pk)
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        reported = report.reported_user
+
+        if action == "reviewed":
+            report.status = Report.Status.REVIEWED
+            messages.success(request, "The report is marked as reviewed.")
+        elif action == "deactivate":
+            if reported == request.user:
+                messages.error(request, "You can't deactivate your own account.")
+                return redirect("admin_reported_accounts")
+            report.status = Report.Status.ACTION_TAKEN
+            if reported.is_active:
+                reported.is_active = False
+                reported.save(update_fields=["is_active"])
+                notify_account_status(reported, request)
+            messages.success(request, f"{reported.email} has been deactivated.")
+        else:
+            return redirect("admin_reported_accounts")
+
+        report.reviewed_at = timezone.now()
+        report.reviewed_by = request.user
+        report.save(update_fields=["status", "reviewed_at", "reviewed_by"])
+
+    return redirect("admin_reported_accounts")
 
 
 @role_required("ADMIN")
@@ -317,6 +404,7 @@ def toggle_user_status(request, pk):
             user.save(update_fields=["is_active"])
             state = "activated" if user.is_active else "deactivated"
             messages.success(request, f"{user.email} has been {state}.")
+            notify_account_status(user, request)
 
     redirect_name = request.POST.get("next")
     if redirect_name not in TOGGLE_RETURN_PAGES:
@@ -324,23 +412,50 @@ def toggle_user_status(request, pk):
     return redirect(redirect_name)
 
 
+def chosen_donor(hospital, donor_id):
+    """
+    The donor a hospital picked in search (#010), or None. Only donors the
+    hospital could find in search qualify: active, available, with a
+    location set.
+    """
+    if not str(donor_id or "").isdigit():
+        return None
+
+    location = searchable_donors(hospital).filter(user_id=int(donor_id)).first()
+    return location.user if location else None
+
+
 @role_required("HOSPITAL")
 def create_blood_request(request):
+    donor_id = request.POST.get("target_donor") or request.GET.get("donor")
+    target_donor = chosen_donor(request.user, donor_id)
+
+    if donor_id and target_donor is None:
+        messages.error(request, "That donor is no longer available. You can still send the request to all compatible donors.")
+
     if request.method == "POST":
-        form = BloodRequestForm(request.POST)
+        form = BloodRequestForm(request.POST, target_donor=target_donor)
         if form.is_valid():
             blood_request = form.save(commit=False)
             blood_request.hospital = request.user
+            blood_request.target_donor = target_donor
             blood_request.save()
-            messages.success(request, "Your blood request has been created. Compatible available donors can now see it.")
+            notify_new_request(blood_request, request)
+            if target_donor:
+                # public_name ends with "." when it has an initial ("Dina D.").
+                name = public_name(target_donor)
+                messages.success(request, f"Your blood request has been sent to {name}{'' if name.endswith('.') else '.'}")
+            else:
+                messages.success(request, "Your blood request has been created. Compatible available donors can now see it.")
             return redirect("manage_blood_requests")
     else:
-        form = BloodRequestForm()
+        initial = {"blood_type": target_donor.blood_type} if target_donor else {}
+        form = BloodRequestForm(initial=initial, target_donor=target_donor)
 
     return render(
         request,
         "accounts/create_blood_request.html",
-        {"form": form},
+        {"form": form, "target_donor": target_donor},
     )
 
 
@@ -401,6 +516,7 @@ def change_request_status(request, pk, status):
     except ValidationError as exc:
         return blood_request_error_page(request, exc)
 
+    notify_status_change(blood_request, request)
     return redirect("manage_blood_requests")
 
 
@@ -425,6 +541,7 @@ def close_blood_request(request, pk):
     except ValidationError as exc:
         return blood_request_error_page(request, exc)
 
+    notify_status_change(blood_request, request)
     return redirect("manage_blood_requests")
 
 
@@ -440,13 +557,189 @@ def user_logout(request):
     return redirect("role_redirect")
 
 
+def completed_requests_to_record(donor):
+    """Completed requests this donor accepted and hasn't recorded yet (#015)."""
+    return (
+        BloodRequest.objects.filter(
+            status=BloodRequest.Status.COMPLETED,
+            responses__donor=donor,
+            responses__response=DonorResponse.Answer.ACCEPTED,
+        )
+        .exclude(donations__donor=donor)
+        .select_related("hospital")
+        .order_by("-created_at")
+    )
+
+
 @role_required("DONOR")
 def donation_history(request):
     donations = Donation.objects.filter(
         donor=request.user
-    ).order_by("-donation_date")
+    ).order_by("-donation_date", "-pk")
+    suggestions = completed_requests_to_record(request.user)
+
+    # "Add this donation" pre-fills the form from a completed request.
+    from_request = None
+    request_id = request.POST.get("blood_request") or request.GET.get("request")
+    if str(request_id or "").isdigit():
+        from_request = suggestions.filter(pk=int(request_id)).first()
+
+    if request.method == "POST":
+        form = DonationForm(request.POST)
+        if not request.user.blood_type:
+            messages.error(request, "Add your blood type to your profile before recording a donation.")
+        elif form.is_valid():
+            donation = form.save(commit=False)
+            donation.donor = request.user
+            donation.blood_type = request.user.blood_type
+            donation.blood_request = from_request
+            donation.save()
+            messages.success(request, "Your donation has been added. Thank you!")
+            return redirect("donation_history")
+    else:
+        initial = {"donation_date": timezone.localdate()}
+        if from_request:
+            initial["place"] = from_request.hospital.get_full_name()
+        form = DonationForm(initial=initial)
+
     return render(
         request,
         "accounts/donation_history.html",
-        {"donations": donations},
+        {
+            "donations": donations,
+            "form": form,
+            "suggestions": suggestions,
+            "from_request": from_request,
+        },
+    )
+
+
+@role_required("DONOR")
+def edit_donation(request, pk):
+    donation = get_object_or_404(Donation, pk=pk, donor=request.user)
+
+    if request.method == "POST":
+        form = DonationForm(request.POST, instance=donation)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your donation record has been updated.")
+            return redirect("donation_history")
+    else:
+        form = DonationForm(instance=donation)
+
+    return render(request, "accounts/donation_form.html", {"form": form, "donation": donation})
+
+
+@role_required("DONOR")
+def delete_donation(request, pk):
+    donation = get_object_or_404(Donation, pk=pk, donor=request.user)
+
+    if request.method == "POST":
+        donation.delete()
+        messages.success(request, "The donation record has been deleted.")
+        return redirect("donation_history")
+
+    return render(request, "accounts/donation_confirm_delete.html", {"donation": donation})
+
+
+def is_safe_internal_path(link):
+    """Only paths on this site, e.g. "/dashboard/" (never "//evil.com")."""
+    return link.startswith("/") and not link.startswith("//") and "\\" not in link
+
+
+@login_required
+def notifications(request):
+    items = request.user.notifications.all()[:50]
+    return render(request, "accounts/notifications.html", {"notifications": items})
+
+
+@login_required
+def open_notification(request, pk):
+    notification = get_object_or_404(Notification, pk=pk, user=request.user)
+
+    if not notification.read:
+        notification.read = True
+        notification.save(update_fields=["read"])
+
+    if notification.link and is_safe_internal_path(notification.link):
+        return redirect(notification.link)
+    return redirect("notifications")
+
+
+@login_required
+def mark_all_notifications_read(request):
+    if request.method == "POST":
+        updated = request.user.notifications.filter(read=False).update(read=True)
+        if updated:
+            messages.success(request, "All notifications are marked as read.")
+    return redirect("notifications")
+
+
+MAX_MESSAGE_LENGTH = 2000
+
+
+@role_required("DONOR", "HOSPITAL")
+def conversation(request, pk, donor_pk):
+    convo = get_conversation(request.user, pk, donor_pk)
+
+    if request.method == "POST":
+        body = request.POST.get("body", "").strip()
+
+        if not convo.can_send:
+            messages.error(request, convo.read_only_reason)
+        elif not body:
+            messages.error(request, "Please write a message first.")
+        elif len(body) > MAX_MESSAGE_LENGTH:
+            messages.error(request, f"Messages can be at most {MAX_MESSAGE_LENGTH} characters.")
+        else:
+            message = Message.objects.create(
+                blood_request=convo.blood_request, donor=convo.donor, sender=request.user, body=body,
+            )
+            notify_new_message(message, convo.other_party, request)
+        return redirect("conversation", pk=pk, donor_pk=donor_pk)
+
+    return render(request, "accounts/conversation.html", {"convo": convo})
+
+
+@role_required("DONOR", "HOSPITAL")
+def conversation_messages(request, pk, donor_pk):
+    """The message list only, for the page's 10-second refresh."""
+    convo = get_conversation(request.user, pk, donor_pk)
+    return render(request, "partials/message_list.html", {"convo": convo})
+
+
+@role_required("DONOR", "HOSPITAL")
+def report_user(request, pk):
+    reported = get_object_or_404(User, pk=pk)
+    if not can_report(request.user, reported):
+        # Same answer whether the account exists or not.
+        raise Http404("No such account.")
+
+    next_url = request.POST.get("next") or request.GET.get("next") or ""
+    if not is_safe_internal_path(next_url):
+        next_url = ""
+
+    if request.method == "POST":
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            already_open = Report.objects.filter(
+                reporter=request.user, reported_user=reported, status=Report.Status.OPEN,
+            ).exists()
+            if already_open:
+                messages.info(request, "You already have an open report about this account. An administrator will review it.")
+            else:
+                report = form.save(commit=False)
+                report.reporter = request.user
+                report.reported_user = reported
+                report.save()
+                notify_admins_of_report(report, request)
+                messages.success(request, "Thank you. An administrator will review your report.")
+            return redirect(next_url or "role_redirect")
+    else:
+        form = ReportForm()
+
+    return render(
+        request,
+        "accounts/report_user.html",
+        {"form": form, "reported_name": display_name(reported), "next_url": next_url},
     )

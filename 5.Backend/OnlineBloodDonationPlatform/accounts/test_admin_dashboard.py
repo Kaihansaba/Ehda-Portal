@@ -36,7 +36,7 @@ class AdminDashboardStatsTests(TestCase):
         self.assertEqual(response.context["total_users"], 5)
         self.assertEqual(response.context["donor_count"], 3)
         self.assertEqual(response.context["hospital_count"], 1)
-        self.assertEqual(response.context["reported_count"], 0)
+        self.assertEqual(response.context["open_report_count"], 0)
 
     def test_numbers_are_shown_instead_of_coming_soon(self):
         response = self.client.get(reverse("admin_dashboard"))
@@ -46,14 +46,14 @@ class AdminDashboardStatsTests(TestCase):
         self.assertContains(response, '<div class="stat-value">1</div>', html=True)
         self.assertNotContains(response, "Coming soon")
 
-    def test_deactivated_accounts_count_as_reported(self):
+    def test_deactivated_accounts_are_not_counted_as_reports(self):
         User.objects.filter(email="donor0@example.com").update(is_active=False)
 
         response = self.client.get(reverse("admin_dashboard"))
 
-        # Still a donor, and also counted as reported.
+        # Still a donor; reports are separate (#019).
         self.assertEqual(response.context["donor_count"], 3)
-        self.assertEqual(response.context["reported_count"], 1)
+        self.assertEqual(response.context["open_report_count"], 0)
 
     def test_links_to_every_admin_tool(self):
         response = self.client.get(reverse("admin_dashboard"))

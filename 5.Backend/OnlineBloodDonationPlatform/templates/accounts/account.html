@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}My account{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'role_redirect' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to dashboard
+        </a>
+        <h1>My account</h1>
+        <p class="lead">{{ request.user.get_role_display }} account details.</p>
+    </div>
+
+    <div class="form-layout">
+        <form method="post" class="card form-stack">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-error" role="alert">
+                    {% include "partials/icon.html" with name="alert" %}
+                    <span>{{ form.non_field_errors|join:" " }}</span>
+                </div>
+            {% endif %}
+
+            {% if request.user.role == "HOSPITAL" %}
+                <div class="form-row">
+                    {% include "partials/form_field.html" with field=form.first_name label="Hospital name" %}
+                    {% include "partials/form_field.html" with field=form.last_name label="Name, second part" optional=True help="E.g. “Hospital” in “Ali Abad Hospital”." %}
+                </div>
+            {% else %}
+                <div class="form-row">
+                    {% include "partials/form_field.html" with field=form.first_name label="First name" %}
+                    {% include "partials/form_field.html" with field=form.last_name label="Last name" %}
+                </div>
+            {% endif %}
+
+            <div class="form-row">
+                {% include "partials/form_field.html" with field=form.email label="Email address" %}
+                {% include "partials/form_field.html" with field=form.phone label="Phone number" %}
+            </div>
+
+            {% if form.address %}
+                {% include "partials/form_field.html" with field=form.address label="Address" optional=True help="Shown to donors who accept one of your requests, so they can find you." %}
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a class="btn btn-secondary" href="{% url 'role_redirect' %}">Cancel</a>
+            </div>
+        </form>
+
+        <aside class="info-aside" aria-labelledby="security-title">
+            <h2 id="security-title" class="card-title">Password</h2>
+            <p class="card-text">Change your password at any time. You’ll stay signed in.</p>
+            <a href="{% url 'password_change' %}" class="btn btn-secondary btn-sm">
+                {% include "partials/icon.html" with name="lock" %}
+                Change password
+            </a>
+        </aside>
+    </div>
+
+{% endblock %}

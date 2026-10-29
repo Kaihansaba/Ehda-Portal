@@ -27,6 +27,46 @@
         });
     }
 
+    // Conversation: newest message at the bottom, refresh every 10 s ------
+    document.querySelectorAll("[data-chat-log]").forEach(function (log) {
+        var url = log.getAttribute("data-poll-url");
+
+        function nearBottom() {
+            return log.scrollHeight - log.scrollTop - log.clientHeight < 80;
+        }
+
+        log.scrollTop = log.scrollHeight;
+
+        if (!url || !window.fetch) {
+            return;
+        }
+
+        window.setInterval(function () {
+            if (document.hidden) {
+                return;
+            }
+
+            fetch(url, { credentials: "same-origin" })
+                .then(function (response) {
+                    return response.ok ? response.text() : null;
+                })
+                .then(function (html) {
+                    // The server renders this list (escaped), like the page itself.
+                    if (html === null || html.trim() === log.innerHTML.trim()) {
+                        return;
+                    }
+                    var stick = nearBottom();
+                    log.innerHTML = html;
+                    if (stick) {
+                        log.scrollTop = log.scrollHeight;
+                    }
+                })
+                .catch(function () {
+                    // Offline for a moment: try again on the next tick.
+                });
+        }, 10000);
+    });
+
     // Show / hide password -----------------------------------------------
     document.querySelectorAll("[data-password-toggle]").forEach(function (button) {
         var input = document.getElementById(button.getAttribute("data-password-toggle"));

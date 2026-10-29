@@ -83,7 +83,8 @@ def search_donors(
         locations = locations.filter(province=province)
 
     if district:
-        locations = locations.filter(district__icontains=district)
+        # Donors who hide their area (#003) never match a district search.
+        locations = locations.filter(district__icontains=district, user__show_district=True)
 
     if origin is not None and radius_km:
         min_lat, max_lat, min_lng, max_lng = bounding_box(
@@ -120,7 +121,7 @@ def search_donors(
                 blood_type=user.blood_type,
                 is_available=user.is_available,
                 province=location.get_province_display(),
-                district=location.district,
+                district=location.district if user.show_district else "",
                 distance_km=distance_km,
             )
         )

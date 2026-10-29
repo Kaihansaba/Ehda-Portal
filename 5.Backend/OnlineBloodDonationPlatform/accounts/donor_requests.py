@@ -2,7 +2,8 @@
 Which blood requests a donor sees and may answer (#011, #012).
 
 A donor sees open or in-review requests for a blood type they can give
-to (locations.constants.COMPATIBLE_DONORS), plus any request they have
+to (locations.constants.COMPATIBLE_DONORS), unless the request was sent
+to a different donor (#010), plus any request they have
 already answered that is not yet completed or cancelled, so they can
 still change their answer. Unavailable donors and donors without a
 blood type see nothing.
@@ -27,6 +28,11 @@ def recipient_types_for(donor_blood_type):
     ]
 
 
+def not_targeted_at_someone_else(donor):
+    """Requests for everyone, or sent to this donor specifically (#010)."""
+    return Q(target_donor__isnull=True) | Q(target_donor=donor)
+
+
 def can_see_requests(donor):
     return donor.role == User.Role.DONOR and donor.is_available and bool(donor.blood_type)
 
@@ -39,7 +45,7 @@ def requests_for_donor(donor):
     new_matches = Q(
         status__in=NEW_REQUEST_STATUSES,
         blood_type__in=recipient_types_for(donor.blood_type),
-    )
+    ) & not_targeted_at_someone_else(donor)
     already_answered = Q(responses__donor=donor) & ~Q(status__in=BloodRequest.CLOSED_STATUSES)
 
     return (
@@ -57,6 +63,7 @@ def unanswered_count(donor):
 
     return (
         BloodRequest.objects.filter(
+            not_targeted_at_someone_else(donor),
             status__in=NEW_REQUEST_STATUSES,
             blood_type__in=recipient_types_for(donor.blood_type),
         )

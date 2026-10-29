@@ -5,17 +5,20 @@ for Afghanistan. It connects people who need blood with willing donors and
 with hospitals and donation centres.
 
 - **Donors** register, set their blood type, availability and an
-  approximate location, and answer blood requests that match their blood
-  type.
-- **Hospitals** create blood requests, search for donors by blood type
-  (including compatible types) and distance, see who accepted, and get the
-  donor's phone number once the donor accepts.
-- **Administrators** manage users, hospitals and donation centres, and
-  monitor requests and platform activity.
+  approximate location, answer blood requests that match their blood
+  type, message the hospital after accepting, and keep a record of their
+  donations.
+- **Hospitals** search for donors by blood type (including compatible
+  types) and distance, send a request to all compatible donors or to one
+  chosen donor, see who accepted, and message or call them.
+- **Administrators** manage users, hospitals and donation centres, review
+  reported accounts, and monitor requests and platform activity.
+- **Everyone** gets in-app notifications (also by email), can report an
+  account they dealt with, and can change their password.
 - **Privacy:** donors' exact locations are never shown (rounded to about
   1 km), and their email address is never shown to other users. A donor's
-  phone number is shared only with the hospital whose request they
-  accepted.
+  full name and phone number go only to the hospital whose request they
+  accepted, and donors can keep their phone number and area private.
 
 Software Engineering project, American University of Afghanistan (AUAF),
 built in four Scrum sprints.
@@ -43,27 +46,29 @@ last column says which.
 |---|---|---|---|
 | #001 | Registration | Done | |
 | #002 | Login, logout, password reset | Done | |
-| #003 | Donor profile | Partial | Donors can't choose which profile fields others see |
-| #004 | Blood type and donation information | Partial | Donors can't enter donation records themselves (admins add them) |
+| #003 | Donor profile | Done | Includes privacy settings: share phone after accepting, show area on search and map |
+| #004 | Blood type and donation information | Done | Blood type is self-reported, not medically verified |
 | #005 | Availability status | Done | |
 | #006 | Search by blood type (with ABO/Rh compatibility) | Done | |
 | #007 | Search by location and distance, nearest first | Done | |
 | #008 | Map of donors, hospitals and donation centres | Done | |
 | #009 | Location privacy (approximate locations only) | Done | |
-| #010 | Blood requests | Partial | Requests go to all compatible available donors; a hospital can't send one to a donor it selected in search |
-| #011 | Request notifications | Partial | In-app count of new matching requests (navbar and dashboard); no stored per-request notifications, no email or push |
+| #010 | Blood requests | Done | To all compatible donors, or to one donor chosen in search |
+| #011 | Request notifications | Done | In-app notifications plus email; no mobile push |
 | #012 | Accept or decline a request | Partial | A donor's answer doesn't change the request status (the hospital updates it) |
 | #013 | Request responses for the seeker | Done | Hospitals act as the blood seeker; they see each donor's answer and a badge for new acceptances |
-| #014 | Messaging after acceptance | Partial | No in-app messaging; after acceptance both sides see each other's phone number instead |
-| #015 | Donation history | Partial | Donors can view their history; adding and editing records is admin-only |
-| #016 | Account management | Partial | Donors edit their profile; hospitals and admins can't edit their own account in the app; no password change while signed in (reset by email works) |
+| #014 | Messaging after acceptance | Done | Refreshes every 10 seconds (not instant); messages are protected by HTTPS in transit once deployed, not encrypted in the database |
+| #015 | Donation history | Done | |
+| #016 | Account management | Done | Donors: profile page; hospitals and admins: account page; password change for everyone |
 | #017 | User management (admin) | Done | Search is in the site admin (`/admin/`) |
 | #018 | Hospitals and donation centres (admin) | Done | Managed in the site admin; shown on the map |
-| #019 | Reported accounts | Partial | Users can't submit reports; “reported” means deactivated by an admin |
+| #019 | Reported accounts | Done | Only people who dealt with each other (a request or messages) can report each other |
 | #020 | Platform monitoring | Done | |
 
 Not built: a separate “blood seeker” account type (hospitals play that
-role), in-app messaging, email or push notifications, and user reports.
+role), and mobile push notifications. A donor's answer is recorded but
+doesn't change the request status by itself (#012); the hospital moves
+the request through its statuses.
 
 ## Tech stack
 
@@ -160,14 +165,16 @@ From `5.Backend/OnlineBloodDonationPlatform`, with the virtual
 environment active:
 
 ```bash
-python manage.py test                    # everything (about 200 tests)
+python manage.py test                    # everything (about 290 tests)
 python manage.py test accounts           # one app
 python manage.py test locations.test_smoke
 ```
 
 The tests cover registration and permissions, search and distance, the
-map, location privacy, blood requests and their status rules, donor
-answers and contact sharing, admin tools, error pages, and a smoke test
+map, location privacy and privacy settings, blood requests (including
+targeted ones) and their status rules, donor answers and contact
+sharing, notifications and email, messaging, reports, donation records,
+accounts and password change, admin tools, error pages, and a smoke test
 that opens every page as every role. See
 [7.Tests/README.md](7.Tests/README.md).
 

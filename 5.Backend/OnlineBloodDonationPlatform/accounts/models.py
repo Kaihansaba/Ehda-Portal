@@ -53,10 +53,23 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
+    # Hospitals' street address (#016). Shown to donors who accepted.
+    address = models.CharField(max_length=255, blank=True)
     blood_type = models.CharField(
         max_length=3, choices=BloodType.choices, blank=True, default=""
     )
     is_available = models.BooleanField(default=True)
+    # Donor privacy settings (#003). Both on by default.
+    share_phone_after_accept = models.BooleanField(
+        "Share my phone number after I accept",
+        default=True,
+        help_text="The hospital sees your phone number only after you accept its request.",
+    )
+    show_district = models.BooleanField(
+        "Show my area on search and the map",
+        default=True,
+        help_text="Your district in search results, and your approximate area on the map.",
+    )
     role = models.CharField(
         max_length=20, choices=Role.choices, default=Role.DONOR
     )
@@ -84,11 +97,17 @@ class Donation(models.Model):
     blood_type = models.CharField(
         max_length=3, choices=User.BloodType.choices
     )
+    # Where the donor gave blood, e.g. a hospital or blood bank (#015).
+    place = models.CharField(max_length=200, blank=True)
     notes = models.TextField(blank=True)
+    # Set when the record was added from a completed blood request.
+    blood_request = models.ForeignKey(
+        "BloodRequest", on_delete=models.SET_NULL, null=True, blank=True, related_name="donations",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["-donation_date"]
+        ordering = ["-donation_date", "-pk"]
 
     def __str__(self):
         return f"{self.donor.get_full_name()} - {self.donation_date}"
@@ -123,6 +142,16 @@ class BloodRequest(models.Model):
     notes = models.TextField(blank=True, default="")
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.OPEN
+    )
+    # Set when a hospital sends the request to one donor chosen in search
+    # (#010). Empty: the request goes to every compatible available donor.
+    target_donor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="targeted_requests",
+        limit_choices_to={"role": User.Role.DONOR},
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -234,3 +263,91 @@ class DonorResponse(models.Model):
     def shares_contact(self):
         """Contact details are exchanged only while the answer is Accepted."""
         return self.response == self.Answer.ACCEPTED
+
+    @property
+    def shares_phone(self):
+        """Phone only while accepted, and only if the donor allows it (#003)."""
+        return self.shares_contact and self.donor.share_phone_after_accept
+
+    @property
+    def can_message(self):
+        """Messaging (#014) is open while accepted and the request is open."""
+        return self.response == self.Answer.ACCEPTED and not self.blood_request.is_closed
+
+    @property
+    def has_messages(self):
+        return Message.objects.filter(blood_request_id=self.blood_request_id, donor_id=self.donor_id).exists()
+
+
+class Notification(models.Model):
+    """An in-app notification (#011). Also sent by email; see accounts/notifications.py."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    message = models.CharField(max_length=255)
+    # A path inside the site, e.g. "/dashboard/donor/requests/". May be empty.
+    link = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-created_at", "-pk"]
+        indexes = [models.Index(fields=["user", "read"])]
+
+    def __str__(self):
+        return f"{self.user.email}: {self.message}"
+
+
+class Message(models.Model):
+    """
+    A message in the conversation between a hospital and one donor about
+    one blood request (#014). Sending is only allowed while the donor's
+    answer is Accepted and the request is open; see accounts/messaging.py.
+    """
+
+    blood_request = models.ForeignKey(BloodRequest, on_delete=models.CASCADE, related_name="messages")
+    # The donor this conversation is with (one conversation per donor per request).
+    donor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="conversation_messages")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
+    body = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at", "pk"]
+        indexes = [models.Index(fields=["blood_request", "donor"])]
+
+    def __str__(self):
+        return f"{self.sender.email} on request {self.blood_request_id}"
+
+
+class Report(models.Model):
+    """A user's report about another account (#019), reviewed by admins."""
+
+    class Reason(models.TextChoices):
+        NO_SHOW = "NO_SHOW", "Didn't show up or stopped responding"
+        INAPPROPRIATE = "INAPPROPRIATE", "Rude or inappropriate behaviour"
+        FAKE = "FAKE", "Fake account or false information"
+        PAYMENT = "PAYMENT", "Asked for money or payment"
+        SAFETY = "SAFETY", "Safety concern"
+        OTHER = "OTHER", "Something else"
+
+    class Status(models.TextChoices):
+        OPEN = "OPEN", "Open"
+        REVIEWED = "REVIEWED", "Reviewed"
+        ACTION_TAKEN = "ACTION_TAKEN", "Action taken"
+
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reports_made")
+    reported_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reports_received")
+    reason = models.CharField(max_length=20, choices=Reason.choices)
+    details = models.TextField(max_length=2000)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.OPEN)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="reports_reviewed",
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.reporter.email} reported {self.reported_user.email} ({self.get_status_display()})"
