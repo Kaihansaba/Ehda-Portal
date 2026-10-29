@@ -56,6 +56,9 @@
                                     {% include "partials/icon.html" with name="users" %}
                                     {{ accepted }} donor{{ accepted|pluralize }} accepted
                                 </a>
+                                {% with new=blood_request.new_accepted_responses_count %}
+                                    {% if new and not blood_request.is_closed %}<span class="count-badge">{{ new }} new</span>{% endif %}
+                                {% endwith %}
                             {% endwith %}
                         </div>
 

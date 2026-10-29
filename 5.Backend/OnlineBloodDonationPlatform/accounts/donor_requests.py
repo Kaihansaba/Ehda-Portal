@@ -69,3 +69,16 @@ def responses_by_request(donor, blood_requests):
     """{request id: the donor's DonorResponse} for the given requests."""
     responses = DonorResponse.objects.filter(donor=donor, blood_request__in=blood_requests)
     return {response.blood_request_id: response for response in responses}
+
+
+def new_acceptances_count(hospital):
+    """Accepted answers the hospital hasn't seen yet, on requests still open."""
+    return (
+        DonorResponse.objects.filter(
+            blood_request__hospital=hospital,
+            response=DonorResponse.Answer.ACCEPTED,
+            seen_by_hospital=False,
+        )
+        .exclude(blood_request__status__in=BloodRequest.CLOSED_STATUSES)
+        .count()
+    )

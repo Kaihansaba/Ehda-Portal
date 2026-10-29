@@ -58,7 +58,9 @@
     <section class="section" aria-labelledby="responses-title">
         <h2 id="responses-title" class="section-title">Donor responses</h2>
 
-        {# PRIVACY (#009): first name + last initial and blood type only. #}
+        {# PRIVACY (#009): first name + last initial and blood type only, #}
+        {# unless the donor accepted: then full name and phone are shared. #}
+        {# Email and location are never shown here. #}
         {% with responses=blood_request.responses.all %}
             {% if responses %}
                 <div class="table-wrap">
@@ -68,16 +70,28 @@
                                 <th scope="col">Donor</th>
                                 <th scope="col">Blood type</th>
                                 <th scope="col">Response</th>
+                                <th scope="col">Contact</th>
                                 <th scope="col">Date</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for response in responses %}
                                 <tr>
-                                    <th scope="row">{{ response.donor|public_name }}</th>
+                                    <th scope="row">
+                                        {% if response.shares_contact %}{{ response.donor.get_full_name }}{% else %}{{ response.donor|public_name }}{% endif %}
+                                        {% if response.pk in new_response_ids %}<span class="count-badge">New</span>{% endif %}
+                                    </th>
                                     <td>{% include "partials/blood_badge.html" with type=response.donor.blood_type %}</td>
                                     <td>
                                         <span class="availability {% if response.response == 'ACCEPTED' %}is-available{% else %}is-unavailable{% endif %}">{{ response.get_response_display }}</span>
+                                    </td>
+                                    <td>
+                                        {% if response.shares_contact %}
+                                            <a href="tel:{{ response.donor.phone }}" dir="ltr">{{ response.donor.phone }}</a>
+                                            <div class="contact-note">Shared because the donor accepted</div>
+                                        {% else %}
+                                            <span class="muted">Not shared</span>
+                                        {% endif %}
                                     </td>
                                     <td><time datetime="{{ response.updated_at|date:'c' }}">{{ response.updated_at|date:"j M Y, H:i" }}</time></td>
                                 </tr>
@@ -85,7 +99,7 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="table-note">Donors can change their answer until you complete or cancel the request. The request status only changes when you update it below.</p>
+                <p class="table-note">A donor’s name and phone number are shared only while they have accepted. If they change their answer to Decline, the details are hidden again. The request status only changes when you update it below.</p>
             {% else %}
                 <div class="card">
                     {% include "partials/empty_state.html" with title="No responses yet" text="Available donors with a compatible blood type can see this request and answer it." %}

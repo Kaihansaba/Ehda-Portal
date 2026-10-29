@@ -141,12 +141,13 @@ def respond_to_request(request, pk):
         DonorResponse.objects.update_or_create(
             blood_request=blood_request,
             donor=request.user,
-            defaults={"response": answer},
+            # A changed answer is new to the hospital again (badge).
+            defaults={"response": answer, "seen_by_hospital": False},
         )
         if answer == DonorResponse.Answer.ACCEPTED:
-            messages.success(request, "Thank you. The hospital can now see that you accepted.")
+            messages.success(request, "Thank you. The hospital can now see your name and phone number so they can contact you.")
         else:
-            messages.success(request, "You declined this request. You can change your answer while it is open.")
+            messages.success(request, "You declined this request. Your contact details are not shared. You can change your answer while it is open.")
 
     return redirect("donor_blood_requests")
 
@@ -351,9 +352,22 @@ def blood_request_error_page(request, exc):
 @role_required("HOSPITAL")
 def request_detail(request, pk):
     blood_request = get_object_or_404(BloodRequest, pk=pk, hospital=request.user)
+
+    # Opening the request marks new acceptances as seen (navbar badge).
+    # Remember which were new so the page can still highlight them.
+    new_acceptances = blood_request.responses.filter(
+        response=DonorResponse.Answer.ACCEPTED, seen_by_hospital=False,
+    )
+    new_response_ids = list(new_acceptances.values_list("pk", flat=True))
+    new_acceptances.update(seen_by_hospital=True)
+
     # "blood_request", not "request": that name would hide Django's request
     # object from the navbar and base template.
-    return render(request, "accounts/request_detail.html", {"blood_request": blood_request})
+    return render(
+        request,
+        "accounts/request_detail.html",
+        {"blood_request": blood_request, "new_response_ids": new_response_ids},
+    )
 
 
 @role_required("HOSPITAL")

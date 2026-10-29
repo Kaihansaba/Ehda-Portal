@@ -11,7 +11,7 @@
             Back to dashboard
         </a>
         <h1>Blood requests</h1>
-        <p class="lead">Hospitals that need blood you can give. The hospital sees your first name, last initial, blood type and answer — never your contact details or location.</p>
+        <p class="lead">Hospitals that need blood you can give. The hospital sees your first name, last initial, blood type and answer. Your full name and phone number are shared only if you accept; your location never is.</p>
     </div>
 
     {% if not request.user.is_available %}
@@ -68,6 +68,18 @@
                                     <span class="availability {% if mine.response == 'ACCEPTED' %}is-available{% else %}is-unavailable{% endif %}">You {{ mine.get_response_display|lower }}</span>
                                     <span>on <time datetime="{{ mine.updated_at|date:'c' }}">{{ mine.updated_at|date:"j M Y" }}</time></span>
                                 </p>
+
+                                {% if mine.shares_contact %}
+                                    <div class="contact-box">
+                                        <p class="contact-title">Contact {{ blood_request.hospital.get_full_name|default:"the hospital" }}</p>
+                                        {% if blood_request.hospital.phone %}
+                                            <a href="tel:{{ blood_request.hospital.phone }}" dir="ltr">{{ blood_request.hospital.phone }}</a>
+                                        {% else %}
+                                            <a href="mailto:{{ blood_request.hospital.email }}">{{ blood_request.hospital.email }}</a>
+                                        {% endif %}
+                                        <p class="contact-note">Shared because you accepted. The hospital can see your name and phone number until you decline.</p>
+                                    </div>
+                                {% endif %}
                             {% endif %}
 
                             <div class="cluster request-actions">

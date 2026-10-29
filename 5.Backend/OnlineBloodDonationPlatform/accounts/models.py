@@ -184,6 +184,11 @@ class BloodRequest(models.Model):
     def accepted_responses_count(self):
         return self.responses.filter(response="ACCEPTED").count()
 
+    @property
+    def new_accepted_responses_count(self):
+        """Accepted answers the hospital hasn't seen yet."""
+        return self.responses.filter(response="ACCEPTED", seen_by_hospital=False).count()
+
 
 class DonorResponse(models.Model):
     """
@@ -209,6 +214,9 @@ class DonorResponse(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     # Changes when the donor changes their answer.
     updated_at = models.DateTimeField(auto_now=True)
+    # False until the hospital opens the request after this answer; drives
+    # the hospital's "new accepted responses" badge. Reset on every change.
+    seen_by_hospital = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["-updated_at"]
@@ -221,3 +229,8 @@ class DonorResponse(models.Model):
 
     def __str__(self):
         return f"{self.donor.email} - {self.get_response_display()} ({self.blood_request_id})"
+
+    @property
+    def shares_contact(self):
+        """Contact details are exchanged only while the answer is Accepted."""
+        return self.response == self.Answer.ACCEPTED
