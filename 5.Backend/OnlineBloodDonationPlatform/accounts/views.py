@@ -14,7 +14,14 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from locations.search import searchable_donors
 from locations.utils import public_name
 
-from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm, DonationForm, ReportForm
+from .forms import (
+    AccountForm,
+    BloodRequestForm,
+    DonationForm,
+    DonorProfileForm,
+    RegistrationForm,
+    ReportForm,
+)
 from .donor_requests import can_see_requests, requests_for_donor, responses_by_request
 from .messaging import get_conversation
 from .reports import can_report, display_name
@@ -174,6 +181,7 @@ def donor_profile(request):
         form = DonorProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request, "Your profile has been saved.")
             return redirect("donor_profile")
     else:
         form = DonorProfileForm(instance=request.user)
@@ -183,6 +191,21 @@ def donor_profile(request):
         "accounts/donor_profile.html",
         {"form": form},
     )
+
+
+@role_required("HOSPITAL", "ADMIN")
+def account(request):
+    """Hospitals and admins edit their account (#016). Donors use donor_profile."""
+    if request.method == "POST":
+        form = AccountForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your account details have been saved.")
+            return redirect("account")
+    else:
+        form = AccountForm(instance=request.user)
+
+    return render(request, "accounts/account.html", {"form": form})
 
 
 @role_required("DONOR")

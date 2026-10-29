@@ -53,6 +53,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
+    # Hospitals' street address (#016). Shown to donors who accepted.
+    address = models.CharField(max_length=255, blank=True)
     blood_type = models.CharField(
         max_length=3, choices=BloodType.choices, blank=True, default=""
     )

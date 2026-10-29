@@ -116,6 +116,28 @@ class DonorProfileForm(forms.ModelForm):
         return email
 
 
+class AccountForm(forms.ModelForm):
+    """Account details for hospitals and admins (#016); donors use DonorProfileForm."""
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email", "phone", "address"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.role == User.Role.HOSPITAL:
+            # Many hospital names are one part, e.g. "Jamhuriat".
+            self.fields["last_name"].required = False
+        else:
+            del self.fields["address"]
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].lower().strip()
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("An account with this email already exists.")
+        return email
+
+
 class BloodRequestForm(forms.ModelForm):
     class Meta:
         model = BloodRequest

@@ -18,6 +18,7 @@ from accounts.views import (
     respond_to_request,
     toggle_availability,
     hospital_dashboard,
+    account,
     admin_dashboard,
     admin_manage_users,
     admin_manage_hospitals,
@@ -187,6 +188,24 @@ urlpatterns = [
 
     # Report an account (#019)
     path("report/<int:pk>/", report_user, name="report_user"),
+
+    # Account details and password change for every role (#016)
+    path("account/", account, name="account"),
+    path(
+        "account/password/",
+        auth_views.PasswordChangeView.as_view(
+            template_name="accounts/password_change.html",
+            success_url=reverse_lazy("password_change_done"),
+        ),
+        name="password_change",
+    ),
+    path(
+        "account/password/done/",
+        auth_views.PasswordChangeDoneView.as_view(
+            template_name="accounts/password_change_done.html",
+        ),
+        name="password_change_done",
+    ),
 
     # Notifications (#011)
     path("notifications/", notifications, name="notifications"),

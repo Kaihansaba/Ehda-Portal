@@ -141,6 +141,10 @@ def expected(name, url):
             **only(),
             "admin": (302, reverse("admin_reported_accounts")),
         },
+        # Account details (#016): hospitals and admins; donors have a profile
+        "account": only("hospital", "admin"),
+        "password_change": logged_in(),
+        "password_change_done": logged_in(),
         # Notifications (#011): every signed-in user has their own
         "notifications": logged_in(),
         # Only the owner (the donor here) can open it; others get 404.

@@ -74,6 +74,14 @@
                             </a>
                         </li>
                     {% endif %}
+                    {% if role == "HOSPITAL" or role == "ADMIN" %}
+                        <li>
+                            <a class="nav-link" href="{% url 'account' %}"{% if view == "account" or view == "password_change" %} aria-current="page"{% endif %}>
+                                {% include "partials/icon.html" with name="user" %}
+                                Account
+                            </a>
+                        </li>
+                    {% endif %}
                     <li>
                         <a class="nav-link" href="{% url 'notifications' %}"{% if view == "notifications" %} aria-current="page"{% endif %}>
                             {% include "partials/icon.html" with name="bell" %}
