@@ -41,6 +41,13 @@ Each user story includes a unique identifier and should be supported by clear ac
 The user stories are used to develop and prioritize the product backlog, plan sprint work, guide implementation, and support product reviews and testing.
 
 
+#### 2.6 Sprint 3–4 Requirements and Traceability (PDF)
+
+- `Sprint-3-4-Requirements-FR1-FR15.pdf`: the blood request, notification, messaging and admin requirements (FR1–FR15, NFR1–NFR10) written for Sprints 3 and 4. They use their own numbering; the full, current list is FR-001 to FR-028 in the SRS.
+- `Traceability-Matrix.pdf`: links those requirements to user stories #010–#020.
+
+UML diagrams are in [9.Diagrams](../9.Diagrams/README.md).
+
 ### 3. Purpose of the Documentation
 
 The project documents serve to:
