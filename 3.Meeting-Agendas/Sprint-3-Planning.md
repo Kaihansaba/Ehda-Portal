@@ -5,7 +5,7 @@
 **Project:** Ehda Portal: Online Blood Donation Platform  
 **Meeting Type:** Sprint Planning Meeting  
 **Date:** 21 October 2026  
-**Duration:** 15 minutes
+**Duration:** 8 minutes
 
 ## Participants
 
