@@ -168,7 +168,10 @@ def respond_to_request(request, pk):
         if previous is None or previous.response != answer:
             notify_donor_response(response, request)
         if answer == DonorResponse.Answer.ACCEPTED:
-            messages.success(request, "Thank you. The hospital can now see your name and phone number so they can contact you.")
+            if request.user.share_phone_after_accept:
+                messages.success(request, "Thank you. The hospital can now see your name and phone number so they can contact you.")
+            else:
+                messages.success(request, "Thank you. The hospital can now see your name and message you here. Your phone number stays private.")
         else:
             messages.success(request, "You declined this request. Your contact details are not shared. You can change your answer while it is open.")
 

@@ -59,6 +59,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=3, choices=BloodType.choices, blank=True, default=""
     )
     is_available = models.BooleanField(default=True)
+    # Donor privacy settings (#003). Both on by default.
+    share_phone_after_accept = models.BooleanField(
+        "Share my phone number after I accept",
+        default=True,
+        help_text="The hospital sees your phone number only after you accept its request.",
+    )
+    show_district = models.BooleanField(
+        "Show my area on search and the map",
+        default=True,
+        help_text="Your district in search results, and your approximate area on the map.",
+    )
     role = models.CharField(
         max_length=20, choices=Role.choices, default=Role.DONOR
     )
@@ -252,6 +263,11 @@ class DonorResponse(models.Model):
     def shares_contact(self):
         """Contact details are exchanged only while the answer is Accepted."""
         return self.response == self.Answer.ACCEPTED
+
+    @property
+    def shares_phone(self):
+        """Phone only while accepted, and only if the donor allows it (#003)."""
+        return self.shares_contact and self.donor.share_phone_after_accept
 
     @property
     def can_message(self):

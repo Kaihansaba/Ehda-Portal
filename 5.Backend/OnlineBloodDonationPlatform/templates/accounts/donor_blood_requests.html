@@ -11,7 +11,7 @@
             Back to dashboard
         </a>
         <h1>Blood requests</h1>
-        <p class="lead">Hospitals that need blood you can give. The hospital sees your first name, last initial, blood type and answer. Your full name and phone number are shared only if you accept; your location never is.</p>
+        <p class="lead">Hospitals that need blood you can give. The hospital sees your first name, last initial, blood type and answer. Your full name{% if request.user.share_phone_after_accept %} and phone number{% endif %} are shared only if you accept; your location never is.</p>
     </div>
 
     {% if not request.user.is_available %}
@@ -79,7 +79,7 @@
                                             <a href="mailto:{{ blood_request.hospital.email }}">{{ blood_request.hospital.email }}</a>
                                         {% endif %}
                                         {% if blood_request.hospital.address %}<p>{{ blood_request.hospital.address }}</p>{% endif %}
-                                        <p class="contact-note">Shared because you accepted. The hospital can see your name and phone number until you decline.</p>
+                                        <p class="contact-note">Shared because you accepted. The hospital can see your name{% if request.user.share_phone_after_accept %} and phone number{% endif %} until you decline.</p>
                                         <a class="btn btn-secondary btn-sm mt-2" href="{% url 'conversation' blood_request.pk request.user.pk %}">
                                             {% include "partials/icon.html" with name="chat" %}
                                             Message the hospital

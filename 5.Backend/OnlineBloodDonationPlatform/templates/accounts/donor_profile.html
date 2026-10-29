@@ -68,6 +68,21 @@
                 {% endfor %}
             </fieldset>
 
+            <fieldset class="field">
+                <legend class="fieldset-legend">Privacy</legend>
+                {% for field in form %}
+                    {% if field.name == "share_phone_after_accept" or field.name == "show_district" %}
+                        <label class="switch" for="{{ field.id_for_label }}">
+                            <span class="switch-text">
+                                <span class="field-label">{{ field.label }}</span>
+                                <span class="field-help">{{ field.help_text }}</span>
+                            </span>
+                            {{ field }}
+                        </label>
+                    {% endif %}
+                {% endfor %}
+            </fieldset>
+
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Save changes</button>
                 <a class="btn btn-secondary" href="{% url 'donor_dashboard' %}">Cancel</a>
@@ -78,8 +93,8 @@
             <h2 id="privacy-title" class="card-title">What others can see</h2>
             <p class="card-text">
                 People searching for donors only see your first name, the first
-                letter of your last name, your blood type, your availability and
-                your approximate area.
+                letter of your last name, your blood type, your availability and,
+                if you allow it below, your approximate area.
             </p>
             <p class="card-text">Your email, phone number and exact location are not shown in search results or on the map.</p>
             <a href="{% url 'locations:donor_location' %}" class="btn btn-secondary btn-sm">

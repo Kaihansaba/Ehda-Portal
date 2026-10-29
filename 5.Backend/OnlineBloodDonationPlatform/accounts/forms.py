@@ -84,6 +84,8 @@ class DonorProfileForm(forms.ModelForm):
             "email",
             "phone",
             "blood_type",
+            "share_phone_after_accept",
+            "show_district",
         ]
         widgets = {
             "first_name": forms.TextInput(

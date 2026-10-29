@@ -96,9 +96,11 @@
                                         <span class="availability {% if response.response == 'ACCEPTED' %}is-available{% else %}is-unavailable{% endif %}">{{ response.get_response_display }}</span>
                                     </td>
                                     <td>
-                                        {% if response.shares_contact %}
+                                        {% if response.shares_phone %}
                                             <a href="tel:{{ response.donor.phone }}" dir="ltr">{{ response.donor.phone }}</a>
                                             <div class="contact-note">Shared because the donor accepted</div>
+                                        {% elif response.shares_contact %}
+                                            <span class="muted">Phone hidden by the donor. Use messages.</span>
                                         {% else %}
                                             <span class="muted">Not shared</span>
                                         {% endif %}
@@ -116,7 +118,7 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="table-note">A donor’s name and phone number are shared only while they have accepted. If they change their answer to Decline, the details are hidden again. The request status only changes when you update it below.</p>
+                <p class="table-note">A donor’s name and phone number are shared only while they have accepted (donors can choose to keep their phone number private). If they change their answer to Decline, the details are hidden again. The request status only changes when you update it below.</p>
             {% else %}
                 <div class="card">
                     {% include "partials/empty_state.html" with title="No responses yet" text="Available donors with a compatible blood type can see this request and answer it." %}

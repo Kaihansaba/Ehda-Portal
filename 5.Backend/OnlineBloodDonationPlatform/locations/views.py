@@ -114,7 +114,8 @@ def donor_map(request):
     if blood_type not in User.BloodType.values:
         blood_type = ""
 
-    locations = searchable_donors(request.user)
+    # Donors who hide their area (#003) are left off the map.
+    locations = searchable_donors(request.user).filter(user__show_district=True)
     if blood_type:
         locations = locations.filter(user__blood_type=blood_type)
 
