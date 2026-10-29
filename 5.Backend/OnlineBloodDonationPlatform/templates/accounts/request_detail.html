@@ -55,6 +55,45 @@
         </div>
     </section>
 
+    <section class="section" aria-labelledby="responses-title">
+        <h2 id="responses-title" class="section-title">Donor responses</h2>
+
+        {# PRIVACY (#009): first name + last initial and blood type only. #}
+        {% with responses=blood_request.responses.all %}
+            {% if responses %}
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Donor</th>
+                                <th scope="col">Blood type</th>
+                                <th scope="col">Response</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for response in responses %}
+                                <tr>
+                                    <th scope="row">{{ response.donor|public_name }}</th>
+                                    <td>{% include "partials/blood_badge.html" with type=response.donor.blood_type %}</td>
+                                    <td>
+                                        <span class="availability {% if response.response == 'ACCEPTED' %}is-available{% else %}is-unavailable{% endif %}">{{ response.get_response_display }}</span>
+                                    </td>
+                                    <td><time datetime="{{ response.updated_at|date:'c' }}">{{ response.updated_at|date:"j M Y, H:i" }}</time></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="table-note">Donors can change their answer until you complete or cancel the request. The request status only changes when you update it below.</p>
+            {% else %}
+                <div class="card">
+                    {% include "partials/empty_state.html" with title="No responses yet" text="Available donors with a compatible blood type can see this request and answer it." %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </section>
+
     {% if blood_request.status == "COMPLETED" or blood_request.status == "CANCELLED" %}
         <p class="muted">This request is {{ blood_request.get_status_display|lower }} and can no longer be changed.</p>
     {% else %}

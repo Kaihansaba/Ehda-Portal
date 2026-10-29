@@ -9,7 +9,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
-from .models import User, Donation, BloodRequest
+from .donor_requests import can_see_requests, requests_for_donor, responses_by_request
+from .models import User, Donation, BloodRequest, DonorResponse
 
 
 def index(request):
@@ -104,6 +105,53 @@ def donor_dashboard(request):
 
 
 @role_required("DONOR")
+def donor_blood_requests(request):
+    blood_requests = list(requests_for_donor(request.user))
+    my_responses = responses_by_request(request.user, blood_requests)
+
+    for blood_request in blood_requests:
+        blood_request.my_response = my_responses.get(blood_request.pk)
+
+    return render(
+        request,
+        "accounts/donor_blood_requests.html",
+        {
+            "blood_requests": blood_requests,
+            "can_see_requests": can_see_requests(request.user),
+        },
+    )
+
+
+@role_required("DONOR")
+def respond_to_request(request, pk):
+    if request.method != "POST":
+        return redirect("donor_blood_requests")
+
+    blood_request = get_object_or_404(BloodRequest, pk=pk)
+    answer = request.POST.get("response")
+
+    if answer not in DonorResponse.Answer.values:
+        messages.error(request, "Please choose Accept or Decline.")
+    elif blood_request.is_closed:
+        messages.error(request, "This request is closed and can no longer be answered.")
+    elif not requests_for_donor(request.user).filter(pk=blood_request.pk).exists():
+        # Not compatible, not available, or no longer open for new answers.
+        messages.error(request, "You can't answer this request.")
+    else:
+        DonorResponse.objects.update_or_create(
+            blood_request=blood_request,
+            donor=request.user,
+            defaults={"response": answer},
+        )
+        if answer == DonorResponse.Answer.ACCEPTED:
+            messages.success(request, "Thank you. The hospital can now see that you accepted.")
+        else:
+            messages.success(request, "You declined this request. You can change your answer while it is open.")
+
+    return redirect("donor_blood_requests")
+
+
+@role_required("DONOR")
 def donor_profile(request):
     if request.method == "POST":
         form = DonorProfileForm(request.POST, instance=request.user)
@@ -180,6 +228,9 @@ def admin_platform_activity(request):
         "accepted_requests": BloodRequest.objects.filter(status=BloodRequest.Status.ACCEPTED).count(),
         "completed_requests": BloodRequest.objects.filter(status=BloodRequest.Status.COMPLETED).count(),
         "cancelled_requests": BloodRequest.objects.filter(status=BloodRequest.Status.CANCELLED).count(),
+        "total_responses": DonorResponse.objects.count(),
+        "accepted_responses": DonorResponse.objects.filter(response=DonorResponse.Answer.ACCEPTED).count(),
+        "declined_responses": DonorResponse.objects.filter(response=DonorResponse.Answer.DECLINED).count(),
     }
     recent_requests = BloodRequest.objects.select_related("hospital").order_by("-created_at")[:10]
     return render(

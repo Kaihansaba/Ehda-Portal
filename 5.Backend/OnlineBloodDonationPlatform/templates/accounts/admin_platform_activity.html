@@ -36,6 +36,19 @@
         </div>
     </section>
 
+    <section class="section" aria-labelledby="responses-title">
+        <h2 id="responses-title" class="section-title">Donor responses</h2>
+        <div class="table-wrap">
+            <table class="data-table">
+                <tbody>
+                    <tr><th scope="row">All responses</th><td>{{ summary.total_responses }}</td></tr>
+                    <tr><th scope="row">Accepted</th><td>{{ summary.accepted_responses }}</td></tr>
+                    <tr><th scope="row">Declined</th><td>{{ summary.declined_responses }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
     <section class="section" aria-labelledby="recent-title">
         <h2 id="recent-title" class="section-title">Recent requests</h2>
 
@@ -48,6 +61,7 @@
                             <th scope="col">Blood type</th>
                             <th scope="col">Urgency</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Donors accepted</th>
                             <th scope="col">Created</th>
                         </tr>
                     </thead>
@@ -59,6 +73,7 @@
                                 <td>{% include "partials/blood_badge.html" with type=blood_request.blood_type %}</td>
                                 <td>{{ blood_request.get_urgency_display }}</td>
                                 <td>{% include "partials/request_status.html" %}</td>
+                                <td>{{ blood_request.accepted_responses_count }}</td>
                                 <td><time datetime="{{ blood_request.created_at|date:'c' }}">{{ blood_request.created_at|date:"j M Y, H:i" }}</time></td>
                             </tr>
                         {% endfor %}

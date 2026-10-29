@@ -1,5 +1,7 @@
 from django import template
 
+from locations.utils import public_name as _public_name
+
 
 register = template.Library()
 
@@ -20,3 +22,9 @@ def blood_name(blood_type):
     sign = "positive" if blood_type.endswith("+") else "negative"
 
     return f"{group} {sign}"
+
+
+@register.filter
+def public_name(user):
+    """First name and last initial only ("Ahmad S."), never the full name."""
+    return _public_name(user)

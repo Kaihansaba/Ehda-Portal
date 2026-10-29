@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load ehda_ui %}
+
+{% block title %}Blood requests{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back to dashboard
+        </a>
+        <h1>Blood requests</h1>
+        <p class="lead">Hospitals that need blood you can give. The hospital sees your first name, last initial, blood type and answer — never your contact details or location.</p>
+    </div>
+
+    {% if not request.user.is_available %}
+        <div class="prompt">
+            <div>
+                <h2 class="prompt-title">You’re marked as not available</h2>
+                <p class="muted">Requests are only shown to donors who can donate right now. Switch your availability on when you’re ready to help.</p>
+            </div>
+            <a href="{% url 'donor_dashboard' %}#availability-title" class="btn btn-primary">Change availability</a>
+        </div>
+    {% elif not request.user.blood_type %}
+        <div class="prompt">
+            <div>
+                <h2 class="prompt-title">Add your blood type first</h2>
+                <p class="muted">We use it to show only the requests your blood can help with.</p>
+            </div>
+            <a href="{% url 'donor_profile' %}" class="btn btn-primary">Add blood type</a>
+        </div>
+    {% elif blood_requests %}
+        <div class="results-list">
+            {% for blood_request in blood_requests %}
+                <article class="card request-card" aria-labelledby="request-{{ blood_request.pk }}">
+                    {% include "partials/blood_badge.html" with type=blood_request.blood_type large=True %}
+
+                    <div class="stack-sm">
+                        <h2 class="request-card-title" id="request-{{ blood_request.pk }}">
+                            {{ blood_request.hospital.get_full_name|default:"A hospital" }}
+                            {% if blood_request.urgency != "ROUTINE" %}
+                                <span class="tag{% if blood_request.urgency == 'EMERGENCY' %} tag-danger{% endif %}">{{ blood_request.get_urgency_display }}</span>
+                            {% endif %}
+                        </h2>
+
+                        <div class="donor-card-meta">
+                            <span class="meta-item">{{ blood_request.units_needed }} unit{{ blood_request.units_needed|pluralize }} of {{ blood_request.blood_type|blood_symbol }}</span>
+                            {% if blood_request.urgency == "ROUTINE" %}
+                                <span class="meta-item">{{ blood_request.get_urgency_display }}</span>
+                            {% endif %}
+                            <span class="meta-item">
+                                {% include "partials/icon.html" with name="clock" %}
+                                <time datetime="{{ blood_request.created_at|date:'c' }}">{{ blood_request.created_at|date:"j M Y, H:i" }}</time>
+                            </span>
+                            {% if blood_request.status != "OPEN" and blood_request.status != "IN_REVIEW" %}
+                                {% include "partials/request_status.html" %}
+                            {% endif %}
+                        </div>
+
+                        {% if blood_request.notes %}
+                            <p class="request-notes">{{ blood_request.notes }}</p>
+                        {% endif %}
+
+                        {% with mine=blood_request.my_response %}
+                            {% if mine %}
+                                <p class="donor-card-meta">
+                                    <span class="availability {% if mine.response == 'ACCEPTED' %}is-available{% else %}is-unavailable{% endif %}">You {{ mine.get_response_display|lower }}</span>
+                                    <span>on <time datetime="{{ mine.updated_at|date:'c' }}">{{ mine.updated_at|date:"j M Y" }}</time></span>
+                                </p>
+                            {% endif %}
+
+                            <div class="cluster request-actions">
+                                {% if not mine or mine.response != "ACCEPTED" %}
+                                    <form method="post" action="{% url 'respond_to_request' blood_request.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="response" value="ACCEPTED">
+                                        <button type="submit" class="btn btn-primary btn-sm">{% if mine %}Accept instead{% else %}Accept{% endif %}</button>
+                                    </form>
+                                {% endif %}
+                                {% if not mine or mine.response != "DECLINED" %}
+                                    <form method="post" action="{% url 'respond_to_request' blood_request.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="response" value="DECLINED">
+                                        <button type="submit" class="btn btn-secondary btn-sm">{% if mine %}Decline instead{% else %}Decline{% endif %}</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card">
+            {% include "partials/empty_state.html" with title="No requests for your blood type right now" text="When a hospital needs blood you can give, it will appear here and on your dashboard." %}
+        </div>
+    {% endif %}
+
+{% endblock %}
