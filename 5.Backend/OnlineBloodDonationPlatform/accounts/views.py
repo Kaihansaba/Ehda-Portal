@@ -180,7 +180,26 @@ def toggle_availability(request):
 
 @role_required("HOSPITAL")
 def hospital_dashboard(request):
-    return render(request, "accounts/hospital_dashboard.html")
+    active_requests = BloodRequest.objects.filter(
+        hospital=request.user,
+        status__in=(BloodRequest.Status.OPEN, BloodRequest.Status.IN_REVIEW),
+    ).count()
+    # Distinct donors whose current answer to any of this hospital's
+    # requests is Accepted (a donor who switched to Decline is not counted).
+    donors_connected = (
+        DonorResponse.objects.filter(
+            blood_request__hospital=request.user,
+            response=DonorResponse.Answer.ACCEPTED,
+        )
+        .values("donor")
+        .distinct()
+        .count()
+    )
+    return render(
+        request,
+        "accounts/hospital_dashboard.html",
+        {"active_requests": active_requests, "donors_connected": donors_connected},
+    )
 
 
 @role_required("ADMIN")

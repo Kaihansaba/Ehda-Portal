@@ -16,13 +16,12 @@
         </div>
     </section>
 
-    <!-- Request counts need data from the view; placeholders until then -->
     <section class="section" aria-labelledby="overview-title">
         <h2 id="overview-title" class="visually-hidden">Overview</h2>
 
         <div class="grid grid-3">
-            {% include "partials/stat_card.html" with label="Active requests" value="—" note="See Manage requests" %}
-            {% include "partials/stat_card.html" with label="Donors connected" value="—" note="Available when donors can respond" %}
+            {% include "partials/stat_card.html" with label="Active requests" value=active_requests note="Open or in review" %}
+            {% include "partials/stat_card.html" with label="Donors connected" value=donors_connected note="Donors who accepted your requests" %}
             {% include "partials/stat_card.html" with label="Account status" value="Active" %}
         </div>
     </section>
