@@ -13,7 +13,13 @@ from locations.utils import public_name
 
 from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
 from .donor_requests import can_see_requests, requests_for_donor, responses_by_request
-from .models import User, Donation, BloodRequest, DonorResponse
+from .models import User, Donation, BloodRequest, DonorResponse, Notification
+from .notifications import (
+    notify_account_status,
+    notify_donor_response,
+    notify_new_request,
+    notify_status_change,
+)
 
 
 def index(request):
@@ -138,12 +144,15 @@ def respond_to_request(request, pk):
         # Not compatible, not available, or no longer open for new answers.
         messages.error(request, "You can't answer this request.")
     else:
-        DonorResponse.objects.update_or_create(
+        previous = DonorResponse.objects.filter(blood_request=blood_request, donor=request.user).first()
+        response, _ = DonorResponse.objects.update_or_create(
             blood_request=blood_request,
             donor=request.user,
             # A changed answer is new to the hospital again (badge).
             defaults={"response": answer, "seen_by_hospital": False},
         )
+        if previous is None or previous.response != answer:
+            notify_donor_response(response, request)
         if answer == DonorResponse.Answer.ACCEPTED:
             messages.success(request, "Thank you. The hospital can now see your name and phone number so they can contact you.")
         else:
@@ -320,6 +329,7 @@ def toggle_user_status(request, pk):
             user.save(update_fields=["is_active"])
             state = "activated" if user.is_active else "deactivated"
             messages.success(request, f"{user.email} has been {state}.")
+            notify_account_status(user, request)
 
     redirect_name = request.POST.get("next")
     if redirect_name not in TOGGLE_RETURN_PAGES:
@@ -355,6 +365,7 @@ def create_blood_request(request):
             blood_request.hospital = request.user
             blood_request.target_donor = target_donor
             blood_request.save()
+            notify_new_request(blood_request, request)
             if target_donor:
                 # public_name ends with "." when it has an initial ("Dina D.").
                 name = public_name(target_donor)
@@ -430,6 +441,7 @@ def change_request_status(request, pk, status):
     except ValidationError as exc:
         return blood_request_error_page(request, exc)
 
+    notify_status_change(blood_request, request)
     return redirect("manage_blood_requests")
 
 
@@ -454,6 +466,7 @@ def close_blood_request(request, pk):
     except ValidationError as exc:
         return blood_request_error_page(request, exc)
 
+    notify_status_change(blood_request, request)
     return redirect("manage_blood_requests")
 
 
@@ -479,3 +492,36 @@ def donation_history(request):
         "accounts/donation_history.html",
         {"donations": donations},
     )
+
+
+def is_safe_internal_path(link):
+    """Only paths on this site, e.g. "/dashboard/" (never "//evil.com")."""
+    return link.startswith("/") and not link.startswith("//") and "\\" not in link
+
+
+@login_required
+def notifications(request):
+    items = request.user.notifications.all()[:50]
+    return render(request, "accounts/notifications.html", {"notifications": items})
+
+
+@login_required
+def open_notification(request, pk):
+    notification = get_object_or_404(Notification, pk=pk, user=request.user)
+
+    if not notification.read:
+        notification.read = True
+        notification.save(update_fields=["read"])
+
+    if notification.link and is_safe_internal_path(notification.link):
+        return redirect(notification.link)
+    return redirect("notifications")
+
+
+@login_required
+def mark_all_notifications_read(request):
+    if request.method == "POST":
+        updated = request.user.notifications.filter(read=False).update(read=True)
+        if updated:
+            messages.success(request, "All notifications are marked as read.")
+    return redirect("notifications")

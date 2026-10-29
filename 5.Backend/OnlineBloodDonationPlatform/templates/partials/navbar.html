@@ -74,6 +74,16 @@
                             </a>
                         </li>
                     {% endif %}
+                    <li>
+                        <a class="nav-link" href="{% url 'notifications' %}"{% if view == "notifications" %} aria-current="page"{% endif %}>
+                            {% include "partials/icon.html" with name="bell" %}
+                            Notifications
+                            {% if unread_notification_count %}
+                                <span class="count-badge" aria-hidden="true">{{ unread_notification_count }}</span>
+                                <span class="visually-hidden">({{ unread_notification_count }} unread)</span>
+                            {% endif %}
+                        </a>
+                    </li>
                     {% if request.user.is_staff %}
                         <li>
                             <a class="nav-link" href="{% url 'admin:index' %}">

@@ -244,3 +244,21 @@ class DonorResponse(models.Model):
     def shares_contact(self):
         """Contact details are exchanged only while the answer is Accepted."""
         return self.response == self.Answer.ACCEPTED
+
+
+class Notification(models.Model):
+    """An in-app notification (#011). Also sent by email; see accounts/notifications.py."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    message = models.CharField(max_length=255)
+    # A path inside the site, e.g. "/dashboard/donor/requests/". May be empty.
+    link = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-created_at", "-pk"]
+        indexes = [models.Index(fields=["user", "read"])]
+
+    def __str__(self):
+        return f"{self.user.email}: {self.message}"

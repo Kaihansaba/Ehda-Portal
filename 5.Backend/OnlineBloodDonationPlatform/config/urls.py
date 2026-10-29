@@ -29,6 +29,9 @@ from accounts.views import (
     request_detail,
     change_request_status,
     close_blood_request,
+    notifications,
+    open_notification,
+    mark_all_notifications_read,
 )
 
 
@@ -147,6 +150,19 @@ urlpatterns = [
         "dashboard/hospital/requests/<int:pk>/close/",
         close_blood_request,
         name="close_blood_request",
+    ),
+
+    # Notifications (#011)
+    path("notifications/", notifications, name="notifications"),
+    path(
+        "notifications/<int:pk>/open/",
+        open_notification,
+        name="open_notification",
+    ),
+    path(
+        "notifications/read-all/",
+        mark_all_notifications_read,
+        name="mark_all_notifications_read",
     ),
 
     # Donor location, search and map (Developer 2)

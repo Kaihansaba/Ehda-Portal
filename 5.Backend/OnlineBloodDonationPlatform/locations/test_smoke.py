@@ -14,7 +14,7 @@ from django.contrib import admin
 from django.test import TestCase
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
-from accounts.models import BloodRequest, User
+from accounts.models import BloodRequest, Notification, User
 from locations.models import DonorLocation
 from locations.search import search_donors
 
@@ -123,6 +123,15 @@ def expected(name, url):
             "hospital": (302, reverse("manage_blood_requests")),
         },
         "admin_dashboard": only("admin"),
+        # Notifications (#011): every signed-in user has their own
+        "notifications": logged_in(),
+        # Only the owner (the donor here) can open it; others get 404.
+        "open_notification": {
+            **logged_in((404, None)),
+            "donor": (302, reverse("donor_blood_requests")),
+        },
+        # GET does nothing; back to the notifications page.
+        "mark_all_notifications_read": logged_in((302, reverse("notifications"))),
         # Admin tools (Developer 3): admins only
         "admin_manage_users": only("admin"),
         "admin_manage_hospitals": only("admin"),
@@ -172,8 +181,13 @@ class UrlSmokeTests(TestCase):
             hospital=self.users["hospital"], blood_type="O-", notes="Surgery",
         )
 
+        notification = Notification.objects.create(
+            user=self.users["donor"], message="Test", link=reverse("donor_blood_requests"),
+        )
+
         # URLs that need real objects: the hospital's own request, a donor.
         self.url_args = {
+            "open_notification": {"pk": notification.pk},
             **URL_ARGS,
             "request_detail": {"pk": blood_request.pk},
             "change_request_status": {"pk": blood_request.pk, "status": "IN_REVIEW"},
