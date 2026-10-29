@@ -7,38 +7,110 @@
     <div class="page-header">
         {% include "partials/admin_back_link.html" %}
         <h1>Reported accounts</h1>
-        <p class="lead">Deactivated accounts. They can't sign in until you reactivate them.</p>
+        <p class="lead">Reports sent by donors and hospitals, open reports first.</p>
     </div>
 
-    {% if reported_users %}
-        <div class="table-wrap">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Person</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Review</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for account in reported_users %}
+    <section class="section" aria-labelledby="reports-title">
+        <h2 id="reports-title" class="visually-hidden">Reports</h2>
+
+        {% if reports %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <th scope="row">{{ account.get_full_name|default:"—" }}</th>
-                            <td>{{ account.email }}</td>
-                            <td>{{ account.get_role_display }}</td>
-                            <td><span class="availability is-unavailable">Reported</span></td>
-                            <td>{% include "partials/user_status_toggle.html" with next="admin_reported_accounts" label="Reactivate" %}</td>
+                            <th scope="col">Reported account</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Reported by</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <div class="card">
-            {% include "partials/empty_state.html" with title="No reported accounts" text="Accounts you deactivate will be listed here." %}
-        </div>
-    {% endif %}
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                            <tr>
+                                <th scope="row">
+                                    {{ report.reported_user.get_full_name|default:"—" }}
+                                    <div class="muted">{{ report.reported_user.email }} · {{ report.reported_user.get_role_display }}</div>
+                                    {% if not report.reported_user.is_active %}<span class="availability is-unavailable">Deactivated</span>{% endif %}
+                                </th>
+                                <td>
+                                    <strong>{{ report.get_reason_display }}</strong>
+                                    <p class="report-details">{{ report.details|linebreaksbr }}</p>
+                                </td>
+                                <td>
+                                    {{ report.reporter.get_full_name|default:report.reporter.email }}
+                                    <div class="muted"><time datetime="{{ report.created_at|date:'c' }}">{{ report.created_at|date:"j M Y, H:i" }}</time></div>
+                                </td>
+                                <td>
+                                    {% if report.status == "OPEN" %}
+                                        <span class="availability is-pending">Open</span>
+                                    {% else %}
+                                        <span class="availability is-available">{{ report.get_status_display }}</span>
+                                        {% if report.reviewed_by %}<div class="muted">by {{ report.reviewed_by.first_name|default:report.reviewed_by.email }}</div>{% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if report.status == "OPEN" %}
+                                        <div class="cluster">
+                                            <form method="post" action="{% url 'review_report' report.pk %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="reviewed">
+                                                <button type="submit" class="btn btn-secondary btn-sm">Mark reviewed</button>
+                                            </form>
+                                            <form method="post" action="{% url 'review_report' report.pk %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="deactivate">
+                                                <button type="submit" class="btn btn-danger btn-sm">Deactivate account</button>
+                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <span class="muted">Done</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card">
+                {% include "partials/empty_state.html" with title="No reports yet" text="When a donor or hospital reports an account, it appears here." %}
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="section" aria-labelledby="deactivated-title">
+        <h2 id="deactivated-title" class="section-title">Deactivated accounts</h2>
+        <p class="muted mb-4">Accounts an administrator has switched off. They can’t sign in until reactivated. This is separate from reports.</p>
+
+        {% if deactivated_users %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for account in deactivated_users %}
+                            <tr>
+                                <th scope="row">{{ account.get_full_name|default:"—" }}</th>
+                                <td>{{ account.email }}</td>
+                                <td>{{ account.get_role_display }}</td>
+                                <td>{% include "partials/user_status_toggle.html" with next="admin_reported_accounts" label="Reactivate" %}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card">
+                {% include "partials/empty_state.html" with title="No deactivated accounts" %}
+            </div>
+        {% endif %}
+    </section>
 
 {% endblock %}

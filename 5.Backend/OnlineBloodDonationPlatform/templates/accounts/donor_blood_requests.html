@@ -85,6 +85,9 @@
                                         </a>
                                     </div>
                                 {% endif %}
+                                {% if mine %}
+                                    <a class="report-link" href="{% url 'report_user' blood_request.hospital_id %}?next={{ request.get_full_path|urlencode }}">Report this hospital</a>
+                                {% endif %}
                             {% endif %}
 
                             <div class="cluster request-actions">

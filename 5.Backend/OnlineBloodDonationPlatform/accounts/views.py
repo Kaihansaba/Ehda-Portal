@@ -5,18 +5,23 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.db.models import Case, IntegerField, Value, When
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from locations.search import searchable_donors
 from locations.utils import public_name
 
-from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm
+from .forms import RegistrationForm, DonorProfileForm, BloodRequestForm, ReportForm
 from .donor_requests import can_see_requests, requests_for_donor, responses_by_request
 from .messaging import get_conversation
-from .models import User, Donation, BloodRequest, DonorResponse, Message, Notification
+from .reports import can_report, display_name
+from .models import User, Donation, BloodRequest, DonorResponse, Message, Notification, Report
 from .notifications import (
     notify_account_status,
+    notify_admins_of_report,
     notify_donor_response,
     notify_new_message,
     notify_new_request,
@@ -218,13 +223,13 @@ def admin_dashboard(request):
     total_users = User.objects.count()
     donor_count = User.objects.filter(role=User.Role.DONOR).count()
     hospital_count = User.objects.filter(role=User.Role.HOSPITAL).count()
-    reported_count = User.objects.filter(is_active=False).count()
+    open_report_count = Report.objects.filter(status=Report.Status.OPEN).count()
 
     context = {
         "total_users": total_users,
         "donor_count": donor_count,
         "hospital_count": hospital_count,
-        "reported_count": reported_count,
+        "open_report_count": open_report_count,
     }
     return render(request, "accounts/admin_dashboard.html", context)
 
@@ -243,8 +248,50 @@ def admin_manage_hospitals(request):
 
 @role_required("ADMIN")
 def admin_reported_accounts(request):
-    reported_users = User.objects.filter(is_active=False).order_by("role", "first_name", "last_name")
-    return render(request, "accounts/admin_reported_accounts.html", {"reported_users": reported_users})
+    """Reports from users (#019), open first; deactivated accounts below."""
+    open_first = Case(
+        When(status=Report.Status.OPEN, then=Value(0)), default=Value(1), output_field=IntegerField(),
+    )
+    reports = Report.objects.select_related("reporter", "reported_user", "reviewed_by").order_by(
+        open_first, "-created_at",
+    )
+    deactivated_users = User.objects.filter(is_active=False).order_by("role", "first_name", "last_name")
+    return render(
+        request,
+        "accounts/admin_reported_accounts.html",
+        {"reports": reports, "deactivated_users": deactivated_users},
+    )
+
+
+@role_required("ADMIN")
+def review_report(request, pk):
+    report = get_object_or_404(Report.objects.select_related("reported_user"), pk=pk)
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        reported = report.reported_user
+
+        if action == "reviewed":
+            report.status = Report.Status.REVIEWED
+            messages.success(request, "The report is marked as reviewed.")
+        elif action == "deactivate":
+            if reported == request.user:
+                messages.error(request, "You can't deactivate your own account.")
+                return redirect("admin_reported_accounts")
+            report.status = Report.Status.ACTION_TAKEN
+            if reported.is_active:
+                reported.is_active = False
+                reported.save(update_fields=["is_active"])
+                notify_account_status(reported, request)
+            messages.success(request, f"{reported.email} has been deactivated.")
+        else:
+            return redirect("admin_reported_accounts")
+
+        report.reviewed_at = timezone.now()
+        report.reviewed_by = request.user
+        report.save(update_fields=["status", "reviewed_at", "reviewed_by"])
+
+    return redirect("admin_reported_accounts")
 
 
 @role_required("ADMIN")
@@ -560,3 +607,40 @@ def conversation_messages(request, pk, donor_pk):
     """The message list only, for the page's 10-second refresh."""
     convo = get_conversation(request.user, pk, donor_pk)
     return render(request, "partials/message_list.html", {"convo": convo})
+
+
+@role_required("DONOR", "HOSPITAL")
+def report_user(request, pk):
+    reported = get_object_or_404(User, pk=pk)
+    if not can_report(request.user, reported):
+        # Same answer whether the account exists or not.
+        raise Http404("No such account.")
+
+    next_url = request.POST.get("next") or request.GET.get("next") or ""
+    if not is_safe_internal_path(next_url):
+        next_url = ""
+
+    if request.method == "POST":
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            already_open = Report.objects.filter(
+                reporter=request.user, reported_user=reported, status=Report.Status.OPEN,
+            ).exists()
+            if already_open:
+                messages.info(request, "You already have an open report about this account. An administrator will review it.")
+            else:
+                report = form.save(commit=False)
+                report.reporter = request.user
+                report.reported_user = reported
+                report.save()
+                notify_admins_of_report(report, request)
+                messages.success(request, "Thank you. An administrator will review your report.")
+            return redirect(next_url or "role_redirect")
+    else:
+        form = ReportForm()
+
+    return render(
+        request,
+        "accounts/report_user.html",
+        {"form": form, "reported_name": display_name(reported), "next_url": next_url},
+    )

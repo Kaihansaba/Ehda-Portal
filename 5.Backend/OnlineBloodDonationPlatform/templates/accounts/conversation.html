@@ -48,6 +48,9 @@
         {% endif %}
     </section>
 
-    <p class="table-note">Messages refresh every 10 seconds. Never share passwords or bank details here.</p>
+    <p class="table-note">
+        Messages refresh every 10 seconds. Never share passwords or bank details here.
+        <a class="report-link" href="{% url 'report_user' convo.other_party.pk %}?next={{ request.get_full_path|urlencode }}">Report this account</a>
+    </p>
 
 {% endblock %}

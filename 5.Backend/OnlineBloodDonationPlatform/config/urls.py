@@ -34,6 +34,8 @@ from accounts.views import (
     mark_all_notifications_read,
     conversation,
     conversation_messages,
+    report_user,
+    review_report,
 )
 
 
@@ -122,6 +124,11 @@ urlpatterns = [
         name="admin_security_access",
     ),
     path(
+        "dashboard/admin/reports/<int:pk>/review/",
+        review_report,
+        name="review_report",
+    ),
+    path(
         "dashboard/admin/users/<int:pk>/toggle-status/",
         toggle_user_status,
         name="toggle_user_status",
@@ -165,6 +172,9 @@ urlpatterns = [
         conversation_messages,
         name="conversation_messages",
     ),
+
+    # Report an account (#019)
+    path("report/<int:pk>/", report_user, name="report_user"),
 
     # Notifications (#011)
     path("notifications/", notifications, name="notifications"),

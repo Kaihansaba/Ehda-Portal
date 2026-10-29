@@ -106,3 +106,10 @@ def notify_new_message(message, recipient, request=None):
     text = f"New message from {name} about the request for {describe(message.blood_request)}."
     link = reverse("conversation", args=[message.blood_request_id, message.donor_id])
     notify(recipient, text, link, request)
+
+
+def notify_admins_of_report(report, request=None):
+    message = f"New report about an account: {report.get_reason_display()}."
+    link = reverse("admin_reported_accounts")
+    for admin_user in User.objects.filter(role=User.Role.ADMIN, is_active=True):
+        notify(admin_user, message, link, request)

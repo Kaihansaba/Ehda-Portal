@@ -293,3 +293,37 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.sender.email} on request {self.blood_request_id}"
+
+
+class Report(models.Model):
+    """A user's report about another account (#019), reviewed by admins."""
+
+    class Reason(models.TextChoices):
+        NO_SHOW = "NO_SHOW", "Didn't show up or stopped responding"
+        INAPPROPRIATE = "INAPPROPRIATE", "Rude or inappropriate behaviour"
+        FAKE = "FAKE", "Fake account or false information"
+        PAYMENT = "PAYMENT", "Asked for money or payment"
+        SAFETY = "SAFETY", "Safety concern"
+        OTHER = "OTHER", "Something else"
+
+    class Status(models.TextChoices):
+        OPEN = "OPEN", "Open"
+        REVIEWED = "REVIEWED", "Reviewed"
+        ACTION_TAKEN = "ACTION_TAKEN", "Action taken"
+
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reports_made")
+    reported_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reports_received")
+    reason = models.CharField(max_length=20, choices=Reason.choices)
+    details = models.TextField(max_length=2000)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.OPEN)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="reports_reviewed",
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.reporter.email} reported {self.reported_user.email} ({self.get_status_display()})"

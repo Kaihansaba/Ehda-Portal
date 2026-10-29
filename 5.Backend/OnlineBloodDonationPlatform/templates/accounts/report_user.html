@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Report an account{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <a href="{{ next_url|default:'/dashboard/' }}" class="btn btn-ghost btn-sm back-link">
+            {% include "partials/icon.html" with name="arrow" class="flip" %}
+            Back
+        </a>
+        <h1>Report {{ reported_name }}</h1>
+        <p class="lead">Tell an administrator what happened. The other person isn’t told who reported them.</p>
+    </div>
+
+    <div class="form-layout">
+        <form method="post" class="card form-stack">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next_url }}">
+
+            <fieldset class="field{% if form.reason.errors %} has-error{% endif %}">
+                <legend class="fieldset-legend">Reason</legend>
+                <div class="radio-list">
+                    {% for choice in form.reason %}
+                        <label class="radio-option">
+                            {{ choice.tag }}
+                            <span>{{ choice.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+                {% for error in form.reason.errors %}
+                    <p class="field-error">
+                        {% include "partials/icon.html" with name="alert" %}
+                        <span>{{ error }}</span>
+                    </p>
+                {% endfor %}
+            </fieldset>
+
+            {% include "partials/form_field.html" with field=form.details label="What happened?" help="Include dates and what was said. Don’t include passwords or bank details." %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Send report</button>
+                <a href="{{ next_url|default:'/dashboard/' }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+
+        <aside class="info-aside" aria-labelledby="next-title">
+            <h2 id="next-title" class="card-title">What happens next</h2>
+            <p class="card-text">An administrator reviews every report and may deactivate the account. You’ll keep using Ehda as normal.</p>
+            <p class="card-text">In an emergency, contact the hospital or the police directly.</p>
+        </aside>
+    </div>
+
+{% endblock %}

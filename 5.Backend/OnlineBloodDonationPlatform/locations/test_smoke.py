@@ -14,7 +14,7 @@ from django.contrib import admin
 from django.test import TestCase
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
-from accounts.models import BloodRequest, DonorResponse, Notification, User
+from accounts.models import BloodRequest, DonorResponse, Notification, Report, User
 from locations.models import DonorLocation
 from locations.search import search_donors
 
@@ -126,6 +126,17 @@ def expected(name, url):
         # Messaging (#014): the hospital and the donor of that request
         "conversation": {**only("donor", "hospital")},
         "conversation_messages": {**only("donor", "hospital")},
+        # Reports (#019): here the URL is the hospital's account. The donor
+        # dealt with it (can report); the hospital can't report itself.
+        "report_user": {
+            **only("donor"),
+            "hospital": (404, None),
+        },
+        # GET does nothing; admins go back to the reports page.
+        "review_report": {
+            **only(),
+            "admin": (302, reverse("admin_reported_accounts")),
+        },
         # Notifications (#011): every signed-in user has their own
         "notifications": logged_in(),
         # Only the owner (the donor here) can open it; others get 404.
@@ -194,6 +205,11 @@ class UrlSmokeTests(TestCase):
         # URLs that need real objects: the hospital's own request, a donor.
         self.url_args = {
             "open_notification": {"pk": notification.pk},
+            "report_user": {"pk": self.users["hospital"].pk},
+            "review_report": {"pk": Report.objects.create(
+                reporter=self.users["donor"], reported_user=self.users["hospital"],
+                reason="OTHER", details="Smoke test report",
+            ).pk},
             "conversation": {"pk": blood_request.pk, "donor_pk": self.users["donor"].pk},
             "conversation_messages": {"pk": blood_request.pk, "donor_pk": self.users["donor"].pk},
             **URL_ARGS,

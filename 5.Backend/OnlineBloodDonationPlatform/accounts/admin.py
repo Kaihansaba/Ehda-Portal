@@ -2,7 +2,7 @@
 from django.contrib.auth.admin import UserAdmin
 from django.urls import reverse_lazy
 
-from .models import User, Donation, DonorResponse
+from .models import User, Donation, DonorResponse, Report
 
 
 admin.site.site_url = reverse_lazy("role_redirect")
@@ -115,3 +115,11 @@ class DonorResponseAdmin(admin.ModelAdmin):
     list_filter = ("response", "blood_request__status", "blood_request__blood_type")
     search_fields = ("donor__email", "donor__first_name", "donor__last_name")
     raw_id_fields = ("blood_request", "donor")
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ("reported_user", "reporter", "reason", "status", "created_at")
+    list_filter = ("status", "reason")
+    search_fields = ("reported_user__email", "reporter__email")
+    raw_id_fields = ("reporter", "reported_user", "reviewed_by")

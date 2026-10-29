@@ -3,7 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 
 from locations.utils import compatible_donor_types, public_name
 
-from .models import User, BloodRequest
+from .models import User, BloodRequest, Report
 
 
 class RegistrationForm(forms.ModelForm):
@@ -151,3 +151,24 @@ class BloodRequestForm(forms.ModelForm):
     # The "notes required for urgent/emergency" rule lives in
     # BloodRequest.clean(), which ModelForm runs automatically. Checking it
     # here as well showed the same error twice.
+
+
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ["reason", "details"]
+        widgets = {
+            "reason": forms.RadioSelect(),
+            "details": forms.Textarea(attrs={"rows": 5, "maxlength": 2000}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # No pre-selected blank "Select an option" radio button.
+        self.fields["reason"].choices = Report.Reason.choices
+
+    def clean_details(self):
+        details = self.cleaned_data["details"].strip()
+        if len(details) < 10:
+            raise forms.ValidationError("Please describe what happened (at least 10 characters).")
+        return details
