@@ -554,11 +554,11 @@ class AdminNavigationTests(TestCase):
 
 class DemoAccountsCommandTests(TestCase):
 
-    def run_command(self):
+    def run_command(self, *args):
         from io import StringIO
         from django.core.management import call_command
 
-        call_command("create_demo_accounts", stdout=StringIO())
+        call_command("create_demo_accounts", *args, stdout=StringIO())
 
     def test_creates_accounts_for_every_role(self):
         with self.settings(DEBUG=True):
@@ -578,13 +578,27 @@ class DemoAccountsCommandTests(TestCase):
 
         self.assertEqual(User.objects.count(), count)
 
-    def test_refuses_when_debug_is_off(self):
+    def test_refuses_the_published_password_when_debug_is_off(self):
         from django.core.management.base import CommandError
 
         with self.settings(DEBUG=False), self.assertRaises(CommandError):
             self.run_command()
 
         self.assertFalse(User.objects.filter(email__endswith="@ehda.test").exists())
+
+    def test_works_on_a_live_site_with_its_own_password(self):
+        with self.settings(DEBUG=False):
+            self.run_command("--password", "Live-Demo-Pass-2026")
+
+        admin_user = User.objects.get(email="admin@ehda.test")
+        self.assertTrue(admin_user.check_password("Live-Demo-Pass-2026"))
+        self.assertFalse(admin_user.check_password("EhdaDemo2026!"))
+
+    def test_refuses_short_passwords(self):
+        from django.core.management.base import CommandError
+
+        with self.settings(DEBUG=True), self.assertRaises(CommandError):
+            self.run_command("--password", "short")
 
 
 # 10. Map tiles
