@@ -35,6 +35,11 @@ def env_bool(name, default):
     return os.environ.get(name, str(default)).strip().lower() in ("1", "true", "yes", "on")
 
 
+def env_list(name):
+    """A comma-separated environment variable as a list, e.g. "a.com, b.com"."""
+    return [item.strip() for item in os.environ.get(name, "").split(",") if item.strip()]
+
+
 # Development defaults: the app runs with no environment variables set.
 DEV_SECRET_KEY = "django-insecure-dev-only-change-this-in-production"
 
@@ -44,13 +49,13 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", DEV_SECRET_KEY)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_bool("DJANGO_DEBUG", True)
 
-# Comma-separated, e.g. "ehda.example.org,www.ehda.example.org".
+# Comma-separated, e.g. "ehdaportal.pythonanywhere.com".
 # Empty is fine while DEBUG is on (localhost is allowed automatically).
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
-    if host.strip()
-]
+ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS")
+
+# Comma-separated full origins, e.g. "https://ehdaportal.pythonanywhere.com".
+# Needed for forms (CSRF) when the site is served over HTTPS.
+CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
 # Placeholder values (the dev key, .env.example's "change-me", or an
 # empty value) must never be used in production.
@@ -166,6 +171,10 @@ STATIC_URL = "static/"
 # runserver while DEBUG is True.
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+# Where "python manage.py collectstatic" copies every static file for the
+# web server (PythonAnywhere's static files mapping points here).
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.1/ref/settings/#default-auto-field
@@ -182,22 +191,67 @@ LOGIN_URL = "/login/"
 
 
 # Email
-# By default, password-reset emails appear in the terminal running the
-# server. To send real email (e.g. Gmail SMTP), set the EMAIL_* values in
-# .env; see .env.example.
-EMAIL_BACKEND = os.environ.get(
-    "EMAIL_BACKEND",
-    "django.core.mail.backends.console.EmailBackend",
-)
+# Without SMTP settings, emails are printed to the console (the terminal
+# running the server, or the server log on PythonAnywhere). Setting
+# EMAIL_HOST_USER and EMAIL_HOST_PASSWORD switches to SMTP. Sending never
+# breaks a page: failures are logged (config/email.py and
+# accounts/notifications.py). PythonAnywhere's free tier blocks SMTP.
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT", "10"))
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@localhost")
+
+SMTP_CONFIGURED = bool(EMAIL_HOST_USER and EMAIL_HOST_PASSWORD)
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND") or (
+    "config.email.SafeSMTPEmailBackend" if SMTP_CONFIGURED
+    else "django.core.mail.backends.console.EmailBackend"
+)
 
 
 # Send our site's origin (not the full URL) as the Referer to other sites.
 # OpenStreetMap's tile servers return 403 for requests without one.
 # Django's default ("same-origin") sends no Referer to other sites.
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+
+# Production (DEBUG off), e.g. on PythonAnywhere
+# PythonAnywhere terminates HTTPS and forwards requests to Django over
+# HTTP with X-Forwarded-Proto set. "Force HTTPS" in its Web tab does the
+# redirect, so Django's own SECURE_SSL_REDIRECT stays off by default.
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", False)
+    # Optional: tell browsers to use HTTPS only (e.g. 3600, later 31536000).
+    # Turn it on only after HTTPS works, because browsers remember it.
+    SECURE_HSTS_SECONDS = int(os.environ.get("DJANGO_SECURE_HSTS_SECONDS", "0"))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", True)
+
+    SILENCED_SYSTEM_CHECKS = [
+        # HSTS preload is only for sites on their own registered domain,
+        # not a subdomain such as ehdaportal.pythonanywhere.com.
+        "security.W021",
+    ]
+    if not SECURE_SSL_REDIRECT:
+        # The redirect is done by PythonAnywhere ("Force HTTPS").
+        SILENCED_SYSTEM_CHECKS.append("security.W008")
+
+
+# Logging
+# Errors (and email failures) go to the console, which is the server log
+# on PythonAnywhere ("Error log" link in the Web tab).
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": os.environ.get("DJANGO_LOG_LEVEL", "WARNING"),
+    },
+}
