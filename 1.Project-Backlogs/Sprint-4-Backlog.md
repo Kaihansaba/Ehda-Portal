@@ -4,8 +4,8 @@
 
 - **Project:** Ehda Portal — Online Blood Donation Platform
 - **Sprint Duration:** 3 days
-- **Start Date:** 24-Oct-2026
-- **End Date:** 26-Oct-2026
+- **Start Date:** 27-Oct-2026
+- **End Date:** 30-Oct-2026
 - **Sprint Manager:** Madina Pasun, Madina Afshar
 
 ## 1. Sprint Description
@@ -28,18 +28,18 @@ Sprint 4 focuses on finalizing the remaining platform features, reviewing the im
 
 | Task ID | Task Name | Responsible | Start | Finish | Duration (Days) | Status | Notes |
 |---|---|---|---|---|---:|---|---|
-| #015 | Donation History | Samira Azizi | 24-Oct | 26-Oct | 3 | Not Started | Allow users to see their donation records |
-| #016 | Manage Account Information | Samira Azizi | 24-Oct | 25-Oct | 2 | Not Started | Allow users to update account information |
-| #017 | Admin Manages Registered Users | Shafiqa Taraki | 24-Oct | 26-Oct | 3 | Not Started | Provide authorized management control |
-| #018 | Admin Manages Hospitals and Clinics | Shafiqa Taraki | 24-Oct | 26-Oct | 3 | Not Started | Add, update, and remove facility information |
-| #019 | Admin Reviews Reported Accounts | Shafiqa Taraki | 24-Oct | 26-Oct | 3 | Not Started | Review reports |
-| #020 | Admin Monitors Requests and Platform Activities | Shafiqa Taraki | 24-Oct | 26-Oct | 3 | Not Started | Provide an overview of requests and platform activity |
-| #024 | Final Validation and Error Handling | All developers | 24-Oct | 26-Oct | 3 | Not Started | Check validation and error handling across the application |
-| #025 | Final Testing | All developers | 24-Oct | 26-Oct | 3 | Not Started | Test workflow |
-| — | Finalize Product Backlog and Sprint Backlogs | Madina Pasun | 24-Oct | 25-Oct | 2 | Not Started | Ensure that the backlogs reflect the actual work |
-| — | Meeting Minutes and Burndown Chart | Madina Afshar | 24-Oct | 25-Oct | 2 | Not Started | Organize meeting records and data |
-| — | GitHub Repository and Documentation Review | All team | 24-Oct | 25-Oct | 2 | Not Started | Check code, diagrams, backlogs, and other documentation |
-| — | Final Demo | All team | 24-Oct | 26-Oct | 3 | Not Started | Prepare the project deliverables and submit |
+| #015 | Donation History | Samira Azizi | 27-Oct | 29-Oct | 3 | Not Started | Allow users to see their donation records |
+| #016 | Manage Account Information | Samira Azizi | 27-Oct | 28-Oct | 2 | Not Started | Allow users to update account information |
+| #017 | Admin Manages Registered Users | Shafiqa Taraki | 27-Oct | 29-Oct | 3 | Not Started | Provide authorized management control |
+| #018 | Admin Manages Hospitals and Clinics | Shafiqa Taraki | 27-Oct | 29-Oct | 3 | Not Started | Add, update, and remove facility information |
+| #019 | Admin Reviews Reported Accounts | Shafiqa Taraki | 27-Oct | 29-Oct | 3 | Not Started | Review reports |
+| #020 | Admin Monitors Requests and Platform Activities | Shafiqa Taraki | 27-Oct | 29-Oct | 3 | Not Started | Provide an overview of requests and platform activity |
+| #024 | Final Validation and Error Handling | All developers | 27-Oct | 29-Oct | 3 | Not Started | Check validation and error handling across the application |
+| #025 | Final Testing | All developers | 27-Oct | 29-Oct | 3 | Not Started | Test workflow |
+| — | Finalize Product Backlog and Sprint Backlogs | Madina Pasun | 27-Oct | 28-Oct | 2 | Not Started | Ensure that the backlogs reflect the actual work |
+| — | Meeting Minutes and Burndown Chart | Madina Afshar | 27-Oct | 28-Oct | 2 | Not Started | Organize meeting records and data |
+| — | GitHub Repository and Documentation Review | All team | 27-Oct | 28-Oct | 2 | Not Started | Check code, diagrams, backlogs, and other documentation |
+| — | Final Demo | All team | 27-Oct | 29-Oct | 3 | Not Started | Prepare the project deliverables and submit |
 
 ## 4. Expected Achievements by the End of Sprint 4
 
