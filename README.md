@@ -138,7 +138,17 @@ git-ignored; never commit it.
 | `DJANGO_SECRET_KEY` | development key | Required (a long random value) when `DJANGO_DEBUG` is `False`; placeholders are refused |
 | `DJANGO_DEBUG` | `True` | Use `False` in production |
 | `DJANGO_ALLOWED_HOSTS` | empty | Comma-separated host names, needed when `DEBUG` is off |
-| `EMAIL_*` | console | Password-reset emails print in the terminal. Set the `EMAIL_*` values (see `.env.example`) to send real email, e.g. with a Gmail app password |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | empty | Comma-separated `https://` origins, needed for forms on an HTTPS site |
+| `DJANGO_SECURE_SSL_REDIRECT`, `DJANGO_SECURE_HSTS_SECONDS`, `DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS` | off, 0, on | HTTPS options used when `DEBUG` is off |
+| `DJANGO_LOG_LEVEL` | `WARNING` | What goes to the console / server log |
+| `EMAIL_*`, `DEFAULT_FROM_EMAIL` | console | Emails print in the terminal. Setting `EMAIL_HOST_USER` and `EMAIL_HOST_PASSWORD` switches to SMTP (e.g. a Gmail app password); a failed email never breaks a page |
+
+Every variable is explained in `.env.example`.
+
+### Deploying
+
+To put the site online on PythonAnywhere (free tier, HTTPS, SQLite),
+follow [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Demo accounts
 
@@ -155,8 +165,9 @@ python manage.py create_demo_accounts
 | `donor@ehda.test` | Donor (O−, Kabul), plus five more donors with locations |
 
 The password for all of them is `EhdaDemo2026!` (change it with
-`--password`). The command only runs while `DEBUG` is on and is safe to
-run more than once. To create your own administrator instead, run
+`--password`). On a live site (`DEBUG` off) that published password is
+refused and `--password` is required. The command is safe to run more
+than once. To create your own administrator instead, run
 `python manage.py createsuperuser`.
 
 ## Running tests
@@ -165,7 +176,7 @@ From `5.Backend/OnlineBloodDonationPlatform`, with the virtual
 environment active:
 
 ```bash
-python manage.py test                    # everything (about 290 tests)
+python manage.py test                    # everything (about 300 tests)
 python manage.py test accounts           # one app
 python manage.py test locations.test_smoke
 ```
@@ -212,7 +223,8 @@ Ehda-Portal/
 │   ├── Sequence-Diagrams/      One per sprint, named “Sprint-N - Topic (Author)”
 │   └── Use-Case-Diagrams/
 └── docs/
-    └── UI_GUIDELINES.md        How to build pages that match the design
+    ├── UI_GUIDELINES.md        How to build pages that match the design
+    └── DEPLOYMENT.md           Putting the site online on PythonAnywhere
 ```
 
 ## Design
@@ -226,6 +238,6 @@ privacy rules, accessibility checklist and right-to-left support.
 - **Facility data:** the hospitals and donation centres added by the
   `0002_sample_facilities` migration are samples. Their names, addresses
   and coordinates must be checked before real use (editable in `/admin/`).
-- **Deployment:** `python manage.py check --deploy` lists the HTTPS
-  settings to turn on (HSTS, secure cookies, SSL redirect) once the site
-  runs behind HTTPS.
+- **Deployment:** see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). With the
+  production values in `.env`, `python manage.py check --deploy` only
+  mentions the optional HSTS setting.
