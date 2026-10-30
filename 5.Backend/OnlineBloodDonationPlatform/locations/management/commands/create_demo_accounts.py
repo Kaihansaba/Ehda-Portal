@@ -24,7 +24,8 @@ DEMO_DONORS = [
 class Command(BaseCommand):
     help = (
         "Create demo accounts (admin, hospital and several donors with "
-        "locations) for local development. Safe to run more than once."
+        "locations) for development and demos. Safe to run more than once. "
+        "With DEBUG off, --password is required."
     )
 
     def add_arguments(self, parser):
@@ -35,8 +36,15 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, password, **options):
-        if not settings.DEBUG:
-            raise CommandError("Demo accounts can only be created while DEBUG is on.")
+        # The default password is published in the README. On a live site
+        # (DEBUG off) anyone could sign in as the demo admin with it.
+        if not settings.DEBUG and password == DEFAULT_PASSWORD:
+            raise CommandError(
+                "DEBUG is off: choose your own demo password, e.g. "
+                "python manage.py create_demo_accounts --password 'Your-Own-Password-2026'"
+            )
+        if len(password) < 10:
+            raise CommandError("Use a demo password of at least 10 characters.")
 
         self.save_user(
             "admin@ehda.test", password,
