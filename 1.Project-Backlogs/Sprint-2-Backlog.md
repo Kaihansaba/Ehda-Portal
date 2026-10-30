@@ -4,8 +4,8 @@
 
 - **Project:** Ehda Portal — Online Blood Donation Platform
 - **Sprint Duration:** 4 days
-- **Start Date:** 15-Oct-2026
-- **End Date:** 18-Oct-2026
+- **Start Date:** 17-Oct-2026
+- **End Date:** 22-Oct-2026
 - **Sprint Manager:** Madina Pasun, Madina Afshar
 
 ## 1. Sprint Description
@@ -26,14 +26,14 @@ Sprint 2 focuses on helping blood seekers discover potential donors using blood 
 
 | Task ID | Task Name | Responsible | Start | Finish | Duration (Days) | Status | Notes |
 |---|---|---|---|---|---:|---|---|
-| #006 | Search Donors by Blood Type | Ahmad Kaihan Saba | 15-Oct | 17-Oct | 3 | Not Started | Show donors matching the selected blood type |
-| #007 | Search by Location or Distance | Ahmad Kaihan Saba | 15-Oct | 18-Oct | 4 | Not Started | Filter donors based on their location or distance |
-| #009 | Display Approximate Locations | Ahmad Kaihan Saba | 15-Oct | 17-Oct | 3 | Not Started | Avoid revealing exact home addresses |
-| #023 | Protect Donor Privacy | Samira Azizi, Ahmad Kaihan Saba | 15-Oct | 18-Oct | 4 | Not Started | Restrict access to private information |
-| #008 | Interactive Map | Ahmad Kaihan Saba | 16-Oct | 18-Oct | 3 | Not Started | Show approved medical facilities |
-| #010 | Create and Send Blood Requests | Shafiqa Taraki | 16-Oct | 18-Oct | 3 | Not Started | Allow blood seekers to create blood requests |
-| #024 | Input Validation and Error Handling | All developers | 15-Oct | 18-Oct | 4 | Not Started | Validate search and request inputs |
-| #025 | Search, Privacy, and Request Testing | All developers | 16-Oct | 18-Oct | 3 | Not Started | Test filters, privacy, and request creation |
+| #006 | Search Donors by Blood Type | Ahmad Kaihan Saba | 17-Oct | 19-Oct | 3 | Not Started | Show donors matching the selected blood type |
+| #007 | Search by Location or Distance | Ahmad Kaihan Saba | 17-Oct | 20-Oct | 4 | Not Started | Filter donors based on their location or distance |
+| #009 | Display Approximate Locations | Ahmad Kaihan Saba | 17-Oct | 19-Oct | 3 | Not Started | Avoid revealing exact home addresses |
+| #023 | Protect Donor Privacy | Samira Azizi, Ahmad Kaihan Saba | 17-Oct | 20-Oct | 4 | Not Started | Restrict access to private information |
+| #008 | Interactive Map | Ahmad Kaihan Saba | 18-Oct | 20-Oct | 3 | Not Started | Show approved medical facilities |
+| #010 | Create and Send Blood Requests | Shafiqa Taraki | 18-Oct | 21-Oct | 4 | Not Started | Allow blood seekers to create blood requests |
+| #024 | Input Validation and Error Handling | All developers | 17-Oct | 21-Oct | 5 | Not Started | Validate search and request inputs |
+| #025 | Search, Privacy, and Request Testing | All developers | 18-Oct | 22-Oct | 5 | Not Started | Test filters, privacy, and request creation |
 
 ## 4. Expected Achievements by the End of Sprint 2
 
