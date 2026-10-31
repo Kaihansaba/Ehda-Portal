@@ -51,57 +51,57 @@ The main objectives of Ehda Portal are:
 
 The main target users of Ehda Portal are described below.
 
-### 4.1 Blood Donors
+###  Blood Donors
 
 Blood donors are people willing to donate blood, subject to medical eligibility. They can create and manage profiles, provide their blood type and availability information, receive blood requests, respond to requests, communicate with blood seekers when permitted, and maintain donation records.
 
-### 4.2 Blood Seekers
+###  Blood Seekers
 
 Blood seekers are people looking for blood for themselves or others. They can search for potential donors by blood type and location, view permitted donor information, submit blood requests, receive responses, and communicate with donors after request acceptance.
 
-### 4.3 Hospitals and Blood Donation Centers
+###  Hospitals and Blood Donation Centers
 
 Hospitals and blood donation centers are medical facilities that users can locate through the platform. Their locations and relevant information can be displayed on the interactive map to help users identify nearby facilities and coordinate where donation-related activities may take place.
 
-### 4.4 Administrators
+###  Administrators
 
 Administrators are responsible for managing the platform's users and supported facility records. They can perform authorized account-management tasks, manage hospital and donation-center information, review reported accounts, and monitor platform activity through the administrative dashboard.
 
 ## 5. Main Features
 
-### 5.1 Registration and Login
+###  Registration and Login
 
 Users can create accounts and log in to access the platform's authorized features.
 
-### 5.2 Donor Profiles
+###  Donor Profiles
 
 Donors can create and update their profiles, including their blood type, contact information, approximate location, and availability status.
 
-### 5.3 Blood Donor Search
+###  Blood Donor Search
 
 Blood seekers can search for potential donors by blood type and location. Where supported, search results can be filtered or ordered by distance and donor availability.
 
-### 5.4 Interactive Map
+###  Interactive Map
 
 The map displays approximate donor locations and the locations of supported hospitals and blood donation centers. Exact donor home addresses must not be exposed to ordinary users.
 
-### 5.5 Blood Requests
+###  Blood Requests
 
 Blood seekers can submit requests to potential donors. Each request has a status, such as pending, accepted, or declined.
 
-### 5.6 Notifications
+###  Notifications
 
 Donors can receive notifications about incoming blood requests, and relevant users can receive updates about request responses through the platform's notification mechanism.
 
-### 5.7 Messaging
+###  Messaging
 
 Donors and blood seekers can communicate through the platform after the relevant blood request has been accepted.
 
-### 5.8 Donation History
+###  Donation History
 
 Donors can record and view information about their previous donations and update records where permitted.
 
-### 5.9 Administrative Dashboard
+###  Administrative Dashboard
 
 Administrators can manage users and supported hospital and donation-center records, review reported accounts, and monitor relevant platform activity.
 
@@ -109,7 +109,6 @@ Administrators can manage users and supported hospital and donation-center recor
 
 Ehda Portal focuses on donor discovery, blood request coordination, communication, donation record management, and administrative functions. Its main purpose is to help users find and contact potential donors more efficiently.
 
-The platform does not independently determine medical eligibility, guarantee that a donor is available, or confirm blood compatibility. Such decisions must be made through appropriate medical procedures and qualified healthcare professionals.
+The platform does not determine medical eligibility, guarantee that a donor is available, or confirm blood compatibility. Such decisions must be made through appropriate medical procedures and qualified healthcare professionals.
 
 The system should also protect personal information by limiting access to sensitive account details and using approximate locations in public-facing donor search and map features.
-
