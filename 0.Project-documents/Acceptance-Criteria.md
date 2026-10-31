@@ -8,8 +8,6 @@ This document defines the acceptance criteria for the 20 user stories of Ehda Po
 
 These criteria support development, testing, sprint reviews, and product evaluation. Each criterion should be verified against the implemented system where the feature is available.
 
-**Important:** A feature should only be marked as accepted or completed after the relevant criteria have been verified. Planned functionality that has not been implemented or tested must remain identified as incomplete.
-
 ---
 
 ## US-001 — User Registration
@@ -254,25 +252,4 @@ These criteria support development, testing, sprint reviews, and product evaluat
 5. The system shall restrict platform-monitoring functions to authorized administrators.
 6. The system shall display appropriate feedback when monitoring information is unavailable or cannot be loaded.
 7. Monitoring features shall not expose private user information beyond what is necessary and authorized for the administrative function.
-
----
-
-## 2. General Acceptance and Verification Rules
-
-The following rules apply to all user stories where relevant:
-
-1. **Requirement alignment:** The implemented feature must match the documented user story and its acceptance criteria.
-2. **Input validation:** Required fields and supported data formats must be validated before information is saved.
-3. **Access control:** Users must only be able to access functions and information permitted by their roles.
-4. **Data persistence:** Successfully saved information must remain available when the relevant page or view is reopened, subject to the system's intended behavior.
-5. **Error handling:** The system should provide understandable feedback when an operation fails or input is invalid.
-6. **Privacy and security:** Personal information, account credentials, donor locations, messages, and donation history must be protected according to their access requirements.
-7. **Testing evidence:** Where a feature is implemented, its acceptance criteria should be checked through appropriate tests or a documented demonstration.
-8. **Honest status reporting:** A user story must not be marked as complete or accepted solely because its documentation has been written.
-
-## 3. Acceptance Review
-
-During a sprint review, the Product Owner and relevant team members should review the completed work against the applicable acceptance criteria. Any unmet criteria, defects, or incomplete functionality should be documented and addressed through the team's backlog process.
-
-A user story may be considered accepted only when the required behavior has been implemented and the applicable acceptance criteria have been verified. Any changes to the agreed requirements should be documented and reflected in the relevant project artifacts.
 
