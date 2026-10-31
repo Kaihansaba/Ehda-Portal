@@ -30,13 +30,13 @@ The team consists of a Product Owner, a Scrum Master, and three Developers. Each
 
 ## 3. Product Owner
 
-### 3.1 Role
+###  Role
 
 The Product Owner is responsible for maximizing the value of the product by representing user needs, clarifying product requirements, and ensuring that the team works on the most important features. The Product Owner manages the Product Backlog and communicates priorities and expected outcomes to the Scrum Team.
 
 **Assigned team member:** Madina Pasun
 
-### 3.2 Responsibilities
+###  Responsibilities
 
 The Product Owner is responsible for:
 
@@ -58,13 +58,13 @@ The Product Owner does not need to perform the Developers' coding tasks. The foc
 
 ## 4. Scrum Master
 
-### 4.1 Role
+###  Role
 
 The Scrum Master is responsible for helping the team understand and follow Scrum principles and practices. The Scrum Master facilitates collaboration, supports effective Scrum events, and helps the team identify and address obstacles that interfere with progress.
 
 **Assigned team member:** Madina Afshar
 
-### 4.2 Responsibilities
+###  Responsibilities
 
 The Scrum Master is responsible for:
 
@@ -86,11 +86,11 @@ The Scrum Master supports the team rather than assigning or controlling every te
 
 ## 5. Development Team
 
-### 5.1 General Role
+###  General Role
 
 The Developers are responsible for designing, implementing, integrating, and testing the technical features of Ehda Portal. Each Developer has primary responsibility for specific modules, while all Developers collaborate to ensure that the modules work together as a complete system.
 
-### 5.2 General Responsibilities
+###  General Responsibilities
 
 All Developers are responsible for:
 
@@ -115,7 +115,7 @@ All Developers are responsible for:
 
 Developer 1 is primarily responsible for user accounts, authentication, donor profile management, and donation history.
 
-### 6.1 Authentication and User Management
+###  Authentication and User Management
 
 Responsibilities include:
 
@@ -129,7 +129,7 @@ Responsibilities include:
 - Protecting passwords and other sensitive account information.
 - Ensuring that restricted features are accessible only to authorized users.
 
-### 6.2 Donor Profiles
+###  Donor Profiles
 
 Responsibilities include:
 
@@ -141,7 +141,7 @@ Responsibilities include:
 - Ensuring that profile information is displayed according to the platform's privacy rules.
 - Supporting the secure storage and retrieval of donor profile information.
 
-### 6.3 Donation History
+###  Donation History
 
 Responsibilities include:
 
@@ -150,7 +150,7 @@ Responsibilities include:
 - Allowing authorized users to view relevant history information.
 - Ensuring that donation-history data is handled appropriately.
 
-### 6.4 Additional Responsibilities
+###  Additional Responsibilities
 
 - Designing and maintaining database structures related to users, donor profiles, and donation history.
 - Testing registration, login, profile management, and donation-history functionality.
@@ -163,7 +163,7 @@ Responsibilities include:
 
 Developer 2 is primarily responsible for helping users find potential blood donors and view relevant location-based information.
 
-### 7.1 Blood Donor Search
+###  Blood Donor Search
 
 Responsibilities include:
 
@@ -176,7 +176,7 @@ Responsibilities include:
 - Handling cases where no matching donors are found.
 - Coordinating search functionality with the donor-profile and location data managed by other modules.
 
-### 7.2 Interactive Map
+###  Interactive Map
 
 Responsibilities include:
 
@@ -189,7 +189,7 @@ Responsibilities include:
 - Supporting map markers and relevant location details.
 - Applying location-privacy requirements to prevent unnecessary exposure of donors' exact home addresses.
 
-### 7.3 Additional Responsibilities
+###  Additional Responsibilities
 
 - Developing and maintaining database queries needed for donor search, blood type, and location-based filtering.
 - Coordinating with Developer 1 on donor profile and user data.
@@ -203,7 +203,7 @@ Responsibilities include:
 
 Developer 3 is primarily responsible for the blood-request workflow, communication between users, notifications, and administrative functionality.
 
-### 8.1 Blood Requests
+###  Blood Requests
 
 Responsibilities include:
 
@@ -216,7 +216,7 @@ Responsibilities include:
 - Displaying relevant request information to authorized users.
 - Handling request states consistently throughout the workflow.
 
-### 8.2 Notifications
+###  Notifications
 
 Responsibilities include:
 
@@ -226,7 +226,7 @@ Responsibilities include:
 - Ensuring that notifications contain relevant information without unnecessarily exposing sensitive data.
 - Testing notification behavior throughout the request workflow.
 
-### 8.3 Messaging
+###  Messaging
 
 Responsibilities include:
 
@@ -237,7 +237,7 @@ Responsibilities include:
 - Coordinating messaging functionality with request statuses and user permissions.
 - Testing message delivery and access control.
 
-### 8.4 Admin Dashboard
+###  Admin Dashboard
 
 Responsibilities include:
 
@@ -249,7 +249,7 @@ Responsibilities include:
 - Displaying relevant platform information to authorized administrators.
 - Ensuring that administrative features are protected by appropriate access controls.
 
-### 8.5 Additional Responsibilities
+###  Additional Responsibilities
 
 - Designing and maintaining database structures related to blood requests, messages, notifications, and administration.
 - Testing the request, notification, messaging, and administrative workflows.
@@ -274,5 +274,3 @@ The team follows these practices:
 ## 10. Conclusion
 
 The defined roles and responsibilities provide a clear division of work for the Ehda Portal project. The Product Owner focuses on product requirements, priorities, and acceptance; the Scrum Master supports the Scrum process and team collaboration; and the Developers design, implement, test, and maintain the assigned system modules.
-
-By coordinating their responsibilities, communicating progress honestly, and maintaining the required documentation, the team aims to develop a functional, maintainable, and privacy-conscious online blood donation platform that addresses the needs of donors, blood seekers, hospitals, and administrators.
