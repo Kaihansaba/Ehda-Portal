@@ -1,7 +1,7 @@
 # User Stories
 
-**Course:** Software Engineering Project  
-**Project Name:** Ehda Portal: An Online Blood Donation Platform
+*Course:* Software Engineering Project  
+*Project Name:* Ehda Portal: An Online Blood Donation Platform
 
 ## User Story List
 
