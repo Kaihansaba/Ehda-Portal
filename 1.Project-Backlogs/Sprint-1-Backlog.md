@@ -27,15 +27,15 @@ Sprint 1 focuses on establishing the technical and account-management foundation
 
 | Task ID | Task Name | Responsible | Start | Finish | Duration (Days) | Status | Notes |
 |---|---|---|---|---|---:|---|---|
-| #021 | Project Structure and Database Connection | Samira Azizi | 11-Oct | 12-Oct | 2 | Not Started | Set up the project structure, database connection, and tables |
-| #001 | User Registration | Samira Azizi | 11-Oct | 13-Oct | 3 | Not Started | Create an account and validate required information |
-| #002 | Login and Logout | Samira Azizi | 11-Oct | 13-Oct | 3 | Not Started | Implement login, logout, and session handling |
-| #022 | Authentication Security and Permission | Samira Azizi | 11-Oct | 14-Oct | 3 | Not Started | Protect passwords and restrict access by role |
-| #003 | Create and Update Donor Profiles | Samira Azizi | 12-Oct | 14-Oct | 3 | Not Started | Allow donors to create and edit profiles |
-| #004 | Blood Type and Availability Fields | Samira Azizi | 12-Oct | 13-Oct | 3 | Not Started | Store blood type and availability |
-| #005 | Change Availability Status | Samira Azizi | 13-Oct | 14-Oct | 2 | Not Started | Allow donors to mark themselves as available or unavailable |
-| #024 | Input Validation and Error Handling | All developers | 12-Oct | 15-Oct | 4 | Not Started | Validate forms and display errors |
-| #025 | Initial Test Cases and Track Defects | All developers | 12-Oct | 16-Oct | 3 | Not Started | Test registration, login, and profiles |
+| #021 | Project Structure and Database Connection | Samira Azizi | 11-Oct | 12-Oct | 2 | Completed | Set up the project structure, database connection, and tables |
+| #001 | User Registration | Samira Azizi | 11-Oct | 13-Oct | 3 | Completed | Create an account and validate required information |
+| #002 | Login and Logout | Samira Azizi | 11-Oct | 13-Oct | 3 | Completed | Implement login, logout, and session handling |
+| #022 | Authentication Security and Permission | Samira Azizi | 11-Oct | 14-Oct | 3 | Completed | Protect passwords and restrict access by role |
+| #003 | Create and Update Donor Profiles | Samira Azizi | 12-Oct | 14-Oct | 3 | Completed | Allow donors to create and edit profiles |
+| #004 | Blood Type and Availability Fields | Samira Azizi | 12-Oct | 13-Oct | 3 | Completed | Store blood type and availability |
+| #005 | Change Availability Status | Samira Azizi | 13-Oct | 14-Oct | 2 | Completed | Allow donors to mark themselves as available or unavailable |
+| #024 | Input Validation and Error Handling | All developers | 12-Oct | 15-Oct | 4 | Completed | Validate forms and display errors |
+| #025 | Initial Test Cases and Track Defects | All developers | 12-Oct | 16-Oct | 3 | Completed | Test registration, login, and profiles |
 
 ## 4. Expected Achievements by the End of Sprint 1
 
@@ -50,7 +50,4 @@ By the end of Sprint 1, the team aims to achieve the following:
 - Validate user input and display appropriate errors.
 - Prepare initial test cases and document identified defects.
 
-## 5. Sprint Deliverable
-
-A working foundation of Ehda Portal with basic account management, donor profiles, database connectivity, and initial security controls.
 
