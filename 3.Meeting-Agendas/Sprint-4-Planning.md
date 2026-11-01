@@ -4,8 +4,8 @@
 **Project:** Ehda Portal – Online Blood Donation Platform  
 **Sprint:** Sprint 4 – Finalization and Submission  
 **Sprint Goal:** Plan and prioritize the remaining account-management and administrative features, complete testing and bug fixing, and prepare the project documentation and repository for final submission.  
-**Date:**  
-**Duration:** 
+**Date:** 27-Oct-2026 
+**Duration:** 4 minutes
 
 ## Participants
 
