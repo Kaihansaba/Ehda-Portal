@@ -10,7 +10,7 @@
 
 **Date:** 21 October 2026
 
-**Duration:** 15 minutes
+**Duration:** 10 minutes
 
 ## Participants
 
@@ -51,17 +51,16 @@ The planned outcomes were:
 
 ## Meeting Agenda
 
-| No. | Agenda Item | Description | Responsible Person | Time |
-|---|---|---|---|---:|
-| 1 | Welcome and Introduction | Welcome the team and explain the purpose of the meeting. | Madina Pasun | 2 min |
-| 2 | Review of Sprint 2 Goal | Review the sprint goal and the features planned for this sprint. | Madina Pasun | 2 min |
-| 3 | Sprint Progress and Blockers | Summarize the work completed, remaining tasks, and problems faced during the sprint. | Madina Afshar | 3 min |
-| 4 | Demonstration of Search and Map Features | Demonstrate the available donor search, location-based search, and map functionality. | Ahmad Kaihan Saba | 5 min |
-| 5 | Review of Acceptance Criteria | Check the demonstrated features against their acceptance criteria and discuss whether they meet the requirements. | Madina Pasun and Development Team | 4 min |
-| 6 | Discussion of Incomplete Work | Identify unfinished features, defects, and tasks that need further work. | Entire Team | 3 min |
-| 7 | Product Backlog Update | Add or update tasks based on the review findings and remaining work. | Madina Pasun | 2 min |
-| 8 | Summary and Closing | Summarize the main points and discuss the next steps. | Madina Pasun and Madina Afshar | 4 min |
-| | **Total** | | | **25 min** |
+| No. | Agenda Item | Description | Responsible Person |
+|---|---|---|---:|
+| 1 | Welcome and Introduction | Welcome the team and explain the purpose of the meeting. | Madina Pasun |
+| 2 | Review of Sprint 2 Goal | Review the sprint goal and the features planned for this sprint. | Madina Pasun |
+| 3 | Sprint Progress and Blockers | Summarize the work completed, remaining tasks, and problems faced during the sprint. | Madina Afshar |
+| 4 | Demonstration of Search and Map Features | Demonstrate the available donor search, location-based search, and map functionality. | Ahmad Kaihan Saba |
+| 5 | Review of Acceptance Criteria | Check the demonstrated features against their acceptance criteria and discuss whether they meet the requirements. | Madina Pasun and Development Team | 
+| 6 | Discussion of Incomplete Work | Identify unfinished features, defects, and tasks that need further work. | Entire Team |
+| 7 | Product Backlog Update | Add or update tasks based on the review findings and remaining work. | Madina Pasun |
+| 8 | Summary and Closing | Summarize the main points and discuss the next steps. | Madina Pasun and Madina Afshar |
 
 ## Expected Results
 
