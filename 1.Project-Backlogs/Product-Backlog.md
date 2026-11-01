@@ -50,23 +50,9 @@ The following items support the implementation, security, reliability, and testi
 | #024 | Validate user input and handle errors consistently. | Required fields and invalid inputs are checked; invalid data is not accepted; users receive clear error messages; errors do not expose sensitive technical information. | High | 3 | Sprints 1–4 | All Developers |
 | #025 | Prepare and execute test cases, fix defects, and retest affected features. | Test cases and results are documented; defects are recorded; fixes are retested; important failures are addressed before the affected features are considered complete. | Critical | 5 | Sprints 1–4 | All Developers |
 
-## 4. Non-Functional Requirements
-
-The following quality requirements apply across the platform. They describe how the system should operate rather than introducing separate user-facing features.
-
-| ID | Quality Requirement | Acceptance Criteria | Priority | Related Backlog Items | Responsible |
-|---|---|---|---|---|---|
-| NFR-001 | Security | Passwords are not stored as plain text; authenticated sessions are handled securely; private user data is protected from unauthorized access. | Critical | #001, #002, #022 | Samira Azizi |
-| NFR-002 | Performance | Donor search and other common pages return results within an acceptable response time under normal usage conditions. | High | #006, #007, #008 | Ahmad Kaihan Saba |
-| NFR-003 | Data Validation | Registration, profile, blood request, and other forms reject missing or invalid required information and provide understandable feedback. | High | #001, #003, #004, #010, #024 | All Developers |
-| NFR-004 | Access Control | Only authorized administrators can access administrative functions; regular users can access only the features and information permitted for their roles. | Critical | #017, #018, #019, #020, #022 | Samira Azizi and Shafiqa Taraki |
-| NFR-005 | Data Reliability | User profiles, donor availability, requests, messages, and other stored information can be saved and retrieved consistently. | High | #003, #005, #010, #014, #015, #021 | Samira Azizi |
-| NFR-006 | Privacy | Exact donor home addresses and private account information are not publicly displayed; sensitive records are available only to authorized users. | Critical | #003, #009, #016, #023 | Samira Azizi and Ahmad Kaihan Saba |
-| NFR-007 | Maintainability | Code is organized into understandable components, follows consistent naming practices, and is documented where needed to support future changes. | Medium | #021, #024, #025 | All Developers |
-| NFR-008 | Usability | Main functions are clearly labeled, forms provide useful feedback, and users can navigate between important pages without unnecessary difficulty. | High | #001–#020 | All Developers |
 
 
-## 5. Guidance on Sprint Planning
+## 4. Guidance on Sprint Planning
 
 The project backlog is organized into four planned sprints. The team should confirm the selected items and their estimated workload during each sprint planning meeting. The following plan reflects the existing backlog assignments.
 
@@ -139,7 +125,7 @@ The project backlog is organized into four planned sprints. The team should conf
 **Expected Increment:** A more complete platform with donation history, account management, administrative features, and tested core workflows.
 
 
-## 6. Definition of Done
+## 5. Definition of Done
 
 A backlog item will be considered Done when the following conditions applicable to that item have been satisfied:
 
