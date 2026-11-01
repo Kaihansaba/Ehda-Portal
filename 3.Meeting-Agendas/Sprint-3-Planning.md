@@ -35,15 +35,14 @@ The meeting was planned to take place at the end of the Sprint 2 Review Meeting.
 
 ## Agenda
 
-| No. | Agenda Item | Responsible Person | Duration |
-|---:|---|---|---:|
-| 1 | Review Sprint 2 results and remaining tasks | Madina Pasun and Development Team | 2 minutes |
-| 2 | Define and confirm the Sprint 3 goal | Madina Pasun and Madina Afshar | 2 minutes |
-| 3 | Select Sprint 3 backlog items | Madina Pasun and Development Team | 3 minutes |
-| 4 | Discuss implementation and assign responsibilities | Development Team | 3 minutes |
-| 5 | Confirm testing and documentation tasks | Madina Pasun and Development Team | 3 minutes |
-| 6 | Summarize the sprint plan and close the meeting | Madina Afshar | 2 minutes |
-| | **Total** | | **15 minutes** |
+| No. | Agenda Item | Responsible Person | 
+|---:|---|---:|
+| 1 | Review Sprint 2 results and remaining tasks | Madina Pasun and Development Team | 
+| 2 | Define and confirm the Sprint 3 goal | Madina Pasun and Madina Afshar | 
+| 3 | Select Sprint 3 backlog items | Madina Pasun and Development Team |
+| 4 | Discuss implementation and assign responsibilities | Development Team | 
+| 5 | Confirm testing and documentation tasks | Madina Pasun and Development Team | 
+| 6 | Summarize the sprint plan and close the meeting | Madina Afshar | 
 
 ## Proposed Sprint 3 Scope
 
