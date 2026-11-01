@@ -2,8 +2,6 @@
 
 ## Sprint Overview
 
-| Sprint Name | Ehda Portal - Sprint Planning |
-|---|---|
 | Manager | Madina Pasun, Madina Afshar |
 | Start Date | 10-Oct |
 | End Date | 26-Oct |
