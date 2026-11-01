@@ -9,7 +9,7 @@
 
 The Product Backlog is the main list of work required to develop the Ehda Portal: Online Blood Donation Platform. It contains the functional features, technical tasks, and quality requirements needed to build a platform that connects people seeking blood with potential donors, hospitals, and blood donation centers.
 
-The backlog contains 20 user stories and 5 technical or quality-related items. Each item includes a description, acceptance criteria, priority, story points, status, sprint assignment, and responsible team member or members.
+The backlog contains 20 user stories and 5 technical or quality-related items. Each item includes a description, acceptance criteria, priority, story points, sprint assignment, and responsible team member or members.
 
 The Product Owner is responsible for maintaining and prioritizing the backlog, while the development team is responsible for estimating and implementing the selected work. The backlog will be reviewed and updated throughout the project as the team identifies problems, receives feedback, and clarifies requirements.
 
@@ -65,57 +65,8 @@ The following quality requirements apply across the platform. They describe how 
 | NFR-007 | Maintainability | Code is organized into understandable components, follows consistent naming practices, and is documented where needed to support future changes. | Medium | #021, #024, #025 | All Developers |
 | NFR-008 | Usability | Main functions are clearly labeled, forms provide useful feedback, and users can navigate between important pages without unnecessary difficulty. | High | #001–#020 | All Developers |
 
-## 5. Prioritization Strategy
 
-Backlog items are prioritized according to their importance to the platform’s main purpose, user needs, security, and dependencies between features.
-
-### Critical Priority
-
-Critical items are necessary to establish the platform’s foundation and support its main purpose.
-
-These include:
-
-- Account registration and login (#001, #002)
-- Donor profiles, blood types, and availability (#003, #004, #005)
-- Searching for donors by blood type and location (#006, #007)
-- Sending blood requests (#010)
-- Project structure and database setup (#021)
-- Authentication and access security (#022)
-- Donor privacy protection (#023)
-- Testing and defect correction (#025)
-
-### High Priority
-
-High-priority items provide important features for locating donors, protecting privacy, and supporting communication.
-
-These include:
-
-- Updating donor availability (#005)
-- Viewing the map (#008)
-- Sharing approximate donor locations (#009)
-- Blood request notifications (#011)
-- Accepting or declining requests (#012)
-- Displaying request responses (#013)
-- Messaging after request acceptance (#014)
-- Input validation and error handling (#024)
-- Important performance, validation, usability, and privacy requirements
-
-### Medium Priority
-
-Medium-priority items improve account management, donation records, and administrative operations.
-
-These include:
-
-- Recording donation history (#015)
-- Managing account information (#016)
-- Managing registered users (#017)
-- Managing hospitals and donation centers (#018)
-- Reviewing reported accounts (#019)
-- Monitoring blood requests and platform activities (#020)
-
-Priorities may be reviewed by the Product Owner as requirements become clearer. Changes should also consider dependencies. For example, request notifications and responses depend on the blood request feature being available.
-
-## 6. Guidance on Sprint Planning
+## 5. Guidance on Sprint Planning
 
 The project backlog is organized into four planned sprints. The team should confirm the selected items and their estimated workload during each sprint planning meeting. The following plan reflects the existing backlog assignments.
 
@@ -187,27 +138,8 @@ The project backlog is organized into four planned sprints. The team should conf
 
 **Expected Increment:** A more complete platform with donation history, account management, administrative features, and tested core workflows.
 
-**Planning Note:** The sprint assignments are the current plan, not proof that the work has been completed. During each planning meeting, the team should review dependencies, confirm the work that can realistically be completed, and update the backlog when necessary.
 
-## 7. Product Backlog Refinement
-
-The Product Backlog will be reviewed and refined throughout development. The Product Owner is responsible for maintaining priorities and clarifying requirements with input from the Scrum Master and development team.
-
-During refinement, the team may:
-
-- Clarify user stories and acceptance criteria.
-- Divide large features into smaller tasks when necessary.
-- Review story-point estimates and technical dependencies.
-- Change priorities when important user needs or technical issues are identified.
-- Identify incomplete requirements and add missing tasks.
-- Update item status and sprint assignments based on actual progress.
-- Review testing needs and ensure privacy and security requirements are considered.
-
-For example, if donor search does not protect private location information adequately, the team may prioritize the relevant privacy work before proceeding with map-related functionality. Similarly, if the blood request feature is incomplete, dependent features such as notifications, responses, and messaging may need to be adjusted.
-
-Backlog updates should reflect actual team decisions and progress rather than assuming that planned work has already been completed.
-
-## 8. Definition of Done
+## 6. Definition of Done
 
 A backlog item will be considered Done when the following conditions applicable to that item have been satisfied:
 
