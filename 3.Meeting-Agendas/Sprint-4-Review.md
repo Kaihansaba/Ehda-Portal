@@ -24,16 +24,16 @@ The purpose of this meeting is to review the work completed during Sprint 4, eva
 
 ## Meeting Agenda
 
-| No. | Agenda Item | Time | Responsible Person |
-|---|---|---|---|
-| 1 | Opening the meeting and explaining its purpose | | Madina Afshar – Scrum Master |
-| 2 | Reviewing the Sprint 4 goal and planned backlog items | | Madina Pasun – Product Owner |
-| 3 | Demonstrating donation history and account information management (#015–#016) | | Samira Azizi – Developer 1 |
-| 4 | Demonstrating administrative functionalities, including user management, hospital and donation-center management, reported accounts, and activity monitoring (#017–#020) | | Shafiqa Taraki – Developer 3 |
-| 5 | Reviewing testing, validation, bug fixing, and retesting results (#024–#025) | | All Developers |
-| 6 | Reviewing project documentation, GitHub repository, and final submission materials | | All Team Members |
-| 7 | Evaluating completed work against acceptance criteria, collecting feedback, and identifying any remaining issues | | Madina Pasun – Product Owner |
-| 8 | Summarizing the review and discussing final actions before submission | | Madina Afshar – Scrum Master |
+| No. | Agenda Item |  Responsible Person |
+|---|---|---|
+| 1 | Opening the meeting and explaining its purpose | Madina Afshar – Scrum Master |
+| 2 | Reviewing the Sprint 4 goal and planned backlog items | Madina Pasun – Product Owner |
+| 3 | Demonstrating donation history and account information management (#015–#016) | Samira Azizi – Developer 1 |
+| 4 | Demonstrating administrative functionalities, including user management, hospital and donation-center management, reported accounts, and activity monitoring (#017–#020) | Shafiqa Taraki – Developer 3 |
+| 5 | Reviewing testing, validation, bug fixing, and retesting results (#024–#025) | All Developers |
+| 6 | Reviewing project documentation, GitHub repository, and final submission materials | All Team Members |
+| 7 | Evaluating completed work against acceptance criteria, collecting feedback, and identifying any remaining issues | Madina Pasun – Product Owner |
+| 8 | Summarizing the review and discussing final actions before submission | Madina Afshar – Scrum Master |
 
 ## Expected Outcomes
 
