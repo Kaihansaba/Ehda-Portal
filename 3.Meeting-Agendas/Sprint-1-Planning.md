@@ -8,7 +8,7 @@
 
 **Date:** 8 October 2026
 
-**Duration:** 32 minutes
+**Duration:** 12 minutes
 
 ## Participants
 
@@ -26,17 +26,16 @@ The purpose of this meeting is to review the user stories and product backlog, d
 
 ## Agenda
 
-| No. | Agenda | Description | Responsible Person | Duration |
-|---|---|---|---|---:|
-| 1 | Review User Stories | Review the 20 user stories and discuss the requirements represented by each story. | Madina Pasun and developers | 5 minutes |
-| 2 | Product Backlog and Prioritization | Review backlog items, priorities, story points, and acceptance criteria. | Madina Pasun and developers | 5 minutes |
-| 3 | Sprint 1 Objectives | Define the goals and expected outcomes of the foundation sprint. | Madina Pasun and Madina Afshar | 4 minutes |
-| 4 | Sprint 1 Task Selection | Discuss the tasks planned for Sprint 1, including project structure, database connection, registration, authentication, donor profiles, and availability fields. | Madina Pasun and developers | 6 minutes |
-| 5 | Task Division | Review developer responsibilities, task dependencies, and the initial distribution of work. | Developers and Madina Afshar | 4 minutes |
-| 6 | Documentation and GitHub Organization | Discuss the required project documents, backlog files, diagrams, and repository structure. | Madina Pasun and team | 3 minutes |
-| 7 | Scrum Meeting Schedule | Agree on the approach for daily Scrum meetings, progress updates, and reporting blockers. | Madina Afshar | 2 minutes |
-| 8 | Questions and Closing | Address questions, summarize decisions, and confirm the next steps. | Madina Afshar | 3 minutes |
-| | **Total** | | | **32 minutes** |
+| No. | Agenda | Description | Responsible Person |
+|---|---|---|---:|
+| 1 | Review User Stories | Review the 20 user stories and discuss the requirements represented by each story. | Madina Pasun and developers | 
+| 2 | Product Backlog and Prioritization | Review backlog items, priorities, story points, and acceptance criteria. | Madina Pasun and developers | 
+| 3 | Sprint 1 Objectives | Define the goals and expected outcomes of the foundation sprint. | Madina Pasun and Madina Afshar |
+| 4 | Sprint 1 Task Selection | Discuss the tasks planned for Sprint 1, including project structure, database connection, registration, authentication, donor profiles, and availability fields. | Madina Pasun and developers |
+| 5 | Task Division | Review developer responsibilities, task dependencies, and the initial distribution of work. | Developers and Madina Afshar |
+| 6 | Documentation and GitHub Organization | Discuss the required project documents, backlog files, diagrams, and repository structure. | Madina Pasun and team |
+| 7 | Scrum Meeting Schedule | Agree on the approach for daily Scrum meetings, progress updates, and reporting blockers. | Madina Afshar |
+| 8 | Questions and Closing | Address questions, summarize decisions, and confirm the next steps. | Madina Afshar |
 
 ## Proposed Sprint 1 Scope
 
