@@ -1,8 +1,9 @@
 # Ehda Portal – Sprint Backlog
 
 ## Sprint Overview
-|  | Details |
-|---|---|---|---|---:|---|---|
+
+| Item | Details |
+|---|---|
 | Manager | Madina Pasun, Madina Afshar |
 | Start Date | 10-Oct |
 | End Date | 26-Oct |
