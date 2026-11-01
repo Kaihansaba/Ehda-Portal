@@ -8,7 +8,7 @@
 
 **Date:** 17 October 2026
 
-**Duration:** 10 minutes (at the end of the Sprint 1 Review Meeting)
+**Duration:** 15 minutes (at the end of the Sprint 1 Review Meeting)
 
 ## Participants
 
@@ -32,14 +32,13 @@ The goal of Sprint 2 is to allow users to search for potential blood donors by b
 
 ## Meeting Agenda
 
-| No. | Agenda Item | Description | Responsible Person | Time |
-|---|---|---|---|---:|
-| 1 | Review Sprint 1 Results | Briefly discuss the progress made in Sprint 1 and any unfinished tasks that may affect Sprint 2. | Madina Pasun and Madina Afshar | 2 min |
-| 2 | Set Sprint 2 Goal | Agree on the main goal and expected results of Sprint 2. | Madina Pasun and Development Team | 2 min |
-| 3 | Select Sprint Tasks | Review the proposed backlog items and decide which tasks to include in Sprint 2. | Madina Pasun and Developers | 2 min |
-| 4 | Assign Responsibilities | Confirm task assignments and discuss any technical dependencies. | Madina Afshar and Development Team | 2 min |
-| 5 | Summarize the Plan | Confirm the selected tasks, responsibilities, and next steps. | Madina Pasun and Madina Afshar | 2 min |
-| | **Total** | | | **10 min** |
+| No. | Agenda Item | Description | Responsible Person |
+|---|---|---|---:|
+| 1 | Review Sprint 1 Results | Briefly discuss the progress made in Sprint 1 and any unfinished tasks that may affect Sprint 2. | Madina Pasun and Madina Afshar |
+| 2 | Set Sprint 2 Goal | Agree on the main goal and expected results of Sprint 2. | Madina Pasun and Development Team |
+| 3 | Select Sprint Tasks | Review the proposed backlog items and decide which tasks to include in Sprint 2. | Madina Pasun and Developers |
+| 4 | Assign Responsibilities | Confirm task assignments and discuss any technical dependencies. | Madina Afshar and Development Team |
+| 5 | Summarize the Plan | Confirm the selected tasks, responsibilities, and next steps. | Madina Pasun and Madina Afshar |
 
 ## Proposed Sprint 2 Scope
 
@@ -57,4 +56,3 @@ The goal of Sprint 2 is to allow users to search for potential blood donors by b
 
 By the end of the meeting, the team should have agreed on the Sprint 2 goal, selected the tasks to work on, and confirmed the responsibilities of each developer. The team should also identify any dependencies from Sprint 1 and make sure the selected work is realistic for the available time.
 
-**Meeting Note:** This meeting was planned to take place at the end of the Sprint 1 Review Meeting. The final task selection and decisions should reflect what the team actually agreed on.
