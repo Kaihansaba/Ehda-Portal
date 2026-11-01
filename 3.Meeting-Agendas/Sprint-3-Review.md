@@ -4,8 +4,8 @@
 **Project:** Ehda Portal – Online Blood Donation Platform  
 **Sprint:** Sprint 3 – Request Responses and Communication  
 **Sprint Goal:** Review the implementation and progress of request notifications, accepting or declining blood requests, displaying request responses, and messaging after a request is accepted.  
-**Date:** 
-**Duration:** 
+**Date:** 26-Oct-2026
+**Duration:** 28 minutes
 
 ## Participants
 
