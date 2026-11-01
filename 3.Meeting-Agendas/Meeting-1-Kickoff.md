@@ -8,7 +8,7 @@
 
 **Date:** 8 October 2026
 
-**Duration:** 15 minutes
+**Duration:** 20 minutes
 
 ## Participants
 
@@ -28,12 +28,12 @@ The purpose of this meeting is to introduce the Ehda Portal project to all team 
 
 | No. | Agenda | Description | Responsible Person | Duration |
 |---|---|---|---|---:|
-| 1 | Introduction | Welcome team members and explain the purpose of the meeting. | Madina Afshar | 2 minutes |
-| 2 | Team Structure and Responsibilities | Introduce the Scrum roles and clarify each member's responsibilities. | Madina Pasun and team | 3 minutes |
-| 3 | Project Overview | Discuss the problem, objectives, intended users, and benefits of Ehda Portal. | Madina Pasun | 3 minutes |
-| 4 | Main Features | Introduce the platform's main features, including donor profiles, donor search, blood requests, notifications, messaging, and administration. | Madina Pasun | 4 minutes |
-| 5 | Questions and Closing | Address initial questions and summarize the main points discussed. | Madina Afshar | 3 minutes |
-| | **Total** | | | **15 minutes** |
+| 1 | Introduction | Welcome team members and explain the purpose of the meeting. | Madina Afshar | 3 minutes |
+| 2 | Team Structure and Responsibilities | Introduce the Scrum roles and clarify each member's responsibilities. | Madina Pasun and team | 4 minutes |
+| 3 | Project Overview | Discuss the problem, objectives, intended users, and benefits of Ehda Portal. | Madina Pasun | 4 minutes |
+| 4 | Main Features | Introduce the platform's main features, including donor profiles, donor search, blood requests, notifications, messaging, and administration. | Madina Pasun | 5 minutes |
+| 5 | Questions and Closing | Address initial questions and summarize the main points discussed. | Madina Afshar | 4 minutes |
+| | **Total** | | | **20 minutes** |
 
 ## Expected Outcomes
 
