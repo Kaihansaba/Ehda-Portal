@@ -5,8 +5,8 @@
 **Sprint:** Sprint 4 – Finalization and Submission  
 **Sprint Period:** October 27–30, 2026  
 **Sprint Goal:** Review the remaining account-management and administrative functionalities, evaluate the application's overall progress, inspect testing and bug-fixing results, and review the final project documentation and submission materials.  
-**Meeting Date:**   
-**Duration:** 
+**Meeting Date:** 30-Oct-2026  
+**Duration:** 41 minutes
 
 ## Participants
 
