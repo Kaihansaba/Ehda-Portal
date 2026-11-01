@@ -8,7 +8,7 @@
 
 **Date:** 17 October 2026
 
-**Duration:** 25 minutes
+**Duration:** 30 minutes
 
 ## Participants
 
@@ -42,18 +42,17 @@ The main goals of Sprint 1 were to:
 
 ## Meeting Agenda
 
-| No. | Agenda | Description | Responsible Person | Time |
-|---|---|---|---|---:|
-| 1 | Introduction | Welcome the team and explain the purpose of the meeting. | Madina Afshar and Madina Pasun | 2 min |
-| 2 | Sprint 1 Goals | Review the goals and tasks planned for the first sprint. | Madina Pasun | 2 min |
-| 3 | Developer 1 Report | Present progress on the database, user accounts, authentication, and donor profiles. | Samira Azizi | 5 min |
-| 4 | Developer 2 Report | Discuss current progress and any work related to donor search and location features. | Ahmad Kaihan Saba | 2 min |
-| 5 | Developer 3 Report | Discuss current progress and any work related to blood requests and communication features. | Shafiqa Taraki | 2 min |
-| 6 | Acceptance Criteria | Check the available features against the acceptance criteria and review their status. | Madina Pasun and Developers | 4 min |
-| 7 | Problems and Remaining Work | Discuss unfinished tasks, technical problems, and anything blocking progress. | Madina Afshar and Development Team | 3 min |
-| 8 | Product Backlog | Update the backlog based on the team's progress and remaining work. | Madina Pasun | 2 min |
-| 9 | Conclusion | Summarize the main points and discuss the next steps. | Madina Pasun and Madina Afshar | 3 min |
-| | **Total** | | | **25 min** |
+| No. | Agenda | Description | Responsible Person |
+|---|---|---|---:|
+| 1 | Introduction | Welcome the team and explain the purpose of the meeting. | Madina Afshar and Madina Pasun |
+| 2 | Sprint 1 Goals | Review the goals and tasks planned for the first sprint. | Madina Pasun |
+| 3 | Developer 1 Report | Present progress on the database, user accounts, authentication, and donor profiles. | Samira Azizi |
+| 4 | Developer 2 Report | Discuss current progress and any work related to donor search and location features. | Ahmad Kaihan Saba |
+| 5 | Developer 3 Report | Discuss current progress and any work related to blood requests and communication features. | Shafiqa Taraki |
+| 6 | Acceptance Criteria | Check the available features against the acceptance criteria and review their status. | Madina Pasun and Developers |
+| 7 | Problems and Remaining Work | Discuss unfinished tasks, technical problems, and anything blocking progress. | Madina Afshar and Development Team |
+| 8 | Product Backlog | Update the backlog based on the team's progress and remaining work. | Madina Pasun |
+| 9 | Conclusion | Summarize the main points and discuss the next steps. | Madina Pasun and Madina Afshar |
 
 ## Expected Results
 
