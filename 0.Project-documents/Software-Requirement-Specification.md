@@ -12,7 +12,7 @@
 
 ## 1. Introduction
 
-### 1.1 Purpose
+###  Purpose
 
 The purpose of this document is to describe all the functional and non-functional requirements of Ehda Portal, an online web-based blood donation platform.
 
@@ -20,7 +20,7 @@ This document shows the expected system behavior, challenges, features, user int
 
 The Software Requirement Specification will help the team with the implementation of the application, and verify that the system meets the project requirements.
 
-### 1.2 Scope
+###  Scope
 
 Ehda portal aims to provide a centralized online platform that connects people who are seeking blood with potential blood donors, hospitals, and other blood donation centers.
 
@@ -36,7 +36,7 @@ The main objectives of this platform are:
 - To provide administrators with tools to manage users, hospitals, and other platform activities.
 - To protect user information through privacy and security controls.
 
-### 1.3 Definitions and Acronyms
+###  Definitions and Acronyms
 
 | Acronym | Definition |
 |---|---|
@@ -51,7 +51,7 @@ The main objectives of this platform are:
 
 ## 2. General Description
 
-### 2.1 Product Perspectives
+###  Product Perspectives
 
 Ehda portal is a web-based blood donation platform that aims to provide a centralized environment for discovering blood donors and coordinating blood requests.
 
@@ -63,21 +63,21 @@ The system will support three main user groups:
 2. Blood seekers
 3. Administrators
 
-### 2.2 User Characteristics
+###  User Characteristics
 
-#### 2.2.1 Blood Donors
+####  Blood Donors
 
 Blood donors are users who provide information about their blood type, contact details, approximate location, and availability.
 
 They should be able to manage their profiles, update their availability status, receive requests, and accept or decline requests they have received.
 
-#### 2.2.2 Blood Seekers
+####  Blood Seekers
 
 Blood seekers are users looking for blood donors.
 
 They should be able to search for donors, view profile information, create blood requests, check request responses, and communicate with donors after the request has been accepted.
 
-#### 2.2.3 Administrators
+####  Administrators
 
 Administrators are authorized users responsible for managing platform functions.
 
@@ -85,7 +85,7 @@ They should be able to manage registered accounts and healthcare facilities, rev
 
 Administrative actions should be restricted to authorized accounts only.
 
-#### 2.2.4 Constraints
+####  Constraints
 
 - Development must remain within the project scope.
 - The technology stack must be selected and documented by the team.
@@ -136,7 +136,7 @@ Administrative actions should be restricted to authorized accounts only.
 
 ## 4. Interface Requirements
 
-### 4.1 User Interface
+###  User Interface
 
 The application shall provide a clear and consistent web interface for donors, blood seekers, and administrators.
 
@@ -152,7 +152,7 @@ The interface should:
 - Avoid displaying private information to unauthorized users.
 - Remain usable on the screen sizes supported by the team.
 
-### 4.2 Software Interface
+###  Software Interface
 
 The system may interact with the following software components:
 
@@ -211,9 +211,8 @@ The review shall check that:
 3. Product backlog
 4. Sprint backlog and sprint plans
 5. Acceptance criteria
-6. System design diagrams
-7. Test cases and testing evidence
-8. Sprint review and retrospective records
+6. Sequence and Use-Case diagrams
+7. Sprint review and Planning records
 
 ---
 
