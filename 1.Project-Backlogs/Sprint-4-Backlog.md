@@ -5,7 +5,7 @@
 - **Project:** Ehda Portal — Online Blood Donation Platform
 - **Sprint Duration:** 3 days
 - **Start Date:** 27-Oct-2026
-- **End Date:** 30-Oct-2026
+- **End Date:** 29-Oct-2026
 - **Sprint Manager:** Madina Pasun, Madina Afshar
 
 ## 1. Sprint Description
